@@ -1,0 +1,140 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui"])
+		#JS_ENV_VAL()	
+	</head>
+	<body>
+		<form method="post" target="hideFrame" enctype="multipart/form-data">
+			<div  class="easyui-panel" title="分销量调整" data-options="iconCls:'icon-edit'">
+				<table width="100%" border="0" cellpadding="0" cellspacing="1">
+					<input type="hidden" id="nextUserId" name="nextUserId" />
+					<input  type="hidden" id="Cflag" name="Cflag" value="Y" />
+					<input type="hidden" id="orgIdValue" value="$!{orgId}" />
+					<input type="hidden" id="orgNameValue" value="$!{orgName}" />
+					<input type="hidden" id="userList" name="userList" />
+					<!--<tr>
+					    <td class="head" style="width:10%" noWrap>
+							提报人:
+						</td>
+						<td style="width:23%">
+							<input class="easyui-validatebox" id="userName" name="budgetChange.userName" value="$!{budgetChange.userName}" style="width:195px;" readonly />
+							<input type="hidden" id="userId" name="budgetChange.userId" value="$!{budgetChange.userId}" />
+						    <input name="key" id="key" type="hidden" value="$!{key}"/>
+						</td>
+						<td class="head" style="width:10%" noWrap>
+							组织:
+						</td>
+						<td style="width:23%">
+							<input class="easyui-validatebox" id='orgName' name="budgetChange.userName" value="$!{budgetChange.userName}" readonly />
+						</td>
+						<td class="head" style="width:10%" noWrap>
+							提报时间:
+						</td>
+						<td style="width:23%">
+							<input class="easyui-validatebox" id='orgName' name="budgetChange.userName" value="$!{budgetChange.userName}" readonly />
+						</td>
+						
+					</tr>-->
+					<tr>
+						<td class="head" noWrap>标题：</td>
+						<td>
+							<input name="skuDistribution.title" id="title" size="30"/>
+						</td>
+					</tr>
+					<tr>
+						<td class="head" noWrap>内容：</td>
+						<td colspan="3">
+						
+							<textarea name="skuDistribution.content" cols="60" rows="6"></textarea>
+						</td>
+					</tr>
+					
+                    <tr>
+                        <td class="head" noWrap>附件上传:</td>
+        		        <td>
+        		           <div id="input">
+        		           <input name="upload" id="file0" type="file" value="添加附件" onchange="addFile()">
+        		           </div>
+        		           <div id="_file"></div>
+        		        </td>
+                    </tr>
+		
+				</table>
+			</div>
+			<div class="easyui-panel" title="明细信息" data-options="collapsible:true,iconCls:'icon-list'">
+			<div region="south" border="false" style="text-align:left;height:30px;line-height:30px;BACKGROUND-COLOR:#efefef">
+				<font style="color:#cccccc">|</font><a class="easyui-linkbutton" plain="true" icon="icon-add" href="javascript:addRow()">添加行
+				</a><font style="color:#cccccc">|</font><a class="easyui-linkbutton" plain="true" icon="icon-remove" href="javascript:removeRow()">删除行
+				</a><font style="color:#cccccc">|</font><a class="easyui-linkbutton" plain="true" icon="icon-excel" href="javascript:importRow()">批量导入
+				</a><font style="color:#cccccc">|</font>
+				<font color="red">单位：标箱</font>
+			</div>
+			<table id="myTab" width="100%" cellpadding="0" border="1px" bordercolor="#cccccc" cellspacing="0px" style="border-collapse:collapse">
+				<tr style="height:25px;BACKGROUND-COLOR:#fffbf0">
+					<td width="2%" style="text-align: center" rowspan="2">
+						<input id="item_all" type="checkbox" onclick="checkAll();"/>
+					</td>
+                    <td width="8%"style="text-align: center" colspan="4">
+						转出经销商
+                    </td>
+                    <td width="8%"style="text-align: center" colspan="4">
+						转入经销商
+                    </td>
+                    </td>
+					<td width="8%"style="text-align: center" rowspan="2">
+						品项
+                    </td>
+                    <td width="8%"style="text-align: center" rowspan="2">
+						调整数量（标箱）
+                    </td>
+				</tr>
+				<tr style="height:25px;BACKGROUND-COLOR:#fffbf0">
+					<td width="8%" style="text-align: center">
+						组织
+                    </td>
+					<td width="9%" style="text-align: center">
+						经销商
+					<td width="3%"style="text-align: center">
+						年
+                    </td>
+					<td width="3%"style="text-align: center">
+						月
+                    </td>
+					<td width="8%"style="text-align: center">
+						组织
+                    </td>
+					<td width="9%"style="text-align: center">
+						经销商
+                    </td>
+					<td width="5%"style="text-align: center">
+						年
+                    </td>
+					<td width="5%"style="text-align: center">
+						月
+                    </td>
+                </tr>
+		    </table>
+			</div>
+			
+			
+			<div border="false" style="height:15px;"></div>
+			
+			<div class="easyui-panel" border="false" style="text-align:center">
+				<a class="easyui-linkbutton" icon="icon-ok" href="javascript:submit()">提交</a>&nbsp;
+				<a class="easyui-linkbutton" icon="icon-cancel" href="javascript:cencel()">取消</a>
+				<input type="hidden" id="detailJsonStr" name="detailJsonStr" />
+				<input type="hidden" id="detailList" name="detailList" />
+			</div>
+			</br>
+		<iframe id="hideFrame" name="hideFrame"  style="height: 0; width: 0"></iframe>
+		</form>
+		<div id="maintWindow"/>
+		<div id="dialogWindow"/>
+		<div id="mainFrame"></div>
+	</body>
+	<script type="text/javascript" src="$!{env.imgUrl}/js/platform/stockReport/salesPlanChange.js?js_version=20170222"></script>
+	<script type="text/javascript" src="$!{env.imgUrl}/js/platform/upload.js"></script>
+</html>

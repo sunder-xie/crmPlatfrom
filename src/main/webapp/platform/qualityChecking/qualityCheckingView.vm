@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui"])
+		#JS_ENV_VAL()
+	</head>
+	<body>
+		<form method="post">
+			<div class="easyui-panel" title="申请条件" data-options="collapsible:true,iconCls:'icon-search'" style="padding:5px">
+				<table width="100%" border="0" cellpadding="0" cellspacing="1">
+					<tr>
+						<td class="head" noWrap>
+							质检报告编号:
+						</td>
+						<td>
+							<input type="text" id="qualityCheckingId" name="qualityCheckingId" value="$!{qualityChecking.qualityCheckingId}"/>
+						</td>
+						<td class="head" noWrap>生产日期:</td>
+						<td >
+							<input type="text" id="dateOfManufactureStart" name="dateOfManufactureStart" onfocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy-MM-dd HH:mm:ss'})" value ='$!{dateOfManufactureStart}' editable="false" data-options ="required:true" style="width:140px" class="Wdate"/>
+							<font class="head">至</font>
+							<input type="text" id="dateOfManufactureEnd" name="dateOfManufactureEnd" onfocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy-MM-dd HH:mm:ss'})" value ='$!{dateOfManufactureEnd}' editable="false" data-options ="required:true" style="width:140px" class="Wdate"/>                           
+						</td>
+						<td class="head" noWrap>
+							物料描述:
+						</td>
+						<td>
+							<input id="wid" name="wid"   class="easyui-combobox"   style="width:182px;" data-options="editable:false"/>
+                		</td>
+                		<td align="right">
+							<a href="javascript:search()" class="easyui-linkbutton" iconCls="icon-search">查询</a>
+						</td>
+						<td>
+							<a href="javascript:clearValue()" class="easyui-linkbutton" iconCls="icon-reload">重置</a>
+						</td>
+					</tr>
+				</table>
+			</div>
+			<table id="datagrid"></table> 
+			<div class="easyui-panel" border="false" style="text-align:center">
+			</div>
+			<div id="toolbar1" class="datagrid-toolbar" >
+		        <input id="ss2" class="easyui-searchbox" searcher="searcher1" prompt="请填写品项or四级科目（SKU）代码或名称" customer="#mm" style="width:300px"></input>		
+		    </div>
+		</form>
+        <iframe id="hideFrame" name="hideFrame" style="height:0; width:0"></iframe>
+		<div id="maintWindow"/>
+	</body>
+	<script type="text/javascript" src="$!{env.imgUrl}/js/My97DatePicker/WdatePicker.js"></script>
+	<script type="text/javascript" src="$!{env.imgUrl}/js/platform/qualityChecking/qualityChecking.js"></script>
+</html>

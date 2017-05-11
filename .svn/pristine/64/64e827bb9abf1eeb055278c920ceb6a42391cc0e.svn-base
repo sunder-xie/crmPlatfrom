@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+	"http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="crmdict"
+		extends="kintiger-default">
+		<action name="crmdictAction" class="crmdictAction" >
+			<result name="searchCrmDict">/platform/crmdict/searchCmsTbDict.vm</result>
+			<result name="searchCrmDictType">/platform/crmdict/searchCmsTbDictType.vm</result>
+			<result name="toCreateDictType">/platform/crmdict/dictTypeCreate.vm</result>
+			<result name="toCreateDict">/platform/crmdict/dictCreate.vm</result>
+			<result name="toUpdateDictType">/platform/crmdict/dictTypeUpdate.vm</result>
+			<result name="toUpdateDict">/platform/crmdict/dictUpdate.vm</result>
+			<result name="searchDict">/platform/crmdict/searchCmsDict.vm</result>
+			<result name="toCreateCrmDict">/platform/crmdict/CrmDictCreate.vm</result>
+			<result name="toUpdateCrmDict">/platform/crmdict/CrmDictUpdate.vm</result>
+		</action>
+	</package>
+</struts>

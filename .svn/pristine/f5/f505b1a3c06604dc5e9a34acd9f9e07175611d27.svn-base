@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui"])
+		#JS_ENV_VAL()	
+	</head>
+	        <body class="easyui-layout">
+		    <form method="post" target="hideFrame">
+			<input type="hidden" id="type" name="type" value="$!{type}"></input>
+			<input type="hidden" id="matPriceId" name="priceObj.matPriceId" value="$!{priceObj.matPriceId}"></input>
+			<input type="hidden" id="bezei" name="bezei" value="$!{priceObj.bezei}"></input>
+			<input type="hidden" id="matterId" name="matterId" value="$!{priceObj.matter}"></input>
+			<div region="center" class="easyui-panel" title="信息维护" data-options="iconCls:'icon-edit'">
+			<table width="100%" border="0" cellpadding="0" cellspacing="1">
+			 <tr>
+				<td class="head" noWrap>品项or四级科目（SKU）:</td>
+				<td>
+				<input  id="matter" name="priceObj.matter" style="width:200px;" data-options="required:true,editable:false">
+				 <div id="toolbar1" class="datagrid-toolbar" >
+		        <input id="ss" class="easyui-searchbox" searcher="searcher" prompt="请填写品项or四级科目（SKU）代码或名称" customer="#mm" style="width:200px"></input>		
+		         </div>
+		        </td>
+       	     </tr>
+			 <tr>
+				<td class="head" noWrap>单价(元):</td>
+				<td><input id="price" name="priceObj.price" value="$!{priceObj.price}" class="easyui-numberbox"  precision="6" min="0" fix="" data-options="required:true" />
+               </td>
+       	     </tr>
+			 <tr>
+				<td class="head" noWrap>有效起始时间:</td>
+				<td><input  id="startDate" name="priceObj.startDate" class="easyui-datebox"  value="$!{priceObj.startDate}"  data-options="required:true,editable:false"/></td>
+			</tr>
+			<tr>
+				<td class="head" noWrap>有效截止时间:</td>
+				<td><input  id="endDate" name="priceObj.endDate" class="easyui-datebox"  value="$!{priceObj.endDate}"  data-options="required:true,editable:false"/></td>
+			</tr>
+			<tr>
+				<td class="head" noWrap>备注:</td>
+				<td><input id="remark" name="priceObj.remark"   class="easyui-validatebox" value="$!{priceObj.remark}"  style="width:60%;height:60px;"  data-options="required:false"  />
+                </td>
+			</tr>
+            </table>
+			</div>
+			<div region="south" border="false" style="text-align:right;height:30px;line-height:30px;">
+				<a class="easyui-linkbutton" icon="icon-ok" href="javascript:submit()">保存</a>
+				<a class="easyui-linkbutton" icon="icon-cancel" href="javascript:close()">取消</a>
+			</div>	
+		</form>
+		<iframe id="hideFrame" name="hideFrame"  style="height: 0; width: 0"></iframe>
+	</body>
+	<div id="OpenGoal"/> 
+<script type="text/javascript" src="$!{env.imgUrl}/js/platform/goal/createOrUpdateGoalPrice.js"></script>
+</html>

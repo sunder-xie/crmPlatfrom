@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="GB2312"?>
+<!DOCTYPE sqlMap
+	PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="complaintReport">
+	<typeAlias alias="complaintReport"
+		type="com.kintiger.platform.complaintReport.pojo.ComplaintReport" />
+    <typeAlias alias="complaintGoal"
+		type="com.kintiger.platform.complaintReport.pojo.ComplaintGoal" />
+
+
+	<select id="getComplaintReport" parameterClass="complaintReport"
+		resultClass="complaintReport">
+		<![CDATA[
+		select
+		   c.complaintsid comId,
+           p.protype productSeries,
+           w.wfactory productPlace,
+           p.pnum complaintNumString,
+           c.variety variety,
+           c.comtype varietyType,
+           w.wshop workShop
+           from office.office_tb_complaints c
+           left join office.office_tb_productdetail p on p.pcomid=c.complaintsid
+           left join office.office_tb_workshop w on w.wcomid=c.complaintsid
+           where c.isdelete = 'N'
+           and c.comdate >= #startDate# 
+           and c.comdate <= #endDate#
+           ]]>
+       <dynamic>
+           <isNotEmpty property="productPlace" prepend="and">
+			<![CDATA[  w.wfactory like #productPlace,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="workShop" prepend="and">
+			<![CDATA[  w.wshop like #workShop,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+	   </dynamic>
+	       <![CDATA[ order by c.comdate ]]>
+	</select>
+	
+	<select id="getComplaintGoalCount" parameterClass="complaintGoal"
+		resultClass="java.lang.Integer">
+		<![CDATA[
+		select
+		   count(*)
+           from office.office_tb_workshop_goal g
+           where 1=1
+           ]]>
+       <dynamic>
+			<isNotEmpty property="gMonth" prepend="and">
+			<![CDATA[  g.g_month=#gMonth# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="gFactory" prepend="and">
+			<![CDATA[  g.g_factory like #gFactory,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="gWorkShop" prepend="and">
+			<![CDATA[  g.g_workshop like #gWorkShop,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+	   </dynamic>
+	       <![CDATA[ order by g.g_month ]]>
+	</select>
+	
+	<select id="getComplaintGoal" parameterClass="complaintGoal"
+		resultClass="complaintGoal">
+		<![CDATA[
+		select
+           g.g_month gMonth,
+           g.g_factory gFactory,
+           g.g_workshop gWorkShop,
+           g.g_goal gGoal
+           from office.office_tb_workshop_goal g
+           where 1=1
+           ]]>
+       <dynamic>
+			<isNotEmpty property="startMonth" prepend="and">
+			<![CDATA[  g.g_month>=#startMonth# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="endMonth" prepend="and">
+			<![CDATA[  g.g_month<=#endMonth# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="gFactory" prepend="and">
+			<![CDATA[  g.g_factory like #gFactory,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="gWorkShop" prepend="and">
+			<![CDATA[  g.g_workshop like #gWorkShop,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+	   </dynamic>
+	       <![CDATA[ order by g.g_month ]]>
+	</select>
+	
+	<update id="updateComplaintGoal" parameterClass="complaintGoal">
+		<![CDATA[ 
+		update office.office_tb_workshop_goal g 
+		set g.g_goal = #gGoal#
+			where g.g_factory like #gFactory,handler=wildcard# escape '\'
+			and g.g_workshop like #gWorkShop,handler=wildcard# escape '\'
+			and g.g_month=#gMonth#
+	        ]]>
+	</update>
+	
+	<insert id="createGoal" parameterClass="complaintGoal">
+	<![CDATA[
+		insert into office.office_tb_workshop_goal
+		  (g_month,
+		   g_factory,
+		   g_workshop,
+		   g_goal)
+		values
+		  (#gMonth#,
+		   #gFactory#,
+		   #gWorkShop#,
+		   #gGoal#)
+	]]>
+	</insert>
+	
+</sqlMap>

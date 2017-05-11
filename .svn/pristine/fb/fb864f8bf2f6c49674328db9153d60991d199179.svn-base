@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tomcatProjectProperties>
+    <rootDir>/src/main/webapp</rootDir>
+    <exportSource>false</exportSource>
+    <reloadable>false</reloadable>
+    <redirectLogger>true</redirectLogger>
+    <updateXml>true</updateXml>
+    <warLocation></warLocation>
+    <extraInfo></extraInfo>
+    <webPath>/crmPlatform</webPath>
+    <webClassPathEntries>
+        <webClassPathEntry>/crmPlatform/src/main/webapp/WEB-INF/lib/TrustPayClient-B2B-V1.3.jar</webClassPathEntry>
+        <webClassPathEntry>/crmPlatform/src/main/webapp/WEB-INF/lib/TrustPayClient-V2.0.12.jar</webClassPathEntry>
+        <webClassPathEntry>/crmPlatform/src/main/webapp/WEB-INF/lib/dsn.jar</webClassPathEntry>
+        <webClassPathEntry>/crmPlatform/src/main/webapp/WEB-INF/lib/gimap.jar</webClassPathEntry>
+        <webClassPathEntry>/crmPlatform/src/main/webapp/WEB-INF/lib/ibatis.ibatis-2.3.4.726.jar</webClassPathEntry>
+        <webClassPathEntry>/crmPlatform/src/main/webapp/WEB-INF/lib/imap.jar</webClassPathEntry>
+        <webClassPathEntry>/crmPlatform/src/main/webapp/WEB-INF/lib/jcert.jar</webClassPathEntry>
+        <webClassPathEntry>/crmPlatform/src/main/webapp/WEB-INF/lib/jnet.jar</webClassPathEntry>
+        <webClassPathEntry>/crmPlatform/src/main/webapp/WEB-INF/lib/jsse.jar</webClassPathEntry>
+        <webClassPathEntry>/crmPlatform/src/main/webapp/WEB-INF/lib/mail.jar</webClassPathEntry>
+        <webClassPathEntry>/crmPlatform/src/main/webapp/WEB-INF/lib/mailapi.jar</webClassPathEntry>
+        <webClassPathEntry>/crmPlatform/src/main/webapp/WEB-INF/lib/oracle.ojdbc14.jar</webClassPathEntry>
+        <webClassPathEntry>/crmPlatform/src/main/webapp/WEB-INF/lib/pop3.jar</webClassPathEntry>
+        <webClassPathEntry>/crmPlatform/src/main/webapp/WEB-INF/lib/smtp.jar</webClassPathEntry>
+        <webClassPathEntry>/crmPlatform/src/main/webapp/WEB-INF/lib/super-csv-2.1.0.jar</webClassPathEntry>
+        <webClassPathEntry>/crmPlatform/target/classes</webClassPathEntry>
+        <webClassPathEntry>/crmPlatform/target/test-classes</webClassPathEntry>
+        <webClassPathEntry>G:/Program Files/Java/jdk1.7.0_67/jre/lib/charsets.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Program Files/Java/jdk1.7.0_67/jre/lib/ext/access-bridge-64.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Program Files/Java/jdk1.7.0_67/jre/lib/ext/dnsns.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Program Files/Java/jdk1.7.0_67/jre/lib/ext/jaccess.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Program Files/Java/jdk1.7.0_67/jre/lib/ext/localedata.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Program Files/Java/jdk1.7.0_67/jre/lib/ext/sunec.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Program Files/Java/jdk1.7.0_67/jre/lib/ext/sunjce_provider.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Program Files/Java/jdk1.7.0_67/jre/lib/ext/sunmscapi.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Program Files/Java/jdk1.7.0_67/jre/lib/ext/zipfs.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Program Files/Java/jdk1.7.0_67/jre/lib/jce.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Program Files/Java/jdk1.7.0_67/jre/lib/jfr.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Program Files/Java/jdk1.7.0_67/jre/lib/jsse.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Program Files/Java/jdk1.7.0_67/jre/lib/resources.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Program Files/Java/jdk1.7.0_67/jre/lib/rt.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Program Files/Java/jdk1.7.0_67/lib/tools.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/antlr/antlr/2.7.2/antlr-2.7.2.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/aopalliance/aopalliance/1.0/aopalliance-1.0.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/com/caucho/hessian/3.1.5/hessian-3.1.5.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/com/kintiger/jms/1.0/jms-1.0.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/com/kintiger/sapJCO/1.0/sapJCO-1.0.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/com/opensymphony/xwork/2.0.4/xwork-2.0.4.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/commons-beanutils/commons-beanutils/1.7.0/commons-beanutils-1.7.0.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/commons-chain/commons-chain/1.1/commons-chain-1.1.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/commons-codec/commons-codec/1.5/commons-codec-1.5.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/commons-collections/commons-collections/3.2/commons-collections-3.2.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/commons-dbcp/commons-dbcp/20030825.184428/commons-dbcp-20030825.184428.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/commons-digester/commons-digester/1.8/commons-digester-1.8.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/commons-fileupload/commons-fileupload/1.2.2/commons-fileupload-1.2.2.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/commons-io/commons-io/2.4/commons-io-2.4.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/commons-lang/commons-lang/2.4/commons-lang-2.4.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/commons-logging/commons-logging/1.0.4/commons-logging-1.0.4.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/commons-pool/commons-pool/20030825.183949/commons-pool-20030825.183949.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/commons-validator/commons-validator/1.3.1/commons-validator-1.3.1.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/dom4j/dom4j/1.1/dom4j-1.1.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/freemarker/freemarker/2.3.8/freemarker-2.3.8.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/javax/servlet/servlet-api/3.0-alpha-1/servlet-api-3.0-alpha-1.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/log4j/log4j/1.2.16/log4j-1.2.16.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/net/sf/ezmorph/ezmorph/1.0.6/ezmorph-1.0.6.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/net/sf/json-lib/json-lib/2.4/json-lib-2.4-jdk15.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/net/sf/supercsv/super-csv/2.1.0/super-csv-2.1.0.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/net/sourceforge/jexcelapi/jxl/2.6/jxl-2.6.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/opensymphony/ognl/2.6.11/ognl-2.6.11.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/opensymphony/xwork/2.0.1/xwork-2.0.1.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/org/apache/ibatis/ibatis-sqlmap/2.3.0/ibatis-sqlmap-2.3.0.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/org/apache/poi/poi-ooxml-schemas/3.9/poi-ooxml-schemas-3.9.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/org/apache/poi/poi-ooxml/3.9/poi-ooxml-3.9.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/org/apache/poi/poi-scratchpad/3.9/poi-scratchpad-3.9.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/org/apache/poi/poi/3.9/poi-3.9.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/org/apache/struts/struts-core/1.3.8/struts-core-1.3.8.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/org/apache/struts/struts-taglib/1.3.8/struts-taglib-1.3.8.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/org/apache/struts/struts-tiles/1.3.8/struts-tiles-1.3.8.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/org/apache/struts/struts2-core/2.0.6/struts2-core-2.0.6.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/org/apache/struts/struts2-spring-plugin/2.0.6/struts2-spring-plugin-2.0.6.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/org/apache/velocity/tools/velocity-tools/2.0-alpha1/velocity-tools-2.0-alpha1.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/org/apache/velocity/velocity-tools/2.0/velocity-tools-2.0.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/org/apache/velocity/velocity/1.7/velocity-1.7.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/org/apache/xmlbeans/xmlbeans/2.3.0/xmlbeans-2.3.0.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/org/json/json/20090211/json-20090211.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/org/slf4j/slf4j-api/1.6.6/slf4j-api-1.6.6.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/org/slf4j/slf4j-log4j12/1.6.6/slf4j-log4j12-1.6.6.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/org/springframework/spring-aop/3.2.2.RELEASE/spring-aop-3.2.2.RELEASE.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/org/springframework/spring-beans/3.2.2.RELEASE/spring-beans-3.2.2.RELEASE.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/org/springframework/spring-context/3.2.2.RELEASE/spring-context-3.2.2.RELEASE.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/org/springframework/spring-core/3.2.2.RELEASE/spring-core-3.2.2.RELEASE.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/org/springframework/spring-dao/2.0.8/spring-dao-2.0.8.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/org/springframework/spring-expression/3.2.2.RELEASE/spring-expression-3.2.2.RELEASE.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/org/springframework/spring-ibatis/2.0.8/spring-ibatis-2.0.8.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/org/springframework/spring-jdbc/2.0.8/spring-jdbc-2.0.8.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/org/springframework/spring-web/2.0.1/spring-web-2.0.1.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/org/springframework/spring/2.5.6/spring-2.5.6.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/oro/oro/2.0.8/oro-2.0.8.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/sslext/sslext/1.2-0/sslext-1.2-0.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/stax/stax-api/1.0.1/stax-api-1.0.1.jar</webClassPathEntry>
+        <webClassPathEntry>G:/Users/Administrator/.m2/repository/velocity/velocity/1.5/velocity-1.5.jar</webClassPathEntry>
+    </webClassPathEntries>
+</tomcatProjectProperties>

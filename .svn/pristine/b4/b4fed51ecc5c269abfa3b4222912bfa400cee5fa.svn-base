@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="GB2312"?>
+<!DOCTYPE sqlMap
+	PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="newOrg">
+
+	<typeAlias alias="borg2" type="com.kintiger.platform.org.pojo.Borg" />
+
+	<select id="getOrgTreeListByOrgId" parameterClass="borg2"
+		resultClass="borg2">
+	<![CDATA[
+		  select   g.org_id  as orgId,
+				   g.org_code as orgCode,
+				   g.org_level as orgLevel,
+				   g.org_city as orgCity,
+				   g.org_name as orgName,
+				   g.org_parent_id as orgParentId,
+				   g.state as state ,
+				   g.remark as remark,
+				   g.last_modify as lastModify,
+				   g.root_notice as rootNotice,
+				   g.sap_org_id as sapOrgId,
+				   g.company_id as companyId,
+				   g.org_jc as orgJc,
+				   g.city_id as cityId,
+				   g.leader_station_id as leaderStationId,
+				   g.img_showorg_id  as imgOrgId,
+				   g.adgroup_name as ADGroupName,
+				   g.organise_type as OrganiseType,
+				   g.create_time as createTime,
+				   g.new_organise_id_str as NewOrganiseIdStr,
+				   g.lsorganise_ids as LSOrganiseIds,
+				   g.short_name as ShortName,
+				   g.jian_ping as JianPing,
+				   g.samaccount_name as sAMAccountName,
+				   g.if_have_mail as IfHaveMail,
+				   g.sap_company_id as sapCompanyId,
+				   g.orgunit as  orgUnit,
+				   g.org_range as orgRange,
+				   g.account_type as accountType
+			  from basis.basis_tb_org g
+			 where g.state = 'Y'
+	]]>
+		<dynamic>
+			<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[ g.org_id=#orgId#]]>
+			</isNotEmpty>
+		</dynamic>
+		<dynamic>
+			<isNotEmpty property="orgParentId" prepend="and">
+			<![CDATA[ g.org_parent_id=#orgParentId#]]>
+			</isNotEmpty>
+		</dynamic>
+	<![CDATA[
+	 order by g.org_level,g.org_id
+	]]>
+	</select>
+	<select id="getOrgByOrgId" parameterClass="borg2" resultClass="borg2">
+	<![CDATA[
+		select g.org_id              as orgId,
+			   g.org_code            as orgCode,
+			   g.org_level           as orgLevel,
+			   g.org_city            as orgCity,
+			   g.org_name            as orgName,
+			   g.org_parent_id       as orgParentId,
+			   g.state               as state,
+			   g.remark              as remark,
+			   g.last_modify         as lastModify,
+			   g.root_notice         as rootNotice,
+			   g.sap_org_id          as sapOrgId,
+			   g.company_id          as companyId,
+			   g.org_jc              as orgJc,
+			   g.city_id             as cityId,
+			   g.leader_station_id   as leaderStationId,
+			   g.leader_role_id      as leaderRoleId,
+			   g.img_showorg_id      as imgOrgId,
+			   g.adgroup_name        as ADGroupName,
+			   g.organise_type       as OrganiseType,
+			   g.create_time         as createTime,
+			   g.new_organise_id_str as NewOrganiseIdStr,
+			   g.lsorganise_ids      as LSOrganiseIds,
+			   g.short_name          as ShortName,
+			   g.jian_ping           as JianPing,
+			   g.samaccount_name     as sAMAccountName,
+			   g.if_have_mail        as IfHaveMail,
+			   g.sap_company_id      as sapCompanyId,
+			   g.orgunit             as orgUnit,
+			   g.org_range           as orgRange,
+			   g.account_type        as accountType,
+			   g2.org_name           as orgParentName,
+			   g3.org_name           as companyName,
+			   ''                    as orgUnitTxtsh,
+			   s.role_name           as leaderRoleName,
+			   g.cost_center         as costCenter
+		  from basis.basis_tb_org g
+		  left join basis.basis_tb_org g2
+			on g.org_parent_id = g2.org_id
+		  left join basis.basis_tb_org g3
+			on g.company_id = g3.org_id		 
+		  left join basis.basis_tb_roles s
+			on s.role_id = g.leader_role_id
+		   and s.descn like '%WFE%'
+		   and s.state = 'U'
+		 where g.state = 'Y'
+	]]>
+		<dynamic>
+			<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[ g.org_id=#orgId#]]>
+			</isNotEmpty>
+		</dynamic>
+		<dynamic>
+			<isNotEmpty property="orgParentId" prepend="and">
+			<![CDATA[ g.org_parent_id=#orgParentId#]]>
+			</isNotEmpty>
+		</dynamic>
+
+	</select>
+	<!--根据人员id获取主次岗组织  -->
+	<select id="getOrgListByUserId" parameterClass="java.lang.String"
+		resultClass="java.lang.String">
+	<![CDATA[
+		select distinct t.org_id orgId
+  			from basis.basis_tb_station_user t
+		where  t.user_id = #userId#
+	]]>	
+	</select>
+	<!--判断人员是否有选择所有组织的权限  -->
+	<select id="getPermissionByUserId" parameterClass="java.lang.String"
+		resultClass="java.lang.Integer">
+		<![CDATA[
+		select count(1)
+		  	from basis.basis_tb_station_user t
+		left join basis.basis_tb_station_role r
+		 	 on t.station_id=r.station_id
+		 where r.role_id = 'org_search_all'
+		 	and t.user_id= #userId#
+		]]>
+	</select>
+	<!-- 查询是否在目标组织中 -->
+	<select id="getOrgCount" parameterClass="java.util.HashMap"
+		resultClass="java.lang.Integer">
+		<![CDATA[
+			select count(1)
+  			from dual
+ 			where #baseOrgId# in (select a.org_id
+            	from basis.basis_tb_org a
+                start with a.org_id = #orgId#
+                connect by prior a.org_parent_id = a.org_id)
+		]]>
+	</select>
+</sqlMap>

@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui"])
+		#JS_ENV_VAL()
+	</head>
+	<body>
+		<form method="post">
+			<input type="hidden" id="userList" name="userList" />
+			<input type="hidden" id="orgId" name="orgId" value="$!{orgId}"/>
+			<div class="easyui-panel" title="查询条件" data-options="collapsible:true,iconCls:'icon-search'" style="padding:5px">
+				<table width="100%" border="0" cellpadding="0" cellspacing="1">
+					<tr>
+						<td class="head" noWrap>
+							事务编号:
+						</td>
+						<td>
+							<input type="text" class="easyui-numberbox" id="eventId" name="eventId" data-options="required:false" style="width:140px" />
+						</td>
+						<td class="head" noWrap>
+							申请人:
+						</td>
+						<td>
+							<input type="text" id="applyUser" name="applyUser" data-options="required:false" style="width:140px" />
+						</td>
+						<td class="head" noWrap>申请年月:</td>
+						<td >
+							<input type="text" id="startDate" name="startDate" onfocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy年MM月'})" value ='$!{startDate}' editable="false" data-options ="required:true" style="width:140px" class="Wdate"/>
+							<font class="head">至</font>
+							<input type="text" id="endDate" name="endDate" onfocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy年MM月'})" value ='$!{endDate}' editable="false" data-options ="required:true" style="width:140px" class="Wdate"/>                           
+						</td>
+					</tr>
+					<tr>
+						<td class="head" noWrap>
+							事务状态:
+						</td>
+						<td>
+							<select class="easyui-combobox" id="eventStatus" name="eventStatus" data-options="editable:false" style="width:140px">
+							    <option value="D">已完成</option>
+							    <option value="Y">流程中</option>
+							    <option value="S">已取消</option>
+							    <option value="N">未提交</option>
+							</select>
+						</td>
+						<td class="head" noWrap>
+							事务类型:
+						</td>
+						<td>
+							<input id="eventType" name="eventType" style="width:140px" />
+						</td>
+						<td>
+							<a href="javascript:search()" class="easyui-linkbutton" iconCls="icon-search">查询</a>
+						</td>
+						<td>
+							<a href="javascript:clearValue()" class="easyui-linkbutton" iconCls="icon-reload">重置</a>
+						</td>
+                    </tr>
+				</table>
+			</div>
+			<table id="datagrid">  
+			</table> 
+		</form>
+        <iframe id="hideFrame" name="hideFrame" style="height:0; width:0"></iframe>
+		<div id="maintWindow"/>
+	</body>
+	<script type="text/javascript" src="$!{env.imgUrl}/js/My97DatePicker/WdatePicker.js"></script>
+	<script type="text/javascript" src="$!{env.imgUrl}/js/platform/dealerAdjustment/dealerAdjustment.js?version_js=20161205"></script>
+</html>

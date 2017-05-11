@@ -1,0 +1,457 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+		<style media="print">  
+			.noPrint { display : none; }  
+        </style> 
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui"])
+		#JS_ENV_VAL()
+	</head>
+	<body>
+	        
+			<form id="ff" method="post" enctype="multipart/form-data">
+			<input type="hidden" id="eventId" name="eventId"  value='$!{eventId}' readonly   >
+			<input type="hidden"  id="xmlFilePath" name="xmlFilePath"  value='$!{xmlFilePath}' readonly   >
+			<input type="hidden"  id="subFolders" name="subFolders"  value='$!{subFolders}' readonly   >
+			<input type="hidden" id="acountListSize" value="$!{acountListSize}" />
+			<input type="hidden" id="addressListSize" value="$!{addressListSize}" />
+			<input type="hidden" id="printType" value="$!{printType}" />
+			
+			<div class="noPrint">
+		    <object height="0" width="0" id="wb" classid="CLSID:8856F961-340A-11D0-A96B-00C04FD705A2" name="wb"></object> 
+		    <input type="button" onClick="printit()" value="打印" name="button_print"> 
+		    <input type="button" onClick="printpreview()" value="打印预览 " name="button_show"> 
+		    <input type="button" onClick="printsetup()" value="打印页面设置" name="button_setup"> 
+	        </div>
+			<div align="center"><h2>$!{proEventTotal.eventTitle}</h2></div>
+			<div class="easyui-panel" title="基本资料" data-options="collapsible:true,iconCls:'icon-list'" style="padding: 2px; width:920px; background: #fafafa;">
+			<table width="100%" border="0" cellpadding="1" cellspacing="1">
+			<tr>
+				<td class="head" noWrap>客户注册名称:</td>
+				<td>$!{kunnr.name1}
+				##<input class="easyui-validatebox" id="name1" name="kunnr.name1" value='$!{kunnr.name1}' style="width:250px" data-options="required:true" readonly >
+				</td>
+			    <td class="head" noWrap>客户SAP代码:</td>
+				<td><input class="easyui-validatebox"  id="kunnr" name="kunnr.kunnr" value='$!{kunnr.kunnr}' readonly ></td>
+			    <td class="head" noWrap>打码号:</td>
+				<td><input class="easyui-validatebox"  id="locco" name="kunnr.locco" value='$!{kunnr.locco}' readonly ></td>
+			</tr>
+			<tr>
+			    <td class="head" noWrap>上级经销商:</td>
+				<td>$!{kunnr.konzsTxt}
+				##<input class="easyui-validatebox" id="konzsTxt" name="kunnr.konzsTxt"  value='$!{kunnr.konzsTxt}' style="width:250px" data-options="required:false,editable:false">
+				<input type="hidden" class="easyui-validatebox" id="konzs" name="kunnr.konzs" value='$!{kunnr.konzs}' data-options="required:false,editable:false"></td>			
+				<td class="head" noWrap>所属组织:</td>
+				<td>
+					<input class="easyui-validatebox" id="orgName" name="kunnr.orgName" value="$!{kunnr.orgName}" data-options="required:true" readonly/>
+					<input type='hidden' id="orgId" name="kunnr.orgId"/>
+				</td>
+				<td class="head" noWrap>客户分类:</td>
+				<td><input class="easyui-validatebox" id="channelId" name="kunnr.channelId" value='$!{kunnr.channelId}' data-options="required:true,editable:false"></td>	
+			</tr>
+			<tr>
+			    <td class="head" noWrap>法人代表:</td>
+				<td>
+					<input class="easyui-validatebox"  data-options="required:true,missingMessage:'姓名'" id="name3" name="kunnr.name3" value='$!{kunnr.name3}' readonly >
+				</td>
+				<td class="head" noWrap>性别年龄:</td>
+				<td>
+				<input class="easyui-combobox" data-options="required:true,editable:false,missingMessage:'性别'" style="width:70px;" id="sex" name="kunnr.sex" value='$!{kunnr.sex}'></input>  	
+				<input class="easyui-numberbox" data-options="min:0,required:true,missingMessage:'年龄'"  style="width:70px" id="age" name="kunnr.age" value='$!{kunnr.age}' readonly >
+				</td>
+				<td class="head" noWrap>法人手机:</td>
+				<td><input class="easyui-numberbox" id="mobNumber" name="kunnr.mobNumber" value='$!{kunnr.mobNumber}' data-options="required:true" readonly  ></td>
+			</tr>
+			<tr>
+			    <td class="head" noWrap>食品流通许可证号:</td>
+				<td><input class="easyui-validatebox" id="healthNumber" name="kunnr.healthNumber" value='$!{kunnr.healthNumber}'readonly ></td>
+				<td class="head" noWrap>营业执照注册号:</td>
+				<td><input class="easyui-validatebox" id="businessLicense" name="kunnr.businessLicense" value='$!{kunnr.businessLicense}'readonly ></td>
+				<td class="head" noWrap>企业性质:</td>
+			    <td><input class="easyui-validatebox" id="natureEnterprise" name="kunnr.natureEnterprise" value="$!{kunnr.natureEnterprise}" data-options="required:true" value='$!{kunnr.natureEnterprise}' validType="length[0,100]"></td>
+			</tr>
+			<tr>
+				<td class="head" noWrap>公司联系电话:</td>
+				<td><input class="easyui-validatebox" id="telNumber" name="kunnr.telNumber" value='$!{kunnr.telNumber}'data-options="required:true" readonly ></td>
+				<td class="head" noWrap>传真:</td>
+				<td><input class="easyui-validatebox" id="faxNumber" name="kunnr.faxNumber" value="$!{kunnr.faxNumber}" readonly ></td>
+				<td class="head" noWrap>邮编:</td>
+				<td><input class="easyui-validatebox" id="zip" name="kunnr.zip" value="$!{kunnr.zip}" readonly ></td>
+			</tr>
+			<tr>
+			 <td class="head" noWrap>仓库面积(㎡):</td>
+				<td><input class="easyui-validatebox" id="warehouseArea" name="kunnr.warehouseArea" value="$!{kunnr.warehouseArea}" data-options="required:true" value='$!{kunnr.warehouseArea}' validType="length[0,30]"></td>
+				<td class="head" noWrap>经营年限:</td>
+				<td><input class="easyui-numberbox" id="businessLife" name="kunnr.businessLife" value="$!{kunnr.businessLife}" readonly ></td>
+			   <td class="head" noWrap>上次年审日期:</td>
+				<td><input class="easyui-datebox" id="lastAnnual" name="kunnr.lastAnnual" value='$!dateUtil.datetime($!{kunnr.lastAnnual},'yyyy-MM-dd')' data-options="editable:false"></td>
+			</tr>
+			<tr>
+				<td class="head" noWrap>办公地所在省</td>
+				<td  colspan="5">
+					<input type="hidden"  id="region">
+					<input class="easyui-combobox"  id="region1" name="kunnr.province" value="$!{kunnr.province}"  readonly data-options="required:false,editable:false">
+				<font class="head" noWrap>城市:</font>
+				<input class="easyui-combobox"  id="region2" name="kunnr.city"  value="$!{kunnr.city}" readonly  data-options="required:false,editable:false">
+				<font class="head" noWrap>区/县:	
+				<input class="easyui-combobox"  id="region3" name="kunnr.area" value="$!{kunnr.area}" readonly  data-options="required:false,editable:false">
+				<font class="head" noWrap>镇/乡:</font>	
+				<input class="easyui-combobox"  id="region4" name="kunnr.town" value="$!{kunnr.town}" readonly  data-options="required:false,editable:false"></td>
+			</tr>
+			<tr>
+				<td class="head" noWrap>具体参考位置:</td>	
+				<td colspan="3">
+				<input class="easyui-validatebox" id="street1" name="kunnr.street1"  readonly  value='$!{kunnr.street1}' style="width:60%" value='$!{kunnr.street1}' data-options="required:true">
+				</td>
+				<td class="head" noWrap>雇员编制数量:</td>	
+				<td>
+				<input class="easyui-numberbox" id="staffNumber" name="kunnr.staffNumber" value="$!{kunnr.staffNumber}" data-options=" required:true,min:0">
+				</td>
+			</tr>
+            <tr>
+				<td class="head" noWrap>开始合作时间:</td>
+				<td><input class="easyui-datebox" id="cooperationStart" name="kunnr.cooperationStart" value="$!dateUtil.datetime($!{kunnr.cooperationStart},'yyyy-MM-dd')" data-options="editable:false"></td>
+				#if($!{kunnr.status}=="2")
+				<td class="head" noWrap>关户时间:</td>
+				<td><input class="easyui-datebox" id="cooperationEnd" name="kunnr.cooperationEnd" value="$!dateUtil.datetime($!{kunnr.cooperationEnd},'yyyy-MM-dd')" data-options="editable:false"></td>
+				#end	
+			</tr>
+			<tr>
+				<td class="head" noWrap>原因:</td>
+				<td colspan="5" style="word-wrap:break-word;word-break:break-all;" style="width:600px;">
+				$!{kunnr.createReason}
+				</td>
+			</tr>
+		    </table>
+            </div>
+           #if('apply'==$!{printType})
+           <div class="easyui-panel" title="财务信息" data-options="collapsible:true,iconCls:'icon-detail'" style="padding: 2px; width:920px; background: #fafafa;">
+           <table width="100%" border="0" cellpadding="0" cellspacing="1">
+			<tr>
+				<td class="head" noWrap>纳税人类型:</td>
+				<td><input class="easyui-validatebox" id="kverm" name="kunnr.kverm" value='$!{kunnr.kverm}' readonly ></td>
+				<td class="head" noWrap>税务登记证号:</td>
+				<td colspan="2"><input class="easyui-validatebox" id="stceg" name="kunnr.stceg" value='$!{kunnr.stceg}' style="width:90%" readonly ></td>
+			</tr>
+			<tr>
+		        <td class="head" noWrap>开票电话:</td>
+				<td><input class="easyui-validatebox" id="kpPhone" name="kunnr.kpPhone" value='$!{kunnr.kpPhone}'data-options="required:true" readonly ></td>
+				<td class="head" noWrap>发票收件人:</td>
+				<td><input class="easyui-validatebox" id="fpRecipient" name="kunnr.fpRecipient" value='$!{kunnr.fpRecipient}'data-options="required:true"  validType="length[0,30]"></td>
+				<td class="head" noWrap>发票联系电话:</td>
+				<td><input class="easyui-validatebox" id="fpContactPhone" name="kunnr.fpContactPhone" value='$!{kunnr.fpContactPhone}'data-options="required:true"  validType="telephone"></td>
+			</tr>
+			  <tr>
+				<td class="head" noWrap>开户银行:</td>
+				<td colspan="2"><input class="easyui-validatebox" id="bank" name="kunnr.bank" value='$!{kunnr.bank}' style="width:90%" readonly ></td>
+				<td class="head" noWrap>银行账户:</td>
+				<td colspan="2"><input class="easyui-validatebox" id="bankAccount" name="kunnr.bankAccount" value='$!{kunnr.bankAccount}' style="width:90%" readonly ></td>
+			</tr>
+			<tr>
+			<td class="head" noWrap>注册地址:</td>
+				<td colspan="5"><input class="easyui-validatebox" id="zcAddress" name="kunnr.zcAddress" value='$!{kunnr.zcAddress}'  style="width:90%" data-options="required:true" validType="length[0,100]"></td>
+			</tr>
+			<tr>
+			<td class="head" noWrap>发票寄送地址:</td>
+				<td colspan="5"><input class="easyui-validatebox" id="fpAddress" name="kunnr.fpAddress" value='$!{kunnr.fpAddress}'  style="width:90%"  data-options="required:true"  validType="length[0,100]"></td>
+			</tr>
+            </table>
+            </div>
+			<div class="easyui-panel" title="业务联系" data-options="collapsible:true,iconCls:'icon-detail'" style="padding: 2px; width:920px; background: #fafafa;">
+					<table width="100%" border="0" cellpadding="0" cellspacing="1">
+						<tr>
+        				<td class="head" noWrap>城市经理:</td>
+        				<td><input class="easyui-validatebox" id="businessManager" name="kunnrBusiness.businessManager" value="$!{kunnrBusiness.businessManager}" readonly ></td>
+        				<td class="head" noWrap>城市经理手机:</td>
+        				<td><input class="easyui-validatebox" id="managerMobile" name="kunnrBusiness.managerMobile" value="$!{kunnrBusiness.managerMobile}" readonly></td>
+        				</tr>
+						<tr>
+						<td class="head" noWrap>客户经理:</td>
+        				<td><input class="easyui-validatebox" id="businessCompetent" name="kunnrBusiness.businessCompetent" value="$!{kunnrBusiness.businessCompetent}" readonly></td>
+        				<td class="head" noWrap>客户经理手机:</td>
+        				<td><input class="easyui-validatebox" id="competentMobile" name="kunnrBusiness.competentMobile" value="$!{kunnrBusiness.competentMobile}" readonly></td>
+						</tr>
+						<tr>
+						<td class="head" noWrap>经销商业务负责人:</td>
+        				<td><input class="easyui-validatebox" id="kunnrLeader" name="kunnrBusiness.kunnrLeader"  validType="length[0,6]" value="$!{kunnrBusiness.kunnrLeader}"></td>
+        				<td class="head" noWrap>负责人手机:</td>
+        				<td><input class="easyui-numberbox" id="kunnrPhone" name="kunnrBusiness.kunnrPhone" value="$!{kunnrBusiness.kunnrPhone}" validType="length[11,11]"></td>
+						</tr>
+		    		</table>
+				</div> 
+				<div class="easyui-panel" title="产品收货" data-options="collapsible:true,iconCls:'icon-detail'" style="padding: 2px; width:920px; background: #fafafa;">
+					<table id="addressTable" width="100%" border="0" cellpadding="0" cellspacing="1">
+						<tr>
+        				<td class="head" noWrap>(收货仓库)地址:</td>
+        				<td colspan="3"><input class="easyui-validatebox" value="$!{kunnr.shXzAddress}$!{kunnr.street}" style="width:90%" readonly ></td>
+        				<td class="head" noWrap>收货人:</td>
+        				<td><input class="easyui-validatebox"  value="$!{kunnr.name102}"  readonly ></td>
+        				<td>
+        				</tr>
+        				</tr>
+        				<td class="head" noWrap>联系电话:</td>
+        				<td><input class="easyui-validatebox" value="$!{kunnr.name102tel}"  readonly></font></td>
+        				<td class="head" noWrap>联系手机:</td>
+        				<td><input class="easyui-validatebox"  value="$!{kunnr.name102mob}"  readonly></td>
+					    <td class="head" noWrap>最大可通行车型:</td>
+        				<td><input class="easyui-combobox" id="maximum02" name="kunnr.maximum" value="$!{kunnr.maximum}"  validType="length[0,20]"></td>
+					    </tr>
+					    #if($addressListSize!=0)
+						#foreach($address in $kunnrAddressList)
+						#set($velocityCount=$velocityCount+1)
+						<tr>
+        				<td class="head" noWrap>(送达方)地址:</td>
+        				<td colspan="3"><input class="easyui-validatebox" value="$!{address.xzAddress}$!{address.address}" style="width:90%" readonly></td>
+        				<td class="head" noWrap>收货人:</td>
+        				<td><input class="easyui-validatebox"  value="$!{address.name}"  readonly>
+        				</tr>
+        				<tr>
+        				<td class="head" noWrap>联系电话:</td>
+        				<td><input class="easyui-validatebox" value="$!{address.telephone}"  readonly></font></td>
+        				<td class="head" noWrap>联系手机:</td>
+        				<td><input class="easyui-validatebox"  value="$!{address.mobile}" readonly></td>
+        				<td class="head" noWrap>最大可通行车型:</td>
+        				<td><input class="easyui-combobox" id="maximum_$velocityCount" name="address.maximum" value="$!{address.maximum}"  validType="length[0,20]"></td>
+					   </tr>
+					   #end
+					   #end
+		    		</table>
+				</div>  
+				<!-- div class="easyui-panel" title="商业折扣" data-options="collapsible:true,iconCls:'icon-detail'" style="padding: 2px;width:920px; background: #fafafa;">
+					<table id="salesAcountTable" width="100%" border="0" cellpadding="0" cellspacing="1">
+						#if($acountListSize!=0)
+						#foreach($acount in $kunnrAcountList)
+							#set($velocityCount=$velocityCount+1)
+						<tr>
+						<td class="head" noWrap>物料回扣组:</td><td><input class="easyui-validatebox" value="$!{acount.bonus}" id="bonus_$velocityCount" data-options="editable:false">
+						<font class="head" noWrap>月返(元):<input class="easyui-validatebox" value="$!{acount.typeA}" readonly  style="width:70px">
+						季返(元):<input class="easyui-validatebox" readonly value="$!{acount.typeB}"  style="width:70px">
+						年返(元):<input class="easyui-validatebox" readonly value="$!{acount.typeC}"  style="width:70px">
+						协议价(元):<input class="easyui-validatebox"  readonly value="$!{acount.typeMoney}"  style="width:70px">
+						</td>
+						</tr>
+						
+						<tr>
+						
+						<td class="head" noWrap><div class="type2J"><label><font color='red'>二级返一级</font>#if($!{acount.flag}=='Y')<input type="checkbox" id="flag_$velocityCount" value="Y" checked>#else<input type="checkbox" id="flag_$velocityCount" value="Y" >#end</label></div></td>
+						<td><div class="type2J"><font class="head" noWrap>月返(元):<input class="easyui-validatebox"  readonly value="$!{acount.type2A}" style="width:70px">
+						季返(元):<input class="easyui-validatebox"  readonly value="$!{acount.type2B}"  style="width:70px">
+						年返(元):<input class="easyui-validatebox"  readonly value="$!{acount.type2C}"  style="width:70px">
+						</font></div></td>
+						</tr>
+					
+						<tr>
+						<td class="head" noWrap>
+						(SAP协议号)月返:</td><td><input class="easyui-validatebox" id="text0_$velocityCount" value="$!{acount.acountSapA}" style="width:100px" data-options="editable:false">
+					    <font style="font-weight:bold;color:#006b8a">&nbsp;季返:<input class="easyui-validatebox" id="text01_$velocityCount" value="$!{acount.acountSapB}" style="width:100px" validType="length[0,20]">
+					         年返:<input class="easyui-validatebox" id="text02_$velocityCount" value="$!{acount.acountSapC}" style="width:100px" validType="length[0,20]">
+					         开始生效日期:</font>
+					    <font style="font-weight:bold;color:#006b8a">
+						<input class="easyui-datebox" id="text1_$velocityCount" value="$!{acount.startDate}" style="width:90px" data-options="editable:false" >
+						有效截止日期:</font><input class="easyui-datebox" id="text2_$velocityCount" value="$!{acount.endDate}" style="width:90px" data-options="editable:false">
+						</td>
+						</tr>
+						#end
+						#else
+						<a class="head" noWrap><font color='green'>未填写物料回扣说明!</font></a>
+						#end
+		    		</table>  
+				</div -->
+				</br>
+					<div class="easyui-panel" title="销售视图" data-options="collapsible:true,iconCls:'icon-detail'" style="padding: 2px;width:920px; background: #fafafa;">
+					<table id="brandTable" width="100%" border="0" cellpadding="0" cellspacing="1">
+				 	#* <tr>
+			              <td class="head" noWrap>公司代码:</td>
+				          <td><input class="easyui-combobox" id="bukrs" name="kunnr.bukrs" value='$!{kunnr.bukrs}' data-options="required:true,editable:false"></td>
+				          <td class="head" noWrap>客户科目组:</td>
+				          <td><input class="easyui-validatebox" id="ktokd" name="kunnr.ktokd" value='$!{kunnr.ktokd}' data-options="required:true" readonly ></td>	
+			              <td class="head" noWrap>交货优先权:</td>
+        				  <td><input class="easyui-combobox" id="lprio" name="kunnrBusiness.lprio" readonly  value="$!{kunnrBusiness.lprio}"></td>
+			            </tr>*#
+			            <tr>
+						<td class="head" noWrap>销售大区:</td>
+        				<td><input class="easyui-combobox" id="vkgrp" name="kunnrBusiness.vkgrp"  data-options="required:true,editable:false" value="$!{kunnrBusiness.vkgrp}"></td>
+        				<td class="head" noWrap>销售省份:</td>
+        				<td><input class="easyui-combogrid" id="bzirk" name="kunnrBusiness.bzirk" data-options="required:true,editable:false" value="$!{kunnrBusiness.bzirk}"></td>
+        				<td class="head" noWrap>城市办:</td>
+        				<td><input class="easyui-combobox" id="vkbur" name="kunnrBusiness.vkbur" data-options="required:true,editable:false" value="$!{kunnrBusiness.vkbur}"></td>
+						</tr>
+					#*	<tr>
+        				<td class="head" noWrap>付款方式:</td>
+        				<td><input class="easyui-validatebox" id="zterm" name="kunnrBusiness.zterm" readonly data-options="required:true" value="$!{kunnrBusiness.zterm}"></td>
+        				<td class="head" noWrap>货币:</td>
+        				<td><input class="easyui-validatebox" id="waers" name="kunnrBusiness.waers" readonly data-options="required:true" value="$!{kunnrBusiness.waers}"></td>
+        				<td class="head" noWrap>定价过程:</td>
+        				<td><input class="easyui-validatebox" id="kalks" name="kunnrBusiness.kalks" readonly data-options="required:true" value="$!{kunnrBusiness.kalks}"></td>
+						</tr>
+						<tr>
+        				<td class="head" noWrap>POD相关:</td>
+        				<td><input class="easyui-validatebox" id="podkz" name="kunnrBusiness.podkz" readonly data-options="required:true" value="$!{kunnrBusiness.podkz}"></td>
+        				<td class="head" noWrap>完全交货:</td>
+        				<td><input class="easyui-validatebox" id="autlf" name="kunnrBusiness.autlf" readonly data-options="required:true" value="$!{kunnrBusiness.autlf}"></td>
+						<td class="head" noWrap>每个项目的交货:</td>
+        				<td><input class="easyui-validatebox" id="kztlf" name="kunnrBusiness.kztlf" readonly data-options="required:true" value="$!{kunnrBusiness.kztlf}"></td>
+						</tr>
+						<tr>
+        				<td class="head" noWrap>最大部分交货:</td>
+        				<td><input class="easyui-validatebox" id="antlf" name="kunnrBusiness.antlf" readonly data-options="required:true"  value="$!{kunnrBusiness.antlf}"></td>
+        				<td class="head" noWrap>回扣相关:</td>
+        				<td><input class="easyui-validatebox" id="bokre" name="kunnrBusiness.bokre" readonly data-options="required:true" value="$!{kunnrBusiness.bokre}"></td>
+        				<td class="head" noWrap>账户分配组:</td>
+        				<td><input class="easyui-validatebox" id="ktgrd" name="kunnrBusiness.ktgrd" readonly data-options="required:true" value="$!{kunnrBusiness.ktgrd}"></td>
+						</tr>
+						<tr>
+        				<td class="head" noWrap>标题:</td>
+        				<td><input class="easyui-validatebox" id="titleMedi" name="kunnrBusiness.titleMedi" readonly  data-options="required:true" value="$!{kunnrBusiness.titleMedi}"></td>
+        				<td class="head" noWrap>国家:</td>
+        				<td><input class="easyui-validatebox" id="country" name="kunnrBusiness.country" readonly data-options="required:true" value="$!{kunnrBusiness.country}"></td>
+        				<td class="head" noWrap>语言:</td>
+        				<td><input class="easyui-validatebox" id="langu" name="kunnrBusiness.langu" readonly data-options="required:true" value="$!{kunnrBusiness.langu}"></td>
+						</tr>
+					    <tr>
+						<td class="head" noWrap>统驭科目:</td>
+        				<td ><input class="easyui-validatebox" id="akont" name="kunnrBusiness.akont" readonly data-options="required:true" value="$!{kunnrBusiness.akont}"></td>
+						<td class="head" noWrap>客戶统计组:</td>
+        				<td><input class="easyui-validatebox" id="versg" name="kunnrBusiness.versg" readonly data-options="required:true" value="$!{kunnrBusiness.versg}"></td>
+						<td class="head" noWrap>税分类:</td>
+        				<td><input class="easyui-validatebox" id="taxkd01" name="kunnrBusiness.taxkd01" readonly data-options="required:true" value="$!{kunnrBusiness.taxkd01}"></td>
+						</tr>*#
+		    		</table>  
+				</div>
+			#end
+    			#if($!{proEventTotal.status}=="0")
+                	#set($status = "未处理")
+                #elseif($!{proEventTotal.status}=="1")
+                	#set($status = "处理中")
+                #elseif($!{proEventTotal.status}=="2")
+                	#set($status = "已完成")
+                #elseif($!{proEventTotal.status}=="3")
+                	#set($status = "已拒绝")
+                #elseif($!{proEventTotal.status}=="4")
+                	#set($status = "已取消")
+                #end
+		    <div class="easyui-panel" data-options="collapsible:true,iconCls:'icon-tip'" style="padding: 2px;width:920px; background: #fafafa;" title="流程数据：评审列表  事务ID：$!{proEventTotal.eventId} 事务状态：$status">
+			<table width="100%" border="0" cellpadding="0" cellspacing="8">
+				<tr>
+					<td valign="top">
+						<table width="100%" border="1px" bordercolor="#cccccc" cellspacing="0px" style="border-collapse:collapse">
+							<tr>
+								<td colspan="2">
+									<table width="100%" border="1px" bordercolor="#cccccc" cellspacing="0px" style="border-collapse:collapse">
+										#set($detail=$eventDetailList.get(0))
+										<tr>
+											<td class="head" align="center" noWrap colspan="1">
+												发起人:
+											</td>
+											<td   noWrap  >
+													$!{detail.userName}
+											</td>
+											<td class="head" align="center"  noWrap colspan="1">
+												角色:
+											</td>
+											<td  noWrap >
+												$!{detail.roleName}
+											</td>
+											<td class="head" align="center"  noWrap colspan="1">
+												发起时间:
+											</td>
+											<td noWrap  >
+												$!dateUtil.datetime($!{detail.time},"yyyy-MM-dd HH:mm:ss")
+											</td>
+										</tr>
+										<tr>
+											<td class="head" align="center"  noWrap colspan="1">
+												备注:
+											</td>
+											<td style="word-wrap:break-word;word-break:break-all;" style="width:600px;"   noWrap colspan="5">
+											 $!{detail.memo}
+											</td>
+										</tr>
+										<tr>
+											<td class="head"  align="center"  noWrap colspan="1">
+												附件:
+											</td>
+											<td   noWrap colspan="5">
+												$!{detail.link}
+											</td>
+										</tr>
+									</table>
+									#foreach($detail in $eventDetailList)
+										#if($velocityCount != 0)
+											<table width="100%" border="1px" bordercolor="#cccccc" cellspacing="0px" style="border-collapse:collapse">
+										<tr>
+											<td class="head" noWrap colspan="1">
+        										处理人:
+											</td>
+        									<td  noWrap >
+        										$!{detail.userName}
+											</td>
+											<td class="head" noWrap colspan="1">
+												角色:
+        									</td>
+        									<td   noWrap >
+        										$!{detail.roleName}
+        									</td>
+											<td class="head" noWrap colspan="1">
+        										处理时间:
+        									</td>
+        								    <td noWrap  >
+												#if($!{detail.operation} != "9")
+    												#if(${detail.lastModify})
+    													$dateUtil.datetime($!{detail.lastModify},"yyyy-MM-dd HH:mm:ss")
+													#end
+												#else
+												&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+												#end
+        									</td>
+										</tr>
+										<tr>
+        								<td class="head" colspan="1" noWrap>
+        												操作状态:
+        								</td>
+											<td noWrap>
+        										#if($!{detail.operation}=="0")
+        											拒绝
+        										#elseif($!{detail.operation}=="1")
+        													同意
+        												#elseif($!{detail.operation}=="9")
+        													未处理
+														#elseif($!{detail.operation}=="2")
+															已回退
+        												#end
+        											</td>
+        										</tr>
+        										<tr>
+        											<td class="head" colspan="1" noWrap>
+        												提交意见:
+        											</td>
+        											<td style="word-wrap:break-word;word-break:break-all;" style="width:600px;"  colspan="5" noWrap>
+        												$!{detail.memo}
+        											</td>
+        										</tr>
+        										<tr>
+        											<td class="head" colspan="1" noWrap>
+        												附件:
+        											</td>
+        											<td  colspan="5" noWrap>
+        												$!{detail.link}
+        											</td>
+        										</tr>
+											</table>
+										#end
+									#end
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+            </div>
+			</br>
+			<iframe id="hideFrame" name="hideFrame"  style="height: 0; width: 0"></iframe>
+		</form>
+	</body>
+		<script type="text/javascript" src="$!{env.imgUrl}/js/platform/kunnr/toKunnrPrintPre.js"></script>
+</html>

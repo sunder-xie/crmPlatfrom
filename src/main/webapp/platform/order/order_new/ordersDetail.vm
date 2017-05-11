@@ -1,0 +1,23 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+    #CSSM(["easyui","style"]) #JSM(["jquery", "easyui"]) #JS_ENV_VAL()
+</head>
+<body>
+    <div class="easyui-panel" style="padding: 5px 20px;">
+                单号：<input id="dh" type="text" style="width: 100px;" />
+        &nbsp;&nbsp;订单状态：<input id="ddzt" value="订单状态" style="width: 100px;" />
+        &nbsp;&nbsp;订单日期：从<input id="ddrq_c" type="text"class="easyui-datebox" required="required" style="width: 100px" /> 
+                至<input id="ddrq_z" type="text" class="easyui-datebox" required="required"style="width: 100px" /> 
+        &nbsp;&nbsp;<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" style="width: 80px">查询</a> 
+        <br /> <br /> 
+                可用预打款金额：<input id="kyydk" type="text" style="width: 100px;" readonly="true" />
+        &nbsp;&nbsp;可兑现折扣金额：<input id="kdxzk" type="text" style="width: 100px;" readonly="true" />
+    </div>
+    <br />
+    <table id="ddlb" style="height: 200px"></table>
+</body>
+<script type="text/javascript" src="$!{env.imgUrl}/js/platform/order/ordersPlat.js"></script>
+<script type="text/javascript" src="$!{env.imgUrl}/js/platform/FDate.js"></script>
+</html>

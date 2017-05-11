@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui"])
+		#JS_ENV_VAL()
+	</head>
+	<body>
+		<form method="post">
+			<input type="hidden" id="dealerAdujstDetailList" name="dealerAdujstDetailList" value="[]" /> 
+            <input type="hidden" id="nextUserId" name="nextUserId">
+            <input type="hidden" id="id" name="id" value="$!{ids}">
+            <input type="hidden" id="token" name="token" value="$!{token}"/>
+            <input type="hidden" id="orgId" value="$!{orgId}"/>
+			<div class="easyui-panel" title="申请条件" data-options="collapsible:true,iconCls:'icon-search'" style="padding:5px">
+				<table width="100%" border="0" cellpadding="0" cellspacing="1">
+					<tr>
+						<td class="head" noWrap>
+							事务标题:
+						</td>
+						<td>
+							<input type="text" id="eventTitle" name="eventTitle" data-options="required:true" style="width:140px" />
+						</td>
+						<td class="head" noWrap>申请年:</td>
+						<td padding-top:10px;padding-bottom:10px;padding-left:15px;width:20%>
+							<input class="easyui-validatebox" id='applyYear' name='applyYear' value="$!{dealerAdjustment.applyYear}" readonly />
+						</td>
+						<td class="head" noWrap>申请月:</td>
+						<td padding-top:10px;padding-bottom:10px;padding-left:15px;width:20%>
+							<input class="easyui-validatebox" id='applyMonth' name='applyMonth' value="$!{dealerAdjustment.applyMonth}" readonly />
+						</td>
+					</tr>
+					<tr>
+						<td class="head" noWrap>
+							申请人:
+						</td>
+						<td>
+							<input class="easyui-validatebox" id="applyUser" name='applyUser' value="$!{dealerAdjustment.applyUser}" readonly />
+						</td>
+						<td class="head" noWrap>
+							事务类型:
+						</td>
+						<td>
+							<select class="easyui-combobox" id="eventType" name="eventType" data-options="editable:false" style="width:140px">
+							    <option value="A">协议目标量提报</option>
+							    <option value="B">协议目标量调整</option>
+							</select>
+						</td>
+					</tr>
+					</table>
+				</div>
+				<div class="easyui-panel" title="资料导入" data-options="collapsible:true,iconCls:'icon-search'" style="padding:5px">
+				<table width="100%" border="0" cellpadding="0" cellspacing="1">
+					<tr>
+						<td class="head" noWrap>
+							组织
+	                    </td>
+						<td>
+							<input class="easyui-validatebox" id='orgName' value="$!{orgName}" readonly />
+							<input type="hidden" id="orgId" value="$!{orgId}"/>
+							<a class="easyui-linkbutton"  href="javascript:choseOrgUser()">选择</a> 	
+						</td>
+						<td class="head" noWrap>经销商:</td>
+							<td><input id="kunnrId" name="kunnrId" data-options="editable:false"></td>
+							<input type="hidden" id="kunnrId" value="$!{kunnrId}"/>
+		     				<div id="toolbar2" class="datagrid-toolbar">
+						    <input class="easyui-searchbox" searcher="searcher" prompt="请输入经销商名称查询" style="width:300px"></input>		
+					        </div>
+		                </td>
+		                <td>
+						    <a class="easyui-linkbutton" icon="icon-excel" href="javascript:exportMould()">提报调整模版下载</a>
+						</td>
+		                <td>
+						    <a class="easyui-linkbutton" icon="icon-add" href="javascript:importDealerAdjustment()()">提报调整模版导入</a>
+					    </td>
+					</tr>
+				</table>
+			</div>
+			<table id="datagrid"></table> 
+			<div class="easyui-panel" border="false" style="text-align:center">
+				<!--<a class="easyui-linkbutton" icon="icon-save" href="javascript:saveToCreate()">保存</a>&nbsp-->
+				<a class="easyui-linkbutton" icon="icon-ok" href="javascript:saveToSubmit()">提交</a>&nbsp
+			</div>
+			
+		</form>
+        <iframe id="hideFrame" name="hideFrame" style="height:0; width:0"></iframe>
+		<div id="maintWindow"/>
+	</body>
+	<script type="text/javascript" src="$!{env.imgUrl}/js/My97DatePicker/WdatePicker.js"></script>
+	<script type="text/javascript" src="$!{env.imgUrl}/js/platform/dealerAdjustment/addDealerAdjustment.js?version=20170105"></script>
+</html>

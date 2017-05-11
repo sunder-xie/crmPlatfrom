@@ -1,0 +1,199 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui"])
+		#JS_ENV_VAL()
+	</head>
+	<body>
+		<form id="ff111" method="post" target="hideFrame1">
+				<input type="hidden" id="size" name="size" value="$bct.bctList.size()" />
+				<input type="hidden" id="subFolders" name="subFolders" value="$!{subFolders}" />
+				<input type="hidden" id="eventId" name="eventId" value="$!{eventId}" />
+				<input type="hidden" id="orgId" name="orgId" value="$!{orgId}" />
+				<input type="hidden" id="month" name="month" value="$!{month}" />
+				<input type="hidden" id="year" name="year" value="$!{year}" />
+				<input type="hidden" id="userId" name="userId" value="$!{userId}"/>
+				<input type="hidden" id="type" name="type" />
+				<input id="detailJsonStr" name="detailJsonStr" type="hidden" />
+		</form>
+			<div class="easyui-panel" title="经分销商目标值"  style="padding: 2px; background: #fafafa;">
+			#if($!{modifyFlag} && $!{curStaId} == "start")
+			<div region="south" border="false" style="text-align:left;height:30px;line-height:30px;BACKGROUND-COLOR:#f4f4f4">
+				<font style="color:#cccccc">|</font><a class="easyui-linkbutton" plain="true" icon="icon-add" href="javascript:addRow()">添加行
+				</a><font style="color:#cccccc">|</font><a class="easyui-linkbutton" plain="true" icon="icon-remove" href="javascript:removeRow()">删除行
+				</a><font style="color:#cccccc">|</font><a class="easyui-linkbutton" plain="true" icon="icon-excel" href="javascript:exportGoal()">导出Excel
+				</a><font style="color:#cccccc">|</font><a class="easyui-linkbutton" plain="true" icon="icon-ad" href="javascript:importGoal()">批量修改
+				</a><font style="color:#cccccc">|</font>
+			</div>
+			#else
+				<div region="south" border="false" style="text-align:left;height:30px;line-height:30px;BACKGROUND-COLOR:#f4f4f4">
+				<font style="color:#cccccc">|</font><a class="easyui-linkbutton" plain="true" icon="icon-excel" href="javascript:exportGoal()">导出Excel
+				</a><font style="color:#cccccc">|</font>
+			</div>
+			#end
+
+			<table id="myTab" width="100%" border="1" cellpadding="1" cellspacing="1" style="minHeight:500" >
+			 <tr>
+					#if($!{modifyFlag} && $!{curStaId} == "start")
+					<td width="2%">
+						<input id="item_all" type="checkbox" onclick="checkAll();"/>
+					</td>
+					#end
+    		        <td width="10%" noWrap style="text-align: center">
+    					客户名
+    				</td>
+					<td width="5%" noWrap style="text-align: center">
+						客户sap代码
+                    </td>
+					<td width="5%" noWrap style="text-align: center">
+						目标年
+                    </td>
+					<td width="5%" noWrap style="text-align: center">
+						目标月
+                    </td>
+					<td width="10%" noWrap style="text-align: center">
+						品项or四级科目（SKU）
+                    </td>
+					<td width="10%" noWrap style="text-align: center">
+						品项or四级科目（SKU）ID
+                    </td>
+					<td width="5%" noWrap style="text-align: center">
+						目标值
+                    </td>
+					<td width="5%" noWrap style="text-align: center">
+						目标箱数
+                    </td>
+			    </tr>
+				#set($i = 1)
+				#foreach($bct in $bct.bctList)
+				<tr id="tr_$velocityCount" style="height:23px">
+				#if($!{modifyFlag} && $!{curStaId} == "start")
+					<td>
+						<input id="item_$velocityCount" type="checkbox" />
+						$i
+					</td>
+					#end
+					#if($!{modifyFlag} && $!{curStaId} == "start")
+						<td class="even" style="text-align: center">
+						<input id= "custNameZH" name="bct.custNameZH" type='hidden' value='$!{bct.custNameZH}' />
+						<input id= "custId" name="bct.custId" type='hidden' value='$!{bct.custId}' />
+						<input id="id_$velocityCount" name="id"   class="easyui-combobox"   value='$!{bct.custNameZH}'    data-options="required:true"  />
+					</td>
+						#else	
+					<td class="even" style="text-align: center">
+						$!{bct.custNameZH}
+					</td>
+					#end
+					#if($!{modifyFlag} && $!{curStaId} == "start")
+					<td class="even" style="text-align: center">
+                    <input id = "kunnr_$velocityCount" name="bct.custId" type="text" value='$!{bct.custId}'  style="width:80px"   data-options="required:true"  readonly/>
+						  </td>
+					#else<td class="even" style="text-align: center">
+                          <input id = "kunnr_$velocityCount" name="bct.custId" type="hidden" value='$!{bct.custId}' />
+						$!{bct.custId}
+                    </td>
+					#end
+					#if($!{modifyFlag} && $!{curStaId} == "start")
+					<td class="even" style="text-align: center">
+					  <input id="theYear_$velocityCount" name="bct.theYear"  class="easyui-combobox" value='$!{bct.theYear}' style="width:80px"  data-options="valueField:'itemName',textField:'itemName',required:true,url:appUrl + '/goalAction!getDictTypeList.jspa'" readonly/>
+					</td>
+					#else
+					<td class="even" style="text-align: center">
+					  <input id = "theYear_$velocityCount" name="bct.theYear" type="hidden" value='$!{bct.theYear}'  />
+						$!{bct.theYear}
+					</td>
+					#end
+					#if($!{modifyFlag} && $!{curStaId} == "start")
+					<td style="text-align: center"><select class="easyui-combobox" id="theMonth_$velocityCount" name="bct.theMonth"  style="width:80px"  readonly data-options="required:true">
+						<option value="1">一月</option>
+						<option value="2">二月</option>
+						<option value="3">三月</option>
+						<option value="4">四月</option>
+						<option value="5">五月</option>
+						<option value="6">六月</option>
+						<option value="7">七月</option>
+						<option value="8">八月</option>
+						<option value="9">九月</option>
+						<option value="10">十月</option>
+						<option value="11">十一月</option>
+						<option value="12">十二月</option>
+						<option value="$!{bct.theMonth}" selected></option>
+                </select>
+				</td>
+					#else
+					<td class="even" style="text-align: center">
+					  <input id = "theMonth_$velocityCount" name="bct.theMonth" type="hidden" value='$!{bct.theMonth}' />
+						$!{bct.theMonth}
+					</td>
+					#end
+					#if($!{modifyFlag} && $!{curStaId} == "start")
+					<td class="even" style="text-align: center">
+					<input id="wid_$velocityCount" name="wid"  type="text" class="easyui-combobox"  value='$!{bct.bezei}'  style="width:147px;"  data-options="required:true"   />
+					</td>
+					#else	
+					<td class="even" style="text-align: center">
+					 
+						$!{bct.bezei}
+					</td>
+					#end
+					#if($!{modifyFlag} && $!{curStaId} == "start")
+					<td class="even" style="text-align: center">
+                    <input id = "matnr_$velocityCount" name="bct.matter" type="text" value='$!{bct.matter}'  data-options="required:true"  readonly/>
+						  </td>
+					#else<td class="even" style="text-align: center">
+                    <input id = "matnr_$velocityCount" name="bct.matter" type="hidden" value='$!{bct.matter}' />
+						$!{bct.matter}
+                    </td>
+					#end
+					#if($!{modifyFlag} && $!{curStaId} == "start")
+					<td class="even" style="text-align: center">
+					<input id = "targetNum_$velocityCount" name="bct.targetNum" class="easyui-numberbox"  precision="4" style="width:80px" value='$!{bct.targetNum}' data-options="required:true"/>
+					</td>
+					#else	
+					<td class="even" style="text-align: center">
+					  <input id ="targetNum_$velocityCount" name="bct.targetNum" type="hidden" value='$!{bct.targetNum}' style="width:80px" />
+						$!{bct.targetNum}
+					</td>
+					#end
+					#if($!{modifyFlag} && $!{curStaId} == "start")
+					<td class="even" style="text-align: center">
+					  <input id="box_$velocityCount" name="bct.box"  value='$!{bct.box}'  class="easyui-numberbox"  style="width:80px" precision="2" data-options="required:true" />
+					</td>	
+					#else
+					<td class="even" style="text-align: center">
+					  <input id = "box_$velocityCount" name="bct.box" type="hidden" value='$!{bct.box}'style="width:80px" />
+						$!{bct.box}
+					</td>
+					#end
+                </tr>
+				#set($i = $i + 1)
+				#end
+				   
+		    </table>
+		</div>
+		#if($!{modifyFlag}&& $!{curStaId} == "start")
+		<div region="south" border="false" style="text-align:right;height:30px;line-height:30px;">
+				<a class="easyui-linkbutton" icon="icon-ok" href="javascript:save()">Submit</a>
+		</div>
+		<!--<div id="toolbar" class="datagrid-toolbar" >
+		        <input id="ss" class="easyui-searchbox" searcher="searcher" prompt="请填写客户代码或客户名称" customer="#mm" style="width:300px"></input>		
+		</div>
+		<div id="toolbar1" class="datagrid-toolbar" >
+		        <input id="ss" class="easyui-searchbox" searcher="searcher1" prompt="请填写品项or四级科目（SKU）代码或名称" customer="#mm" style="width:300px"></input>		
+		</div>-->
+		 <div id="ToolBar">
+        </div>
+		 <div id="ToolBar1">
+        </div>
+		#end
+		<iframe id="hideFrame1" name="hideFrame1"  style="height: 0; width: 0"></iframe>
+	</body>
+		#if($!{modifyFlag})
+    <script>
+		var curStaId = '$!{curStaId}';
+	</script>
+	<script type="text/javascript" src="$!{env.imgUrl}/js/platform/goal/goalView.js"></script>
+	#end
+</html>

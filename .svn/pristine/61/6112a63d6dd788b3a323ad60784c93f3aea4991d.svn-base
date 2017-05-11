@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="GB2312"?>
+<!DOCTYPE sqlMap
+	PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="channel">
+	<typeAlias alias="channel"
+		type="com.kintiger.platform.channel.pojo.Bchannel" />
+
+	<select id="getChannelTreeList" parameterClass="channel"
+		resultClass="channel">
+	<![CDATA[
+		select t.channel_id as channelId,
+			   t.channel_level as channelLevel,
+			   t.channel_number as channelNumber,
+			   t.channel_name as channelName,
+			   t.channel_parent_id as channelParentId,
+			   t.channel_state as channelState,
+			   t.last_modify as lastModify,
+			   t.remark as remark,
+			   t.modify_date as modifyDate,
+			   t.company_mark as companyMark,
+			   t.channel_grade as channelGrade,
+			   t.kdgrp as kdgrp,
+			   t.channel_name_new as channel_name_new	
+		  from crm.crm_tb_channel t 
+			  where t.channel_parent_id=#channelParentId# 
+				  and t.channel_state='Y' 
+				  and t.channel_name is not null order by t.channel_id
+	]]>
+	</select>
+
+	<select id="getCompanyName" parameterClass="java.lang.String"
+		resultClass="java.lang.String">
+	<![CDATA[
+		select t.channel_name
+			from crm.crm_tb_channel t 
+				where t.channel_state<>'N' 
+					and t.channel_name is not null 
+					and t.channel_grade='2' 
+					and t.company_mark=#companyMark#
+	]]>
+	</select>
+
+	<select id="getChannelListCount" parameterClass="channel"
+		resultClass="java.lang.Integer">
+	<![CDATA[
+		select count(t.channel_id) 
+				 from crm.crm_tb_channel t 
+					 where t.channel_name is not null
+	]]>
+		<dynamic>
+			<isNotEmpty property="channelName" prepend="and">
+			<![CDATA[ t.channel_name like #channelName,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+
+			<isNotEmpty property="companyMark" prepend="and">
+			<![CDATA[ t.company_mark like #companyMark,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+
+			<isNotEmpty property="channelParentId" prepend="and">
+			<![CDATA[ t.channel_parent_id = #channelParentId# ]]>
+			</isNotEmpty>
+
+			<isNotEmpty property="channelState" prepend="and">
+			<![CDATA[ t.channel_state like #channelState,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<select id="getChannelList" parameterClass="channel"
+		resultClass="channel">
+		<include refid="global.paginationStart" />
+	<![CDATA[
+		 select t.channel_id as channelId,
+				   t.channel_level as channelLevel,
+				   t.channel_number as channelNumber,
+				   t.channel_name as channelName,
+				   t.channel_parent_id as channelParentId,
+				   tp.channel_name as parentChannelName,
+				   t.channel_state as channelState,
+				   t.last_modify as lastModify,
+				   t.remark as remark,
+				   t.modify_date as modifyDate,
+				  t.company_mark as companyMark,
+				   t.channel_grade as channelGrade,
+				   t.kdgrp as kdgrp,
+				   t.channel_name_new as channel_name_new  
+			 from crm.crm_tb_channel t 
+			 left join crm.crm_tb_channel tp on tp.channel_id=t.channel_parent_id
+				 where t.channel_name is not null
+	]]>
+		<dynamic>
+			<isNotEmpty property="channelName" prepend="and">
+			<![CDATA[ t.channel_name like #channelName,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="companyMark" prepend="and">
+			<![CDATA[ t.company_mark like #companyMark,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="channelParentId" prepend="and">
+			<![CDATA[ t.channel_parent_id = #channelParentId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="channelState" prepend="and">
+			<![CDATA[ t.channel_state like #channelState,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+		</dynamic>
+		<![CDATA[order by t.last_modify desc]]>
+		<include refid="global.paginationEnd" />
+	</select>
+
+	<update id="startup" parameterClass="channel">
+		update crm.crm_tb_channel b set
+		b.channel_state=#channelState#,b.last_modify=sysdate
+		where b.channel_id=#channelId#
+	</update>
+
+	<insert id="creatChannel" parameterClass="channel">
+		<selectKey resultClass="java.lang.Long" keyProperty="channelId">
+			select crm.crm_sq_channel.nextval as channelId from dual
+		</selectKey>
+	<![CDATA[
+		insert into crm.crm_tb_channel t (
+			t.channel_id,
+			t.channel_name,
+			t.channel_parent_id,
+			t.channel_state,
+			t.last_modify,
+			t.remark,
+			t.modify_date
+			)
+		values (
+			#channelId#,
+			#channelName#,
+			#channelParentId#,
+			#channelState#,
+			sysdate,
+			#remark#,
+			sysdate)
+	]]>
+	</insert>
+
+	<select id="getChannelById" parameterClass="channel"
+		resultClass="channel">
+	<![CDATA[
+		select b.channel_parent_id as channelParentId,
+		c.channel_name as parentChannelName,
+		b.channel_id as channelId,
+		b.channel_name as channelName,
+		b.remark as remark
+		 from crm.crm_tb_channel b 
+		left join crm.crm_tb_channel c on b.channel_parent_id=c.channel_id
+		where b.channel_state='Y'
+		
+	]]>
+		<isNotEmpty property="channelName" prepend="and">
+			<![CDATA[  b.channel_name=#channelName#]]>
+		</isNotEmpty>
+		<isNotEmpty property="channelId" prepend="and">
+			<![CDATA[ b.channel_id=#channelId#]]>
+		</isNotEmpty>
+		<isNotEmpty property="type" prepend="and">
+			<![CDATA[ b.channel_id in(select t.channel_id channelId
+      from crm.crm_tb_channel t
+     where t.channel_id not in
+         (select distinct channel_parent_id from crm.crm_tb_channel where channel_parent_id is not null and channel_state='Y')
+       and t.channel_state = 'Y'
+  start with t.channel_name=#type# connect by nocycle prior t.channel_id=t.channel_parent_id
+ )]]>
+		</isNotEmpty>
+	</select>
+
+	<update id="updateChannelInfo" parameterClass="channel">
+	<![CDATA[
+			update crm.crm_tb_channel b
+		   set b.channel_name      = #channelName#,
+		   b.channel_parent_id = #channelParentId#,
+		   b.remark            = #remark#,
+		   b.last_modify       = sysdate
+		 where b.channel_id =#channelId#
+
+	]]>
+	</update>
+	
+	<select id="getUnderChannel" resultClass="channel">
+	<![CDATA[
+       select t.channel_id channelId, t.channel_name channelName
+      from crm.crm_tb_channel t
+     where t.channel_id not in
+         (select distinct channel_parent_id from crm.crm_tb_channel where channel_parent_id is not null and channel_state='Y')
+       and t.channel_state = 'Y'
+	]]>
+		<dynamic>
+			<isNotEmpty property="channelName" >
+			<![CDATA[  start with t.channel_name=#channelName# connect by nocycle prior t.channel_id=t.channel_parent_id]]>
+			</isNotEmpty>
+		</dynamic>
+		<![CDATA[  order by t.channel_parent_id ]]>
+	</select>
+
+
+	
+
+<select id="getAllChannel" resultClass="channel">
+	<![CDATA[
+       select distinct(t.all_channel_name) allChannelName
+      from crm.crm_tb_channel t
+     where t.channel_id not in
+         (select distinct channel_parent_id from crm.crm_tb_channel where channel_parent_id is not null and channel_state='Y')
+       and t.channel_state = 'Y'
+	]]>
+		<dynamic>
+			<isNotEmpty property="channelName">
+			<![CDATA[  start with t.channel_name=#channelName# connect by nocycle prior t.channel_id=t.channel_parent_id]]>
+			</isNotEmpty>
+		</dynamic>
+		
+	</select>
+
+</sqlMap>

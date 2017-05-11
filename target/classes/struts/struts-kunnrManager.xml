@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+	"http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="kunnrManager" extends="kintiger-default">
+		<action name="kunnrManagerAction" class="kunnrManagerAction">
+	        <result name="toKunnrManager">/platform/kunnrManager/searchKunnrManager.vm</result>
+	        <result name="toStockSafety">/platform/kunnrManager/searchStockSafety.vm</result>
+	        <result name="toProductionPlan">/platform/kunnrManager/searchProductionPlan.vm</result>
+	        <result name="toProductionNeed">/platform/kunnrManager/searchProductionNeed.vm</result>
+		</action>
+	</package>
+</struts>

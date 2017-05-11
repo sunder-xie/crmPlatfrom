@@ -1,0 +1,171 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+		<style media="print">  
+			.noprint { display : none; }
+        </style> 
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui", "print"])
+		#JS_ENV_VAL()
+		<object  id="LODOP" classid="clsid:2105C259-1E0C-4534-8141-A753534CB4CA" width=0 height=0> 
+			<embed id="LODOP_EM" type="application/x-print-lodop" width=0 height=0></embed>
+		</object>
+	</head>
+	<body>
+		<div class="noPrint">
+			<input type="button" value="打印预览" name="B3"  onclick="Preview()">
+			<input type="button" value="打印" name="B3"  onclick="Print()">
+		</div>
+		<input type="hidden" id="activeSize" value="$!{activeDetailList.size()}" />
+		
+		<div id="contentForm">
+		   <center><b><font size="2">$!{order.custName}送货单</font></b></center>
+		   </br>
+		   <table width="100%" cellpadding="0" cellspacing="0" style="border:#f39801 solid 1px;">
+				<tr height="25px">
+					<td style="padding-left:5px;font-size:13px;font-weight:bold;color:#0e2d5f;border-bottom:#f39801 1px solid;">
+						订单信息&nbsp;&gt;&gt;
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<table width="100%" border="0" cellpadding="0" cellspacing="0" style="border-collapse:collapse;word-break:break-all;word-wrap:break-word;">
+							<tr>
+								<td style="padding:5px;color:#006b8a;font-size:12px;font-weight:bold;text-align:right;width:10%" noWrap>
+									经销商名称：
+								</td>
+								<td style="font-size:12px;font-weight:bold;color:#000000;width:15%">
+									$!{order.kunnrName}
+								</td>
+								<td style="padding:5px;color:#006b8a;font-size:12px;font-weight:bold;text-align:right;width:10%" noWrap>
+									下单人：
+								</td>
+								<td style="font-size:12px;font-weight:bold;color:#000000;width:15%">
+									$!{order.userName}
+								</td>
+								<td style="padding:5px;color:#006b8a;font-size:12px;font-weight:bold;text-align:right;width:10%" noWrap>
+									下单人组织：
+								</td>
+								<td style="font-size:12px;font-weight:bold;color:#000000;width:15%">
+									$!{order.orgName}
+								</td>
+								<td style="padding:5px;color:#006b8a;font-size:12px;font-weight:bold;text-align:right;width:10%" noWrap>
+									创建时间：
+								</td>
+								<td style="font-size:12px;font-weight:bold;color:#000000;width:15%">
+									$!{order.createDate}
+								</td>
+							</tr>
+							<tr>
+								<td style="padding:5px;color:#006b8a;font-size:12px;font-weight:bold;text-align:right;width:10%" noWrap>
+									联系人：
+								</td>
+								<td style="font-size:12px;font-weight:bold;color:#000000;width:15%">
+									$!{order.name2}
+								</td>
+								<td style="padding:5px;color:#006b8a;font-size:12px;font-weight:bold;text-align:right;width:10%" noWrap>
+									联系电话：
+								</td>
+								<td style="font-size:12px;font-weight:bold;color:#000000;width:15%">
+									$!{order.mobile}
+								</td>
+								<td style="padding:5px;color:#006b8a;font-size:12px;font-weight:bold;text-align:right;width:10%" noWrap>
+									可进入车型：
+								</td>
+								<td style="font-size:12px;font-weight:bold;color:#000000;width:15%">
+									$!{order.carType}
+								</td>
+							</tr>
+							<tr>
+								<td style="padding:5px;color:#006b8a;font-size:12px;font-weight:bold;text-align:right;width:10%" noWrap>
+									送货地址：
+								</td>
+								<td colspan="7" style="font-size:12px;font-weight:bold;color:#000000;">
+									$!{order.address}
+								</td>
+							</tr>
+							<tr>
+								<td style="padding:5px;color:#006b8a;font-size:12px;font-weight:bold;text-align:right;width:10%" noWrap>
+									订单描述：
+								</td>
+								<td colspan="7" style="font-size:12px;font-weight:bold;color:#000000;">
+									$!{order.orderDesc}
+								</td>
+							</tr>
+                        </table>
+                    </td>
+                </tr>
+           </table>
+		   <br/>
+		   
+		   <table width="100%" cellpadding="0" cellspacing="0" style="border:#f39801 solid 1px;">
+				<tr height="25px">
+					<td style="padding-left:5px;font-size:13px;font-weight:bold;color:#0e2d5f;border-bottom:#f39801 1px solid;">
+						订单明细&nbsp;&gt;&gt;
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<table width="100%" border="0" cellpadding="0" cellspacing="0" style="border-collapse:collapse;word-break:break-all;word-wrap:break-word;">
+							<tr>
+								<td style="padding:5px;color:#000000;font-size:12px;font-weight:bold;text-align:center;border:#f39801 1px solid;">
+									品项
+								</td>
+								<td style="padding:5px;color:#000000;font-size:12px;font-weight:bold;text-align:center;border:#f39801 1px solid;">
+									订单类型
+								</td>
+								<td style="padding:5px;color:#000000;font-size:12px;font-weight:bold;text-align:center;border:#f39801 1px solid;">
+									单价
+								</td>
+								<td style="padding:5px;color:#000000;font-size:12px;font-weight:bold;text-align:center;border:#f39801 1px solid;">
+									数量
+								</td>
+								<td style="padding:5px;color:#000000;font-size:12px;font-weight:bold;text-align:center;border:#f39801 1px solid;">
+									实际数量
+								</td>
+								
+								<td style="padding:5px;color:#000000;font-size:12px;font-weight:bold;text-align:center;border:#f39801 1px solid;">
+									总价
+								</td>
+							</tr>
+		   #foreach($orderDetail in $orderDetailList)		   
+							<tr>
+								<td style="padding:5px;color:#000000;font-size:12px;text-align:center;border:#f39801 1px solid;">
+									$!{orderDetail.skuName}
+								</td>
+								<td style="padding:5px;color:#000000;font-size:12px;text-align:center;border:#f39801 1px solid;">
+									#if($!{orderDetail.orderType}=="A")
+        								本品
+        							#elseif($!{orderDetail.orderType}=="B")
+        							           赠品
+        							#end
+								</td>
+								<td style="padding:5px;color:#000000;font-size:12px;text-align:center;border:#f39801 1px solid;">
+									$!{orderDetail.price}
+								</td>
+								<td style="padding:5px;color:#000000;font-size:12px;text-align:center;border:#f39801 1px solid;">
+									$!{orderDetail.quantity}
+								</td>
+								<td style="padding:5px;color:#000000;font-size:12px;text-align:center;border:#f39801 1px solid;">
+									$!{orderDetail.realQuantity}
+								</td>
+								<td style="padding:5px;color:#000000;font-size:12px;text-align:center;border:#f39801 1px solid;">
+									$!{orderDetail.totalPrice}
+								</td>
+							</tr>
+		   #end
+                        </table>
+                    </td>
+                </tr>
+           </table>
+		   
+        </div>
+	</body>
+	<script type="text/javascript" src="$!{env.imgUrl}/js/platform/order/order_new/printOrderNew.js"></script>
+	<script type="text/javascript">
+		var strHtml1="<br><font color='#FF00FF'>打印控件未安装!点击这里<a href='" + imgUrl + "/js/print/install_lodop.exe'>执行安装</a>,安装后请刷新页面或重新进入。</font>";
+    	var strHtml2="<br><font color='#FF00FF'>打印控件需要升级!点击这里<a href='" + imgUrl + "/js/print/install_lodop.exe'>执行升级</a>,升级后请重新进入。</font>";
+    	var strHtml3="<br><br><font color='#FF00FF'>(注：如曾安装过Lodop旧版附件npActiveXPLugin,请在【工具】->【附加组件】->【扩展】中先卸载它)</font>";
+    </script>
+</html>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="GB2312"?>
+<!DOCTYPE sqlMap
+	PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="cuanhuoQuery">
+	<typeAlias alias="cuanhuoQ"
+		type="com.kintiger.platform.cuanhuoQuery.pojo.CuanhuoQuery" />
+    <typeAlias alias="cuanhuoSKU"
+		type="com.kintiger.platform.cuanhuoQuery.pojo.CuanhuoSKU" />
+
+
+    <select id="getCuanhuoSKUCount" 
+    parameterClass="cuanhuoQ" resultClass="java.lang.Integer">
+	<![CDATA[
+		select count(*)
+        from crm.crm_tb_sku s
+        where s.cloudid like '0000000000'
+          and s.status = 'U'
+          and s.product_type = '1'
+	]]>	
+	    <dynamic>
+			<isNotEmpty property="IV_MATNR_NAME" prepend="and">
+			<![CDATA[  S.sku_name like #IV_MATNR_NAME,handler=wildcard# escape '\']]>
+			</isNotEmpty>	
+		</dynamic>
+	</select>
+	
+    <select id="getCuanhuoSKUs" 
+    parameterClass="cuanhuoQ" resultClass="cuanhuoQ">
+	<include refid="global.paginationStart" />
+	<![CDATA[
+		select s.sku_id SKU_ID,
+		       s.sku_name IV_MATNR_NAME,
+		       s.sku_sap_code IV_MATNR
+        from crm.crm_tb_sku s
+        where s.cloudid like '0000000000'
+          and s.status = 'U'
+          and s.product_type = '1'
+	]]>	
+	    <dynamic>
+			<isNotEmpty property="IV_MATNR_NAME" prepend="and">
+			<![CDATA[  S.sku_name like #IV_MATNR_NAME,handler=wildcard# escape '\']]>
+			</isNotEmpty>	
+		</dynamic>
+		<![CDATA[ order by s.sku_id]]>	
+		<include refid="global.paginationEnd" />
+	</select>
+
+</sqlMap>

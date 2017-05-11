@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+	"http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="goal" extends="kintiger-default">
+		<action name="goalAction" class="goalAction">
+			<result name="GoalSearchPre">/platform/goal/goalSearch.vm</result>
+			<result name="GoalSearchViewPre">/platform/goal/goalSearchView.vm</result>
+			<result name="toGoalReport">/platform/goal/goalReport.vm</result>
+			<result name="createGoalPrepare">/platform/goal/createGoal.vm</result>
+			<result name="createOrgGoalPrepare">/platform/goal/createGoal.vm</result>
+			<result name="updateGoalPrepare">/platform/goal/updateGoal.vm</result>
+			<result name="view">/platform/goal/goalView.vm</result>
+			<result name="resultMessage">/platform/common/resultMessage.vm</result>
+			<result name="orgtree">/platform/org/orgTree.vm</result>
+			 <result name="orgAllTree">/platform/org/orgTreeAll.vm</result>
+			<!-- 合同=经销商=协议 -->
+			<result name="GoalSearchContractPre">/platform/goal/goalContractSearch.vm</result>
+			<result name="createGoalContractPrepare">/platform/goal/createContractGoal.vm</result>
+			<!-- 物料定价 -->
+			<result name="toSearchMatterPrice">/platform/goal/searchMatterPrice.vm</result>
+			<result name="toCreateOrUpdatePrice">/platform/goal/createOrUpdateGoalPrice.vm</result>
+			<result name="toSearchMatterPriceBo">/platform/goal/searchMatterPriceBo.vm</result>
+			<result name="toImportMvgBo">/platform/goal/importMvgBo.vm</result>
+			
+			<result name="toGoalSalesChange">/platform/goal/goalSalesChange.vm</result>
+			<result name="toDistributionGoalChange">/platform/goal/distributionGoalChange.vm</result>
+			<result name="toGoalSalesChangeView">/platform/goal/goalSalesChangeView.vm</result>
+			<result name="toGoalDistributionChangeView">/platform/goal/goalDistributionChangeView.vm</result>
+			<result name="toSearchGoalSalesChange">/platform/goal/searchGoalSalesChange.vm</result>
+			<result name="toPrintContractGoal">/platform/goal/printContractGoal.vm</result>
+			<result name="toPrintContractGoalView">/platform/goal/printContractGoalView.vm</result>
+			<result name="toPrintContractGoalView2">/platform/goal/printContractGoalView2.vm</result>
+			<result name="toSearchDistributionGoal">/platform/goal/searchDistributionGoal.vm</result>
+		</action>
+	</package>
+</struts>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<bean id="stockManageAction" class="com.kintiger.platform.stock.action.StockManageAction"
+		parent="baseAction" scope="request">
+		<property name="stockService" ref="stockService" ></property>
+		<property name="kunnrService" ref="kunnrService" ></property>
+		<property name="instockService" ref="instockService"/>
+		<property name="goalService" ref="goalService"/>
+	</bean>
+	<bean id="stockService" class="com.kintiger.platform.stock.service.impl.StockServiceImpl">
+		<property name="stockDao" ref="stockDao" />
+		<property name="inStockDao" ref="iInStockDao"/>
+
+	</bean>
+	<bean id="stockDao" class="com.kintiger.platform.stock.dao.impl.StockDaoImpl"
+		parent="baseDao">
+	</bean>
+</beans>

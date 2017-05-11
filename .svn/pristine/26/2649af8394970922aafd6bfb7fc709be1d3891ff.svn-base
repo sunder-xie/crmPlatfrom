@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+	"http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="question"
+		extends="kintiger-default">
+		<action name="questionAction" class="questionAction" >
+		    <result name="toSearchQuestion">/platform/question/questionSearch.vm</result>
+			<result name="toSearchQuestionUser">/platform/question/questionSearchUser.vm</result>
+			<result name="toCreateQuestion">/platform/question/questionCreate.vm</result>
+			<result name="toUpdateQuestion">/platform/question/questionUpdate.vm</result>
+			<result name="toUpdateQuestionUser">/platform/question/questionUpdateUser.vm</result>
+			<result name="toShowQuestion">/platform/question/questionShow.vm</result>
+			<result name="orgtree">/platform/org/orgTreeAll.vm</result>
+			<result name="selectAnswer">/platform/question/selectUserByAllOrgMain.vm</result>
+			<result name="searchCommunit">/platform/question/searchCommunit.vm</result>
+			<result name="toDemand">/platform/question/demandSearch.vm</result>
+			<result name="toCreateDemand">/platform/question/demandCreate.vm</result>
+			<result name="toUpdateDemand">/platform/question/demandUpdate.vm</result>
+		</action>
+	</package>
+</struts>

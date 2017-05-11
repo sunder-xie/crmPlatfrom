@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="supercheck" extends="kintiger-default">
+		<action name="supercheck" class="supercheckAction">
+			<!-- <result name="toPage">/platform/supercheck/toPage.vm</result>
+			 --><result name="toWeightAndPriceConf">/platform/supercheck/toWeightAndPriceConf.vm</result>
+			<result name="toAllItemConf">/platform/supercheck/toAllItemConf.vm</result>
+			<!-- <result name="toDayAttendence">/platform/supercheck/dayAttendence.vm</result> -->
+			<result name="toSupervisorSearchCols">/platform/supercheck/supervisorSearchCols.vm</result>
+		</action>
+	</package>
+</struts>
+
+

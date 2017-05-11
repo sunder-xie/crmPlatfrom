@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="GB2312"?>
+<!DOCTYPE sqlMap
+	PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="supercheck">
+
+	<typeAlias alias="bchannel" type="com.kintiger.platform.channel.pojo.Bchannel" />
+	<typeAlias alias="materiel" type="com.kintiger.platform.master.pojo.Materiel" />
+	<typeAlias alias="weightprice" type="com.kintiger.platform.supercheck.pojo.WeightAndPrice" />
+	<typeAlias alias="allitemconf" type="com.kintiger.platform.supercheck.pojo.AllitemConf" />
+
+   
+
+	<select id="getCheckChannelNames" parameterClass="bchannel"
+		resultClass="bchannel">
+		<include refid="global.paginationStart" />
+		<![CDATA[
+			select distinct (c.check_channel_name) checkChannelName
+			  from crm.crm_tb_channel c
+			 where c.check_channel_name is not null
+				
+		]]>
+		<include refid="global.paginationEnd" />
+
+	</select>
+	<select id="getMateriels" parameterClass="materiel" resultClass="materiel">
+		<include refid="global.paginationStart" />
+		<![CDATA[
+			select distinct (t1.matg), t1.bezei40 
+			  from basis.basis_tb_materiel t1
+			 where 1 = 1
+			   and t1.matg is not null
+			 order by t1.matg
+		]]>
+		<include refid="global.paginationEnd" />
+	</select>
+	
+	<select id="getDistinctAllitemNames" parameterClass="allitemconf" resultClass="allitemconf">
+		<include refid="global.paginationStart" />
+		<![CDATA[
+		select distinct(a.allitem_name) allitemName from crm.crm_tb_allitemconf a
+		]]>
+		<include refid="global.paginationEnd" />
+	</select>
+	
+	
+	<select id="getWeightAndPrices" parameterClass="weightprice" resultClass="weightprice">
+		<include refid="global.paginationStart" />
+		<![CDATA[
+			select wp.check_id checkId,
+		       wp.matg,
+		       wp.bezei40,
+		       wp.check_channel_name checkChannelName,
+		       wp.ph_weight phWeight,
+		       wp.cl_weight clWeight,
+		       wp.price
+		  from CRM.CRM_TB_WEIGHTPRICE wp where 1=1
+		]]>
+		<dynamic>
+			<isNotEmpty property="checkChannelName" prepend="and">
+			<![CDATA[ wp.check_channel_name =#checkChannelName#]]>
+			</isNotEmpty>
+			</dynamic>
+		<include refid="global.paginationEnd" />
+	</select>
+	
+	<select id="getAllitemConfs" parameterClass="allitemconf" resultClass="allitemconf">
+		<include refid="global.paginationStart" />
+		<![CDATA[
+			select c.conf_id confId, c.allitem_name allitemName,c.ph_flag phFlag,c.cl_flag clFlag,c.hl_flag hlFlag, c.jg_flag jgFlag, c.allitems  from crm.crm_tb_allitemconf c where 1=1
+		]]>
+		<dynamic>
+			<isNotEmpty property="allitemName" prepend="and">
+			<![CDATA[ c.allitem_name =#allitemName#]]>
+			</isNotEmpty>
+			</dynamic>
+		<include refid="global.paginationEnd" />
+	</select>
+	
+	<delete id="delWpByChannel" parameterClass="java.lang.String">
+		<![CDATA[
+			delete from crm.crm_tb_weightprice wp where wp.check_channel_name = #checkChannelName#
+		]]>
+	</delete>
+	
+	<delete id="delAllitemConf" parameterClass="java.lang.String">
+		<![CDATA[
+			delete from crm.crm_tb_allitemconf a where a.allitem_name=#allitemName#
+		]]>
+	</delete>
+	
+	<insert id="saveWeightprices" parameterClass="weightprice">
+   		<![CDATA[
+   		 insert into crm.crm_tb_weightprice(bezei40,
+                              matg,
+                              check_channel_name,
+                              ph_weight,
+                              cl_weight,
+                              price) values(#bezei40#,
+              #matg#,
+              #checkChannelName#,
+              #phWeight#,
+              #clWeight#,
+              #price#)
+		]]>
+	</insert>
+	
+	<insert id="saveAllitemConf" parameterClass="allitemconf">
+	<selectKey resultClass="java.lang.Long" keyProperty="confId">
+		<![CDATA[
+			SELECT crm.crm_seq_allitemconf.nextval as confId from dual
+		]]>
+		</selectKey> 
+	<![CDATA[
+		 insert into crm.CRM_TB_ALLITEMCONF
+		  (conf_id, allitem_name,allitems,ph_flag,cl_flag,hl_flag,jg_flag)
+		values
+		  (#confId#, #allitemName#,#allitems#,#phFlag#,#clFlag#,#hlFlag#,#jgFlag# )
+	]]>
+	</insert>
+	
+	
+
+
+
+</sqlMap>

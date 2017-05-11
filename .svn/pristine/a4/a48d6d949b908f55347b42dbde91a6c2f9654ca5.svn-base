@@ -1,0 +1,116 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui"])
+		#JS_ENV_VAL()
+	</head>
+	<body>
+		<form method="post">
+		<input type="hidden" id="smsList" name="smsList"/>
+		<input type="hidden" id="sendInfoList" name="sendInfoList"/>
+		<input type="hidden" id="groupList" name="groupList"/>
+		<input type="hidden" id="selectGroupName" name="selectGroupName"/>
+		<input type="hidden" id="selectIsPubGroup" name="selectIsPubGroup"/>
+		<input type="hidden" id="opUserId" name="opUserId" value='$!{opUserId}'/>
+			<div style="overflow:auto;width:49%;float:left">
+				<div class="easyui-panel" title="添加到发送列表" data-options="collapsible:true">
+			<table width="100%" border="0" cellpadding="0" cellspacing="1" >
+                <tr>
+					<td class="head" noWrap>组织:</td>
+                    <td colspan="2" ><input id="orgId" name="orgId" type="hidden" value="50919">
+						<input type="text" id="orgName" name="orgName"  value="香飘飘食品股份有限公司" style="width:148px;"readonly>
+    					<input type="checkbox" name="bhxjFlag" id="bhxjFlag" checked="true" value="C"/>包含下级
+						<a class="easyui-linkbutton"  href="javascript:selectOrgTree()">组织</a>
+					</td>
+					<td colspan="2">
+						<a id="search" href="javascript:search()" class="easyui-linkbutton" data-options="iconCls:'icon-search'">查询</a>
+                    	<a href="javascript:clearValue()" class="easyui-linkbutton" iconCls="icon-clear">重置</a> 	
+					</td>
+					<td></td> 					
+                </tr>
+    			<tr>
+    				<td class="head" noWrap style="text-align: center">
+    					选择岗位:
+    				</td>
+    				<td  noWrap>
+						<select  id="stationIds" name="stationIds"  style="width:112px;">
+						</select>
+						<td class="head" noWrap style="text-align: center">
+    						名称:
+    						<input type="text" id="userName" name="userName" style="width:130px;" >
+    					</td>
+    				</td> 						
+    				
+					<td class="head" noWrap>人员类别:</td>    				   				
+            		<td >
+						<select class="easyui-combobox" id="isOffice" name="isOffice"  style="width:100px;" data-options="editable:false" />
+					</td>    				
+            	</tr>
+           	
+            	<tr>
+            		<td>
+            		</td>
+
+					<div id="toolbar" class="datagrid-toolbar" >
+					<input id="ss" class="easyui-searchbox" searcher="searcher" prompt="请填写查询条件" menu="#mm" style="width:300px"></input>					
+            	</tr>
+    		</table>		
+				<table id="datagrid1"></table> 
+				</div>
+			</div>
+			
+			<div style="width:49%;float:right"> 
+				<div class="easyui-panel" title="发送列表" data-options="collapsible:true">
+				<table width="100%" border="0" cellpadding="0" cellspacing="1" >
+					<tr>
+						<td class="head" noWrap>
+							短信内容:
+							<div>(140字以内)</div>
+						</td>
+						<td>
+							<textarea id = "content" name = "content" style="width:440px;height:53px;overflow-x:hidden" maxlength="140"></textarea>
+						</td>
+					</tr>
+				</table>
+				<table id="datagrid2">  
+				</table>
+				<table width="100%" border="0" cellpadding="0" cellspacing="1" >
+					<tr>
+						<td class="head" noWrap>新增编组名称:</td>		
+						<td >			
+							<input type="text" id="groupName" name="groupName" style="width:156px;"
+							 onKeypress="javascript:if(event.keyCode == 32)event.returnValue = false;">
+						</td> 	
+						<td class="head" noWrap>我的公共编组:</td>    				   				
+	            		<td >
+							<select  id="myPubGroups" name="myPubGroups"  style="width:160px;">
+							</select>	            		
+						</td> 
+					</tr>
+					<tr>
+						<td class="head" noWrap>我的个人编组:</td>    				   				
+	            		<td >
+							<select  id="priGroups" name="priGroups"  style="width:160px;">
+							</select>	            		
+						</td> 					
+						<td class="head" noWrap>所有公共编组:</td>    				   				
+	            		<td >
+							<select  id="pubGroups" name="pubGroups"  style="width:160px;">
+							</select>	            		
+						</td> 
+					</tr>
+				</table>				
+				</div>
+			</div>			
+			<input type="hidden" id="ids" name="ids" />
+		</form>
+		<div border="false" style="text-align:center;height:30px;line-height:30px;clear:both">
+			<a href="javascript:cancel()" class="easyui-linkbutton" iconCls="icon-clear">重置</a>
+		</div>
+		<iframe id="hideFrame" name="hideFrame"  style="height: 0; width: 0"></iframe>
+		<div id="maintModelAtt"/>
+	</body>
+	<script type="text/javascript" src="$!{env.imgUrl}/js/platform/sms/sms.js"></script>
+</html>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="sales" extends="kintiger-default" namespace="/sales">
+		<action name="salesAction" class="salesAction">
+			<result name="toSearchTvko">/platform/sales/searchTvko.vm</result>
+			<result name="toSearchTvtwt">/platform/sales/searchTvtwt.vm</result>
+			<result name="toSearchTspa">/platform/sales/searchTspa.vm</result>
+			<result name="toSearchTvkbt">/platform/sales/searchTvkbt.vm</result>
+			<result name="toSearchTvkbz">/platform/sales/searchTvkbz.vm</result>
+			<result name="toSearchTvgrt">/platform/sales/searchTvgrt.vm</result>
+			<result name="toSearchT171t">/platform/sales/searchT171t.vm</result>
+			<result name="toSearchT001w">/platform/sales/searchT001w.vm</result>
+			<result name="toSearchT001">/platform/sales/searchT001.vm</result>
+			<result name="toSearchTvbot">/platform/sales/searchTvbot.vm</result>
+			<result name="toSearchZwlqy">/platform/sales/searchZwlqy.vm</result>
+			<result name="toSearchZdqsf">/platform/sales/searchZdqsf.vm</result>
+			<result name="toSearchTvbvk">/platform/sales/searchTvbvk.vm</result>
+			<result name="toSearchKbetr">/platform/sales/searchKbetr.vm</result>
+			
+		</action>
+	</package>
+</struts>
+
+

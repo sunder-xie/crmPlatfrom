@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+        #CSSM(["easyui","style"])
+        #JSM(["jquery", "easyui"])
+        #JS_ENV_VAL()
+    </head>
+    <body>
+        <form method="post" id="acyivityPlanRepotySerarchForm">
+            <div class="easyui-panel" title="查询条件" data-options="collapsible:true,iconCls:'icon-search'" style="padding: 2px;">
+                <table width="100%" border="0" cellpadding="0" cellspacing="1">
+                    <tr>
+                        <td class="head" noWrap>组织：</td>
+                    	<td>
+                    		<input class="easyui-validatebox"  id="orgName" name="orgName" value='$!{orgName}' readonly="true">
+							<input type='hidden' id="orgId" name="orgId" value='$!{orgId}'> 
+							<input type='hidden' id="orgName" name="orgName" value='$!{orgName}'>
+							<input type="hidden" id="loginId" name="loginId" value='$!{loginId}'>
+							<input type="hidden" id="state" name="state" value='$!{state}'>
+							<input type="hidden" id="productionDate" name="productionDate" value='$!{productionDate}'>
+							<input type="hidden" id="flag" value="$!{flag}">
+							<input type="hidden" id="userType" name="userType" value="D">
+							<a class="easyui-linkbutton"  href="javascript:choseOrg()">选择</a>
+							&nbsp;
+            			</td>
+            			<td class="head" noWrap>经销商：</td>
+                        <td><input id="kunnr" name="kunnr" data-options="editable:false"></td>
+					    <div id="toolbarKonzs" class="datagrid-toolbar">
+					    <input class="easyui-searchbox" searcher="searcherKonzs" prompt="请输入经销商编号或名称查询" style="width:300px"></input>		
+				        </div>
+                        <td class="head" noWrap>提报日期:</td>
+                        <td><input type="text" id="startDate" name = "startDate" onfocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy-MM-dd'})" class="Wdate"/>至</td>
+                        <td>&nbsp;</td>
+                        <td><input type="text" id="endDate" name = "endDate" onfocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy-MM-dd'})" class="Wdate"/></td>
+                    </tr>
+                    <tr>
+				        <td class="head" nowrap>品项：</td>
+		                <td>
+			            <input id="skuId" name="skuId" data-options="editable:false">
+			            </td>
+			            <div id="toolbarSku" class="datagrid-toolbar" >
+			            <input class="easyui-searchbox" searcher="searcherSku" prompt="请填写物料名"  style="width:300px" />
+			            </div>
+			            <td class="head" nowrap>品类：</td>
+		                <td>
+			            <input id="categoryId" name="categoryId" data-options="editable:false">
+			            </td>
+			            <div id="toolbarCategory" class="datagrid-toolbar" >
+			            <input class="easyui-searchbox" searcher="searcherCategory" prompt="请填写品类名"  style="width:300px" />
+			            </div>
+			            <td class="head" noWrap>库存所属日期:</td>
+                        <td><input type="text" id="productionStartDate" name = "productionStartDate" onfocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy-MM-dd'})" class="Wdate"/>至</td>
+                        <td>&nbsp;</td>
+                        <td><input type="text" id="productionEndDate" name = "productionEndDate" onfocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy-MM-dd'})" class="Wdate"/></td>
+			        </tr>
+			        <tr>
+			            <td class="head" nowrap>提报人：</td>
+		                <td>
+			            <input type="text" id="userName" name="userName">
+			            </td>
+			            <td class="head" noWrap>品牌:</td>
+			            <td>
+			                <select class="easyui-combobox" id="brand" name="brand" data-options="editable:false">
+			                    <option value="">请选择...</option>
+			                    <option value="X">香飘飘</option>
+			                    <option value="M">MECO</option>
+			                    <option value="L">兰芳园</option>
+			                </select>
+			            </td>
+			            <td colspan="4">&nbsp;</td>
+			        </tr>
+			        <tr>
+			            <td class="head" noWrap>主户箱数合计:</td>
+				        <td><input id="boxSum" data-options="editable:false" readonly></td>
+				        <td class="head" noWrap>主户名称:</td>
+				        <td><input id="kunagName" data-options="editable:false" readonly></td>
+				        <td colspan="2">&nbsp;</td>
+                        <td class="head" noWrap>点击查询:</td>
+                        <td >
+                             <a href="javascript:search()"  class="easyui-linkbutton" iconCls="icon-search">Search</a>
+                             <a href="javascript:clearValue()" class="easyui-linkbutton" iconCls="icon-clear">Clear</a>
+                        </td>
+                   </tr>
+             </table>
+        </div>
+   <table id="datagrid">  
+   </table>
+ </form>
+<iframe id="hideFrame" name="hideFrame"  style="height: 0; width: 0"></iframe>
+<div id="maintWindow"/>
+</body>
+	<script type="text/javascript" src="$!{env.imgUrl}/js/My97DatePicker/WdatePicker.js"></script>
+    <script type="text/javascript" src="$!{env.imgUrl}/js/platform/stockReport/searchStockReportMonthDD.js?js_version=20170118"></script>
+</html>

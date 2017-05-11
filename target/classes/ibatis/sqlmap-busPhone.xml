@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="GB2312"?>
+<!DOCTYPE sqlMap
+	PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="busPhone">
+	<typeAlias alias="busPhone"
+		type="com.kintiger.platform.busPhone.pojo.BusPhone" />
+
+    <select id="getEmpListCount" parameterClass="busPhone"
+		resultClass="java.lang.Integer">
+		<![CDATA[
+		   select count(*)
+		          from basis.basis_tb_salesemp_info si
+		               left join basis.basis_tb_org o on si.org_id = o.org_id
+		               left join (select * from basis.basis_tb_station_user su
+		                           where su.is_main_station <> 'N') su on si.emp_id = su.user_id
+		               left join basis.basis_tb_stations s on su.station_id = s.station_id
+		               left join hr.hr_tb_additional_info h on h.emp_id = si.emp_id
+		          where o.org_name <> si.emp_name
+		]]>
+		<dynamic>
+		<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[ si.org_id in (select b.org_id from basis.basis_tb_org b 
+				         start with b.org_id = #orgId#
+				         connect by prior b.org_id= b.org_parent_id)]]>
+		</isNotEmpty>
+	    <isNotEmpty property="userName" prepend="and">
+			<![CDATA[si.emp_name like #userName,handler=wildcard# escape '\']]>
+		</isNotEmpty>
+		<isNotEmpty property="busPhone" prepend="and">
+			<![CDATA[ si.bus_mobilephone = #busPhone#]]>
+		</isNotEmpty>
+		<isNotEmpty property="userState" prepend="and">
+			<![CDATA[ si.emp_state = #userState#]]>
+		</isNotEmpty>
+		<isNotEmpty property="phoneState" prepend="and">
+			<![CDATA[ si.bus_mobile_state = #phoneState#]]>
+		</isNotEmpty>
+		<isNotEmpty property="startDate" prepend="and">
+		<![CDATA[ ( ]]>
+			<![CDATA[ ( si.bus_mobile_start_date >= #startDate#]]>
+		</isNotEmpty>
+		<isNotEmpty property="endDate" prepend="and">
+			<![CDATA[ si.bus_mobile_start_date <= #endDate# )]]>
+		</isNotEmpty>
+		<isNotEmpty property="startDate" prepend="or">
+			<![CDATA[ ( si.bus_mobile_end_date >= #startDate#]]>
+		</isNotEmpty>
+		<isNotEmpty property="endDate" prepend="and">
+			<![CDATA[ si.bus_mobile_end_date <= #endDate# )]]>
+		<![CDATA[ ) ]]>
+		</isNotEmpty>
+	    </dynamic>
+			<![CDATA[order by o.org_name]]>
+	</select>
+	
+	<select id="getEmpList" parameterClass="busPhone"
+		resultClass="busPhone">
+		<include refid="global.paginationStart" /> 
+		<![CDATA[
+		   select si.emp_id as userId,
+		          o.org_name as orgName,
+		          t.p_org_name as orgProvince,
+		          t.rc_org_name as orgRegion,
+		          s.station_name as userStation,
+		          si.emp_name as userName,
+		          si.bus_mobilephone as busPhone,
+		          si.st_mobile as busPhoneSimple,
+		          si.emp_start_date as userStartDate,
+		          h.add_departure_time as userEndDate,
+		          si.emp_state as userState,
+		          si.bus_mobile_start_date as phoneStartDate,
+		          si.bus_mobile_end_date as phoneEndDate,
+		          si.bus_mobile_state as phoneState,
+		          si.bus_mobile_remark as phoneRemark,
+		          si.emp_id_card as userIdCard
+		          from basis.basis_tb_salesemp_info si
+		               left join basis.basis_tb_org o on si.org_id = o.org_id
+		               left join (select * from basis.basis_tb_station_user su
+		                           where su.is_main_station <> 'N') su on si.emp_id = su.user_id
+		               left join basis.basis_tb_stations s on su.station_id = s.station_id
+		               left join hr.hr_tb_additional_info h on h.emp_id = si.emp_id
+		               left join basis.basis_tb_org_temp t on t.org_id = si.org_id
+		          where o.org_name <> si.emp_name
+		]]>
+		<dynamic>
+		<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[ si.org_id in (select b.org_id from basis.basis_tb_org b 
+				         start with b.org_id = #orgId#
+				         connect by prior b.org_id= b.org_parent_id)]]>
+		</isNotEmpty>
+	    <isNotEmpty property="userName" prepend="and">
+			<![CDATA[si.emp_name like #userName,handler=wildcard# escape '\']]>
+		</isNotEmpty>
+		<isNotEmpty property="busPhone" prepend="and">
+			<![CDATA[ si.bus_mobilephone = #busPhone#]]>
+		</isNotEmpty>
+		<isNotEmpty property="userState" prepend="and">
+			<![CDATA[ si.emp_state = #userState#]]>
+		</isNotEmpty>
+		<isNotEmpty property="phoneState" prepend="and">
+			<![CDATA[ si.bus_mobile_state = #phoneState#]]>
+		</isNotEmpty>
+		<isNotEmpty property="startDate" prepend="and">
+		<![CDATA[ ( ]]>
+			<![CDATA[ ( si.bus_mobile_start_date >= #startDate#]]>
+		</isNotEmpty>
+		<isNotEmpty property="endDate" prepend="and">
+			<![CDATA[ si.bus_mobile_start_date <= #endDate# )]]>
+		</isNotEmpty>
+		<isNotEmpty property="startDate" prepend="or">
+			<![CDATA[ ( si.bus_mobile_end_date >= #startDate#]]>
+		</isNotEmpty>
+		<isNotEmpty property="endDate" prepend="and">
+			<![CDATA[ si.bus_mobile_end_date <= #endDate# )]]>
+		<![CDATA[ ) ]]>
+		</isNotEmpty>
+	    </dynamic>
+			<![CDATA[order by o.org_name]]>
+		<include refid="global.paginationEnd" />
+	</select>
+	
+	<select id="getKunnrEmpListCount" parameterClass="busPhone"
+		resultClass="java.lang.Integer">
+		<![CDATA[
+		   select count(*)
+		          from basis.basis_tb_kunnremp_info ki
+		               left join basis.basis_tb_org o on ki.org_id = o.org_id
+		               left join crm.crm_tb_kunnr k on k.kunnr = ki.lifnr
+		          where 1=1
+		]]>
+		<dynamic>
+		<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[ ki.org_id in (select b.org_id from basis.basis_tb_org b 
+				         start with b.org_id = #orgId#
+				         connect by prior b.org_id= b.org_parent_id)]]>
+		</isNotEmpty>
+	    <isNotEmpty property="userName" prepend="and">
+			<![CDATA[ki.emp_name like #userName,handler=wildcard# escape '\']]>
+		</isNotEmpty>
+		<isNotEmpty property="busPhone" prepend="and">
+			<![CDATA[ ki.bus_mobilephone = #busPhone#]]>
+		</isNotEmpty>
+		<isNotEmpty property="kunnrId" prepend="and">
+			<![CDATA[ k.kunnr = #kunnrId#]]>
+		</isNotEmpty>
+		<isNotEmpty property="phoneState" prepend="and">
+			<![CDATA[ ki.bus_mobile_state = #phoneState#]]>
+		</isNotEmpty>
+		<isNotEmpty property="startDate" prepend="and">
+			<![CDATA[ (( ki.bus_mobile_start_date >= #startDate#]]>
+		</isNotEmpty>
+		<isNotEmpty property="endDate" prepend="and">
+			<![CDATA[ ki.bus_mobile_start_date <= #endDate# )]]>
+		</isNotEmpty>
+		<isNotEmpty property="startDate" prepend="or">
+			<![CDATA[ ( ki.bus_mobile_end_date >= #startDate#]]>
+		</isNotEmpty>
+		<isNotEmpty property="endDate" prepend="and">
+			<![CDATA[ ki.bus_mobile_end_date <= #endDate# ))]]>
+		</isNotEmpty>
+	    </dynamic>
+			<![CDATA[order by o.org_name]]>
+	</select>
+	
+	<select id="getKunnrEmpList" parameterClass="busPhone"
+		resultClass="busPhone">
+		<include refid="global.paginationStart" /> 
+		<![CDATA[
+		   select ki.emp_id as userId,
+		          o.org_name as orgName,
+		          t.p_org_name as orgProvince,
+		          t.rc_org_name as orgRegion,
+		          ki.emp_name as userName,
+		          ki.bus_mobilephone as busPhone,
+		          ki.st_mobile as busPhoneSimple,
+		          ki.emp_state as userState,
+		          ki.bus_mobile_start_date as phoneStartDate,
+		          ki.bus_mobile_end_date as phoneEndDate,
+		          ki.bus_mobile_state as phoneState,
+		          ki.bus_mobile_remark as phoneRemark,
+		          k.name1 as kunnrName
+		          from basis.basis_tb_kunnremp_info ki
+		               left join basis.basis_tb_org o on ki.org_id = o.org_id
+		               left join crm.crm_tb_kunnr k on k.kunnr = ki.lifnr
+		               left join basis.basis_tb_org_temp t on t.org_id = ki.org_id
+		          where 1=1
+		]]>
+		<dynamic>
+		<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[ ki.org_id in (select b.org_id from basis.basis_tb_org b 
+				         start with b.org_id = #orgId#
+				         connect by prior b.org_id= b.org_parent_id)]]>
+		</isNotEmpty>
+	    <isNotEmpty property="userName" prepend="and">
+			<![CDATA[ki.emp_name like #userName,handler=wildcard# escape '\']]>
+		</isNotEmpty>
+		<isNotEmpty property="busPhone" prepend="and">
+			<![CDATA[ ki.bus_mobilephone = #busPhone#]]>
+		</isNotEmpty>
+		<isNotEmpty property="kunnrId" prepend="and">
+			<![CDATA[ k.kunnr = #kunnrId#]]>
+		</isNotEmpty>
+		<isNotEmpty property="phoneState" prepend="and">
+			<![CDATA[ ki.bus_mobile_state = #phoneState#]]>
+		</isNotEmpty>
+		<isNotEmpty property="startDate" prepend="and">
+			<![CDATA[ (( ki.bus_mobile_start_date >= #startDate#]]>
+		</isNotEmpty>
+		<isNotEmpty property="endDate" prepend="and">
+			<![CDATA[ ki.bus_mobile_start_date <= #endDate# )]]>
+		</isNotEmpty>
+		<isNotEmpty property="startDate" prepend="or">
+			<![CDATA[ ( ki.bus_mobile_end_date >= #startDate#]]>
+		</isNotEmpty>
+		<isNotEmpty property="endDate" prepend="and">
+			<![CDATA[ ki.bus_mobile_end_date <= #endDate# ))]]>
+		</isNotEmpty>
+	    </dynamic>
+			<![CDATA[order by o.org_name]]>
+		<include refid="global.paginationEnd" />
+	</select>
+	
+	<update id="updateEmp" parameterClass="busPhone">
+	   update basis.basis_tb_salesemp_info si set last_modify = sysdate,
+	          si.bus_mobile_start_date = #phoneStartDate#,
+	          si.bus_mobile_end_date = #phoneEndDate#
+	   <dynamic>
+	       <isNotEmpty property="busPhone" prepend=",">
+			<![CDATA[ si.bus_mobilephone = #busPhone#]]>
+		   </isNotEmpty>
+		   <isNotEmpty property="busPhoneSimple" prepend=",">
+			<![CDATA[ si.st_mobile = #busPhoneSimple#]]>
+		   </isNotEmpty>
+		   <isNotEmpty property="phoneState" prepend=",">
+			<![CDATA[ si.bus_mobile_state = #phoneState#]]>
+		   </isNotEmpty>
+		   <isNotEmpty property="phoneRemark" prepend=",">
+			<![CDATA[ si.bus_mobile_remark = #phoneRemark#]]>
+		   </isNotEmpty>
+		   where si.emp_id = #userId#
+	   </dynamic>
+	</update>
+	
+	<update id="updateKunnrEmp" parameterClass="busPhone">
+	   update basis.basis_tb_kunnremp_info si set last_modify = sysdate,
+	          si.bus_mobile_start_date = #phoneStartDate#,
+	          si.bus_mobile_end_date = #phoneEndDate#
+	   <dynamic>
+	       <isNotEmpty property="busPhone" prepend=",">
+			<![CDATA[ si.bus_mobilephone = #busPhone#]]>
+		   </isNotEmpty>
+		   <isNotEmpty property="busPhoneSimple" prepend=",">
+			<![CDATA[ si.st_mobile = #busPhoneSimple#]]>
+		   </isNotEmpty>
+		   <isNotEmpty property="phoneState" prepend=",">
+			<![CDATA[ si.bus_mobile_state = #phoneState#]]>
+		   </isNotEmpty>
+		   <isNotEmpty property="phoneRemark" prepend=",">
+			<![CDATA[ si.bus_mobile_remark = #phoneRemark#]]>
+		   </isNotEmpty>
+		   where si.emp_id = #userId#
+	   </dynamic>
+	</update>
+	
+	<update id="deleteEmp" parameterClass="busPhone">
+	   update basis.basis_tb_salesemp_info si set last_modify = sysdate,
+	          si.bus_mobile_start_date = '',
+	          si.bus_mobile_end_date = '',
+			  si.bus_mobilephone = '',
+			  si.st_mobile = '',
+			  si.bus_mobile_state = '',
+			  si.bus_mobile_remark = ''
+		   where si.emp_id = #userId#
+	</update>
+	
+	<update id="deleteKunnrEmp" parameterClass="busPhone">
+	   update basis.basis_tb_kunnremp_info si set last_modify = sysdate,
+	          si.bus_mobile_start_date = '',
+	          si.bus_mobile_end_date = '',
+			  si.bus_mobilephone = '',
+			  si.st_mobile = '',
+			  si.bus_mobile_state = '',
+			  si.bus_mobile_remark = ''
+		   where si.emp_id = #userId#
+	</update>
+	
+	
+	
+</sqlMap>

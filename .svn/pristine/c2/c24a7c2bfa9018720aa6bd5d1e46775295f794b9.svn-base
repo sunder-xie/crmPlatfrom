@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://www.springframework.org/schema/tx
+	http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+
+	<bean id="env"
+		class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="location" value="/WEB-INF/env.properties" />
+	</bean>
+	
+	<bean id="businessEnv"
+		class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="location" value="/WEB-INF/businessEnv.properties" />
+	</bean>
+
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>/WEB-INF/env.properties</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="dataSource" destroy-method="close"
+		class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="${jdbc.driverClassName}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+	</bean>
+
+	<!--配置ibatis的资源文件载入 -->
+	<bean id="lobHandler" class="org.springframework.jdbc.support.lob.DefaultLobHandler" 
+		lazy-init="true" />
+ 		
+	<bean id="sqlMapClient" class="org.springframework.orm.ibatis.SqlMapClientFactoryBean">
+		<property name="configLocation">
+			<value>classpath:ibatis/ibatis-config.xml</value>
+		</property>
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource">
+			<ref local="dataSource" />
+		</property>
+	</bean>
+		
+	<bean id="transactionTemplate"
+		class="org.springframework.transaction.support.TransactionTemplate">
+		<property name="transactionManager">
+			<ref local="transactionManager" />
+		</property>
+	</bean>
+
+	 <tx:annotation-driven transaction-manager="transactionManager"/> 
+
+
+	<bean id="baseAction" class="com.kintiger.platform.base.action.BaseAction">
+		<property name="env" ref="env" />
+		<property name="businessEnv" ref="businessEnv"></property>
+	</bean>
+
+	<bean id="baseDao" class="com.kintiger.platform.base.dao.impl.BaseDaoImpl">
+		<property name="sqlMapClient" ref="sqlMapClient" />
+	</bean>
+
+	<bean id="authInterceptor"
+		class="com.kintiger.platform.framework.content.interceptor.AuthencationInterceptor">
+		<property name="allUserServiceHessian" ref="allUserServiceHessian" />
+	</bean>
+	
+	<!--JCO -->
+	<bean id="sapConnection" class="com.kintiger.platform.framework.sap.SAPConnectionBean" lazy-init="true">
+		<property name="poolName">
+			<value>${sap.jdbc.poolName}</value>
+		</property>
+		<property name="maximumConnectionCount">
+			<value>${sap.jdbc.maximumConnectionCount}</value>
+		</property>
+		<property name="clientName">
+			<value>${sap.jdbc.clientName}</value>
+		</property>
+		<property name="user">
+			<value>${sap.jdbc.user}</value>
+		</property>
+		<property name="password">
+			<value>${sap.jdbc.password}</value>
+		</property>
+		<property name="language">
+			<value>${sap.jdbc.language}</value>
+		</property>
+		<property name="hostName">
+			<value>${sap.jdbc.hostName}</value>
+		</property>
+		<property name="sysnr">
+			<value>${sap.jdbc.sysnr}</value>
+		</property>
+		<property name="group">
+			<value>${sap.jdbc.group}</value>
+		</property>
+		<property name="repositoryName">
+			<value>${sap.jdbc.repositoryName}</value>
+		</property>
+		<property name="byGroup">
+			<value>${sap.jdbc.byGroup}</value>
+		</property>
+	</bean>
+	
+</beans>

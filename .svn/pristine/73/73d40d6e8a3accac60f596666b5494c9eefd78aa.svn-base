@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui"])
+		#JS_ENV_VAL()
+	</head>
+	<body >	
+		<form id="ff" method="post" enctype="multipart/form-data" >
+					<table  width="100%" border="0" cellpadding="0" cellspacing="1">
+						<tr style="height:20px">
+                            <td >
+								<a class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-excel'"  onclick=javascript:exportExcel();> 模版下载</a>
+							</td>
+							<td >
+								&nbsp;&nbsp;
+							</td>
+						</tr>
+						
+						<tr>
+        				<td class="head" noWrap>附件导入:</td>
+        				<td><input type="file" name="uploadFile" id="uploadFile" style="width:400px" /></td>
+						<td style="width:10%"></td>
+        				<td></td>
+						</tr>
+		    		</table> 
+					</br>
+					 <div region="south" border="false" style="text-align:right;height:30px;line-height:30px;font-size:12px">
+							<a class="easyui-linkbutton" icon="icon-ok" href="javascript:importCheck()">查看</a>
+							<a class="easyui-linkbutton" icon="icon-save" href="javascript:importExcel()">导入</a>
+							<font color='red'>温馨提示:查看按钮是数据进行验证筛选，导入是直接把数据导入</font>
+						<font style="width:50%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font>
+					</div>
+					<table id="cust_list">
+					</table>
+			</br>
+		 </form>
+			<iframe id="hideFrameCust" name="hideFrameCust"  style="height: 0; width: 0"></iframe>
+	</body>
+      <script type="text/javascript" src="$!{env.imgUrl}/js/platform/batOrgUpdate/batCustOrgUpdate.js"></script>
+</html>

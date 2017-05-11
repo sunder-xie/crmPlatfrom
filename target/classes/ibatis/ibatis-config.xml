@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="GB2312"?>
+<!DOCTYPE sqlMapConfig
+	PUBLIC "-//ibatis.apache.org//DTD SQL Map Config 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-config-2.dtd">
+<sqlMapConfig>
+	<settings useStatementNamespaces="true" enhancementEnabled="true" />
+
+	<!-- 为传入参数加上%后缀，执行前缀查询 -->
+	<typeAlias alias="prefix"
+		type="com.kintiger.platform.framework.ibatis.PrefixTypeHanlderCallback" />
+
+	<!-- 为传入参数加上%前缀，执行后缀查询 -->
+	<typeAlias alias="postfix"
+		type="com.kintiger.platform.framework.ibatis.PostfixTypeHanlderCallback" />
+
+	<!-- 为传入参数的前后都加上%，执行模糊查询 -->
+	<typeAlias alias="wildcard"
+		type="com.kintiger.platform.framework.ibatis.WildcardTypeHanlderCallback" />
+
+	<!-- 将java.util.Date类型的传入参数转化成yyyy-mm-dd hh24:mi:ss格式的字符串 -->
+	<typeAlias alias="dateTime"
+		type="ccom.kintiger.platform.framework.ibatis.DateTimeTypeHanlderCallback" />
+
+	<!-- 将java.util.Date类型的传入参数转化成yyyy-mm-dd格式的字符串 -->
+	<typeAlias alias="dateOnly"
+		type="com.kintiger.platform.framework.ibatis.DateOnlyTypeHanlderCallback" />
+
+	<!-- 根据传入的java.util.Date类型参数计算出前/后一天，并且转化成yyyy-mm-dd hh24:mi:ss格式的字符串。执行时间区间查询时，构造条件一般为：开始日期 
+		<= DateField < 结束日期的后一天 -->
+	<typeAlias alias="previousDate"
+		type="com.kintiger.platform.framework.ibatis.PreviousDateTypeHanlderCallback" />
+
+	<typeAlias alias="nextDate"
+		type="com.kintiger.platform.framework.ibatis.NextDateTypeHanlderCallback" />
+
+	<!-- 当执行in参数查询的时候替换“’”字符为空 -->
+	<typeAlias alias="charaRplace"
+		type="com.kintiger.platform.framework.ibatis.CharacterReplaceHanlderCallback" />
+	<sqlMap resource="ibatis/global.xml" />
+	<sqlMap resource="ibatis/sqlmap-channel.xml" />
+	<sqlMap resource="ibatis/sqlmap-goal.xml" />
+	<sqlMap resource="ibatis/sqlmap-kunnr.xml" />
+	<sqlMap resource="ibatis/sqlmap-crmdict.xml" />
+	<sqlMap resource="ibatis/sqlmap-sales.xml" />
+	<sqlMap resource="ibatis/sqlmap-customer.xml" />
+	<sqlMap resource="ibatis/sqlmap-custVist.xml" />
+	<sqlMap resource="ibatis/sqlmap-instock.xml" />
+	<sqlMap resource="ibatis/sqlmap-stock.xml" />
+	<sqlMap resource="ibatis/sqlmap-city.xml" />
+	<sqlMap resource="ibatis/sqlmap-master.xml" />
+	<sqlMap resource="ibatis/sqlmap-wfe.xml" />
+	<sqlMap resource="ibatis/sqlmap-batOrgUpdate.xml" />
+	<sqlMap resource ="ibatis/sqlmap-distributionData.xml"/>
+    <sqlMap resource ="ibatis/sqlmap-distributionDataRep.xml"/>
+    <sqlMap resource ="ibatis/sqlmap-distributionDataRepMon.xml"/>
+    <sqlMap resource ="ibatis/sqlmap-distributionInventory.xml"/>
+    <sqlMap resource ="ibatis/sqlmap-distributionDataAppend.xml"/>
+    <sqlMap resource ="ibatis/sqlmap-distributionDataAppendRep.xml"/>
+    <sqlMap resource ="ibatis/sqlmap-distributionDataAppendRepMon.xml"/>
+    <sqlMap resource ="ibatis/sqlmap-distributionGoal.xml"/>
+    <sqlMap resource ="ibatis/sqlmap-distributionGoalAppend.xml"/>
+	<sqlMap resource="ibatis/sqlmap-question.xml" />
+	<sqlMap resource="ibatis/sqlmap-saleItems.xml" />
+	<sqlMap resource="ibatis/sqlmap-order.xml" />
+	<sqlMap resource="ibatis/sqlmap-kunnrBusinessContact.xml" />
+	<sqlMap resource="ibatis/sqlmap-complaintReport.xml" />
+	<sqlMap resource="ibatis/sqlmap-visitInfo.xml" />
+	<sqlMap resource="ibatis/sqlmap-busPhone.xml" />
+	<sqlMap resource="ibatis/sqlmap-stockReport.xml" />
+	<sqlMap resource="ibatis/sqlmap-pos.xml" />
+	<sqlMap resource="ibatis/sqlmap-sms.xml" />	
+	<sqlMap resource="ibatis/sqlmap-cuanhuoQuery.xml" />
+	<sqlMap resource="ibatis/sqlmap-newOrg.xml" />
+	<sqlMap resource="ibatis/sqlmap-supercheck.xml" />
+	<sqlMap resource="ibatis/sqlmap-Allchannel.xml" />
+	<sqlMap resource="ibatis/sqlmap-kunnrManager.xml" />
+	<sqlMap resource="ibatis/sqlmap-qualityChecking.xml"/>
+</sqlMapConfig>

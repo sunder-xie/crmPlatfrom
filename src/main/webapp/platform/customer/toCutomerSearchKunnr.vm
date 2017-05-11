@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui"])
+		#JS_ENV_VAL()
+	</head>
+	<body>
+		<!-- 查询 -->
+		       <input id="kunnrUser" name="kunnrUser" type="hidden" >
+		       <input id="kunnrUserId" name="kunnrUserId" type="hidden">
+		       <input id="jsonRows" name="jsonRows" type="hidden">
+		
+	        <form method="post">
+			<div id="p_search" class="easyui-panel" title="查询条件"
+				style="padding: 2px; background: #fafafa;" data-options="collapsible:true,iconCls:'icon-search'">
+				<table width="100%" border="0" cellpadding="0" cellspacing="1">
+				<tr>
+				    <input id="orgId" name="orgId" type="hidden" value="$!{orgId}">
+                    <td class="head" noWrap>门店编号</td>
+                    <td><input id="custNumber" name="custNumber"></td>
+					<td class="head" noWrap>门店名称</td>
+                    <td><input id="custName" name="custName"></td>
+					<td class="head" noWrap>客户渠道</td>
+                    <td><input class="easyui-combobox" id="channelId" name="channelId" style="width:155px;" data-options="editable:false"></td>
+                </tr>
+				<tr>
+                    
+					<td class="head" noWrap>业务代表</td>
+                    <td>
+					##<input type='hidden' id="businessCompetent" name="businessCompetent"/>
+					<input id="stationUserName" name="stationUserName"   readonly/>
+					<a class="easyui-linkbutton"  href="javascript:selectOrgTree4Station()">选择</a>
+					<input type='hidden' id="stationUserId" name="stationUserId"/>
+                    </td>
+                    
+					<td class="head" noWrap>客户状态</td>
+                    <td>
+						#*<select  class="easyui-combobox" id="custState" name="custState" style="width:155px;">
+						<option value="">所有客户</option>  
+						<option value="0">正常客户</option>  
+						<option value="1">间歇客户</option> 
+						<option value="2">新客户</option> 
+						<option value="3">已关户</option> 
+                    </select>*#
+                    	<select id="custState"  name="custState" style="width:150px;">
+                    	<option value="">所有客户</option>  
+									#foreach($list in $cmsTbDictCustStateList)
+										<option value='$list.itemValue'  readonly>$list.itemName</option>
+									#end
+					</select>	
+					</td>	
+                    <td class="head" noWrap>客户类型</td>
+                    <td><select id="custType"  name="custType" style="width:150px;">
+                    	<option value="">所有客户</option>  
+                    	<option value="T">二阶客户</option>  
+                    	<option value="Z">终端门店</option>  
+					</select>	</td>
+                    </tr>
+                    <tr>
+                    <td class="head" noWrap>联系人</td>
+                    <td><input id="contactName" name="contactName"></td>
+                    <td>&nbsp;</td>
+                    <td><input type="hidden" id="custKunnr" name="custKunnr" value="$!{custKunnr}"></td>
+                    <td><input type="hidden" id="custParent" name="custParent"></td>
+                </tr>
+				<tr>
+				
+				 <td colspan="5" class="head" noWrap>&nbsp;</td>
+					<td>
+						<a id="search" href="javascript:search()" class="easyui-linkbutton" data-options="iconCls:'icon-search'">查询</a>
+                    	<a href="javascript:clearFormValue()" class="easyui-linkbutton" iconCls="icon-clear">重置</a> 	
+					</td>	
+                </tr>
+                </table>
+				</div>
+			</div>
+			<table id="datagrid"></table>
+			<input type="hidden" id="ids" name="ids"/>
+				<input type="hidden" id="type" name="type" value="$!{type}"/>
+	</form>
+	</div>
+	<iframe id="hideFrame" name="hideFrame"  style="height: 0; width: 0"></iframe>
+	<div id="hiddenWin"/> 
+	</body>
+<script type="text/javascript" src="$!{env.imgUrl}/js/platform/customer/toCustomerSearchKunnr.js"></script>
+</html>

@@ -1,0 +1,207 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui","upload"])
+		#JS_ENV_VAL()
+	</head>
+		<body class="easyui-layout">	
+	<form  method="post" target="hideFrame" enctype="multipart/form-data"> 
+           <div id="p_add" region="center" class="easyui-panel"
+			title="需求信息" 
+			data-options="iconCls:'icon-edit'">
+          
+						<table id="table_01" width="100%" cellspacing="0" border="0">
+						<input type="hidden" id="userId" value="$!{userId}">
+						<input type="hidden" id="authorId" value="$!{demand.authorId}">
+                                        <tr>
+											<td class="head" nowrap>
+												需求编号：
+											</td>
+											<td>
+								                <input type="text"  id="demandId"  name="demand.demandId" value="$!{demand.demandId}" class="easyui-validatebox"
+								  readonly="true">
+											</td>
+											<td class="head" nowrap>
+												提交时间：
+											</td>
+											<td>
+												<input type="text"  id="createDate" value="$!{demand.createDate}" class="easyui-validatebox"
+								  readonly="true">
+											</td>
+                                            <td class="head" nowrap>
+												组织：
+											</td>
+											<td>
+												<input type="text"  id="orgName" value="$!{demand.orgName}" class="easyui-validatebox"
+								  readonly="true">
+											</td>
+									 </tr>
+									 <tr>
+                                            <td class="head" nowrap>
+												提交人：
+											</td>
+											<td>
+												<input type="text"  id="author" value="$!{demand.author}" class="easyui-validatebox"
+								  readonly="true">
+											</td>
+                                            <td class="head" nowrap>
+												提交人联系方式：
+											</td>
+											<td>
+												<input type="text"  id="phone" name="demand.phone" value="$!{demand.phone}" class="easyui-validatebox"
+								  >
+											</td>
+											<td class="head" nowrap>
+												提交人邮箱：
+											</td>
+											<td>
+											    <input type="text"  id="authorEmail" name="demand.authorEmail" value="$!{demand.authorEmail}" class="easyui-validatebox"
+								  >
+											</td>
+									  </tr>
+									 <tr>
+									       <td>&nbsp;</td>
+									 </tr>
+									 <tr>
+									       <td class="head" nowrap>
+												需求分类：
+											</td>
+											<td>
+											   <input id="typeValue" type="hidden" value="$!{demand.demandType}">
+											   <select class="easyui-combobox" id="demandType" name="demand.demandType" data-options="editable:false">
+			                                       <option value="1">人力资源</option>
+			                                       <option value="2">财务管理</option>
+			                                       <option value="3">信息管理</option>
+			                                       <option value="4">营销管理</option>
+			                                       <option value="5">供应链管理</option>
+			                                   </select>
+											</td>
+											<td class="head" nowrap>
+												需求等级：
+											</td>
+											<td>
+											   <input id="levelValue" type="hidden" value="$!{demand.demandLevel}">
+											   <select class="easyui-combobox" id="demandLevel" name="demand.demandLevel" data-options="editable:false">
+			                                       <option value="1">重要既又紧急</option>
+			                                       <option value="2">重要但不紧急</option>
+			                                       <option value="3">不重要但紧急</option>
+			                                   </select>
+											</td>
+											<td class="head" nowrap>
+												期望完成日期：
+											</td>
+											<td>
+								               <input id="exceptDate" value="$!{demand.expectDate}" class="easyui-validatebox" data-options="required:false" readonly>
+											</td>
+									 </tr>
+									 <tr>
+                                            <td class="head" nowrap>
+												需求标题：
+											</td>
+											<td colspan="3">
+												<textarea style="resize:none;" maxlength="100" cols="60" rows="1"  id="title" class="easyui-validatebox"
+								                  readonly>$!{demand.title}</textarea>
+											</td>
+                                         </tr>
+                                         <tr>
+                                         <td class="head" nowrap>
+												需求描述：
+											</td>
+											<td colspan="4">
+												<textarea maxlength="480" cols="80" rows="6"  id="content"   name="demand.content" class="easyui-validatebox"
+								  style="resize:none;">$!{demand.content}</textarea>
+											</td>
+                                     </tr>
+                                     <tr>
+                                           <td class="head" noWrap>附件:</td>
+						                   <td colspan="5">
+							                 $!{demand.link}
+						                   </td>
+                                     </tr>
+                                     <tr id="fileUp">
+                                            <td class="head" noWrap>附件上传:</td>
+        				                    <td>
+        				                    <div id="input">
+        				                        <input name="upload" id="file0" type="file" value="添加附件" onchange="addFile()">
+        				                    </div>
+        				                    <div id="_file"></div>
+        				                    </td>
+                                     </tr>
+						      </table>
+						<div class="easyui-panel" title="需求处理信息" data-options="collapsible:true,iconCls:'icon-list'" style="padding: 2px; background: #fafafa;">
+						      
+						      <table id="handleAuthor" width="100%" border="0">
+                              </table>
+                              <table id="handleResult" width="100%" border="0"> 
+                              </table>
+                              <table>
+                                  <tr><td>&nbsp;</td></tr>
+                              </table>
+                              <table id="addCommunit" width="100%" border="0" cellpadding="0" cellspacing="1">
+			                          <tr>
+					                      <td width="10%" class="head" nowrap>回复：</td>
+					                      <td width="60%">
+						                    <textarea style="resize:none;" maxlength="400" cols="100" rows="4"  id="communitContent"
+						                     class="easyui-validatebox"></textarea>
+					                      </td>
+					                      <td width="30%"><a class="easyui-linkbutton" icon="icon-ok" href="javascript:submitCommunit()">提交回复</a></td>
+                                      </tr>
+			                      </table>
+                       </div>
+                       <span id="userResult">
+                       <div class="easyui-panel" title="用户确认评价" data-options="collapsible:true,iconCls:'icon-list'" style="padding: 2px; background: #fafafa;">
+                         <table width="100%" border="0" cellpadding="1" cellspacing="1">
+                            <tr>
+                                        <td style="font-size: 12px;font-weight: bold;COLOR: #006b8a;width:15%">
+												处理速度（满分10分）：
+										</td>
+										<td style="width:15%">
+										   <input id="handleSpeedValue" type="hidden" value="$!{demand.handleSpeed}">
+										   <select id="handleSpeed" name="demand.handleSpeed">
+			                               </select>
+										</td>
+										<td style="font-size: 12px;font-weight: bold;COLOR: #006b8a;width:15%">
+												处理质量（满分10分）：
+										</td>
+										<td style="width:15%">
+										   <input id="handleQualityValue" type="hidden" value="$!{demand.handleQuality}">
+										   <select id="handleQuality" name="demand.handleQuality">
+			                               </select>
+										</td>
+										<td style="font-size: 12px;font-weight: bold;COLOR: #006b8a;width:15%">
+												服务态度（满分10分）：
+										</td>
+										<td style="width:15%">
+										   <input id="handleAttitudeValue" type="hidden" value="$!{demand.handleAttitude}">
+										   <select id="handleAttitude" name="demand.handleAttitude">
+			                               </select>
+										</td>
+							</tr>
+							<tr>
+										<td style="font-size: 12px;font-weight: bold;COLOR: #006b8a;width:15%">
+												问题与建议：
+											</td>
+											<td>
+												<textarea maxlength="216" cols="36" rows="6"  id="advice"   name="demand.advice" class="easyui-validatebox"
+								  style="resize:none;">$!{demand.advice}</textarea>
+											</td>
+											<td colspan="4">
+											    <font color="red">提交人对处理人处理结果已经没问题，填写最终评语信息</font>
+											</td>
+							</tr>
+                         </table>
+                      </div>
+                      </span>
+		                          <div id="btn_submit" region="south" border="false" style="text-align:center;height:30px;line-height:30px;">
+				                      <a class="easyui-linkbutton" icon="icon-ok" href="javascript:submit()">提交</a>
+				                      <a class="easyui-linkbutton" icon="icon-cancel" href="javascript:cencel()">取消</a>
+		                          </div>
+                               
+            </div>
+	        <div id="nextUserDialog"/>
+		 </form>
+           <iframe id="hideFrame" name="hideFrame"  style="height: 0; width: 0"></iframe>	</body>
+         <script type="text/javascript" src="$!{env.imgUrl}/js/platform/question/demandUpdate.js"></script>
+</html>

@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="GB2312"?>
+<!DOCTYPE sqlMap
+	PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="pos">
+	<typeAlias alias="pos"
+		type="com.kintiger.platform.pos.pojo.Pos" />
+
+	<select id="getPosCount" parameterClass="pos"
+		resultClass="java.lang.Integer">
+	   <![CDATA[
+		     select count(1)
+           from crm.crm_tb_pos p
+               left join basis.basis_tb_org o on o.org_id = p.org_id  
+               left join basis.basis_tb_salesemp_info s on p.user_id = s.emp_id
+             where  p.p_state = 'Y'
+		]]>
+		<dynamic>
+			<isNotEmpty property="systemId" prepend="and">
+				<![CDATA[ p.p_id = #systemId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="systemName" prepend="and">
+				<![CDATA[ p.system_name like #systemName,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="startDate" prepend="and">
+				<![CDATA[  to_date(p.input_date,'yyyy-MM-dd')>=to_date(#startDate#,'yyyy-MM-dd')]]>
+			</isNotEmpty>
+			<isNotEmpty property="endDate" prepend="and">
+				<![CDATA[  to_date(p.input_date,'yyyy-MM-dd')<=to_date(#endDate#,'yyyy-MM-dd')]]>
+			</isNotEmpty>
+
+			<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[ o.org_id in 
+				(select oo.org_id
+                       from basis.basis_tb_org oo
+                       where oo.state = 'Y'
+                      start with oo.org_id=#orgId#
+                       connect by nocycle prior oo.org_id = oo.org_parent_id)]]>
+			</isNotEmpty>
+			<isNotEmpty property="orgName" prepend="and">
+			<![CDATA[ o.org_id in 
+				(select oo.org_id
+                       from basis.basis_tb_org oo
+                       where oo.state = 'Y'
+                      start with oo.org_name like #orgName,handler=wildcard# escape '\' 
+                       connect by nocycle prior oo.org_id = oo.org_parent_id)]]>
+			</isNotEmpty>
+
+		</dynamic>
+		
+	</select>
+
+
+
+	<select id="getOrgIdByOrgName" parameterClass="java.lang.String"
+		resultClass="pos">
+	   <![CDATA[
+		     select o.org_id orgId,o.org_name orgName from basis.basis_tb_org o where o.org_name = #org_city#
+		]]>
+	</select>
+
+	<select id="getSystemBySystemName" parameterClass="java.lang.String"
+		resultClass="pos">
+	   <![CDATA[
+		    select d.item_id as systemId,
+		    d.item_name as systemName
+   			from crm.crm_tb_dict d
+ 			where d.dict_type_id = '168'
+   			and d.item_name = #systemName#
+
+		]]>
+	</select>
+	
+	<select id="getPosList" parameterClass="pos"
+		resultClass="pos">
+		<include refid="global.paginationStart" />
+	   <![CDATA[
+     			select 
+     			p.p_id as pId,
+     			p.system_id as systemId,
+     			p.system_name as systemName,
+     			o.org_name as orgCity,
+     			o.org_id as orgId,
+     			s.emp_id as inputId,
+     			s.emp_name as inputName,
+     			substr(p.input_date,0,7) as inputDate,
+     			p.aone_xy as aOneXY,
+     			p.aone_mx as aOneQKL,
+     			p.aone_yw as  aOneYW ,
+     			p.aone_mx as  aOneMX ,
+     			p.aone_cm as aOneCM ,
+     			p.aone_kf as aOneKF ,
+     			p.bone as bOne ,
+     			p.cone as  cOne ,
+     			p.aeight_yw as aEightYW ,
+     			p.aeight_xy as aEightXY,
+     			p.aone_lc as aOneLC,
+     			p.beight as bEight,
+     			p.ceight as cEight,
+     			p.done as dOne,
+     			p.dtwo as dTwo,
+     			p.dthree as dThree,
+     			p.yg_sale as ygSale,
+     			p.total_sale as totalSale,
+     			p.total_money as totalMoney
+			   from crm.crm_tb_pos    p
+		         left join basis.basis_tb_org o on o.org_id = p.org_id
+		         left join basis.basis_tb_salesemp_info s on p.user_id = s.emp_id
+		         where p.p_state = 'Y'
+	   ]]>
+				<dynamic>
+			<isNotEmpty property="systemId" prepend="and">
+				<![CDATA[ p.p_id = #systemId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="systemName" prepend="and">
+				<![CDATA[ p.system_name like #systemName,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="startDate" prepend="and">
+				<![CDATA[  to_date(p.input_date,'yyyy-MM-dd')>=to_date(#startDate#,'yyyy-MM-dd')]]>
+			</isNotEmpty>
+			<isNotEmpty property="endDate" prepend="and">
+				<![CDATA[  to_date(p.input_date,'yyyy-MM-dd')<=to_date(#endDate#,'yyyy-MM-dd')]]>
+			</isNotEmpty>
+
+			<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[ o.org_id in 
+				(select oo.org_id
+                       from basis.basis_tb_org oo
+                       where oo.state = 'Y'
+                      start with oo.org_id=#orgId#
+                       connect by nocycle prior oo.org_id = oo.org_parent_id)]]>
+			</isNotEmpty>
+			<isNotEmpty property="orgName" prepend="and">
+			<![CDATA[ o.org_id in 
+				(select oo.org_id
+                       from basis.basis_tb_org oo
+                       where oo.state = 'Y'
+                      start with oo.org_name like #orgName,handler=wildcard# escape '\' 
+                       connect by nocycle prior oo.org_id = oo.org_parent_id)]]>
+			</isNotEmpty>
+
+		</dynamic>
+		
+		<include refid="global.paginationEnd" />
+	</select>
+
+	<update  id="updatePos" parameterClass="pos" >
+	<![CDATA[
+		update  crm.crm_tb_pos t set t.P_STATE =#pState#
+	]]>
+
+	<![CDATA[
+		 where t.P_ID=#pId#
+	]]>
+	</update>
+
+	<insert id="insertPosData" parameterClass="pos">
+		<selectKey resultClass="java.lang.Long" keyProperty="pId">
+			<![CDATA[
+		select crm.CRM_SEQ_POS.NEXTVAL as pId from dual
+			]]>
+		</selectKey>
+		<![CDATA[
+			insert into crm.CRM_TB_POS (
+			   P_ID,
+			   ORG_ID,
+			   ORG_CITY,
+			   SYSTEM_ID,
+			   SYSTEM_NAME,			   
+			   USER_ID,
+			   USER_NAME,
+			   INPUT_DATE,	
+  			   AONE_XY,
+               AONE_MX,
+  			   AONE_YW,
+  			   AONE_CM,
+  			   AONE_LC,
+  			   AONE_QKL,
+  			   AONE_KF,
+ 			   BONE,
+ 			   AEIGHT_XY,
+ 			   AEIGHT_YW,
+ 		 	   CONE,
+ 			   BEIGHT,
+  			   CEIGHT,
+  			   DONE,
+  			   DTWO,
+  			   DTHREE,
+  			   YG_SALE,
+			   TOTAL_SALE,
+			   TOTAL_MONEY,
+			   P_STATE	   
+				)
+			values (
+				#pId#,
+				#orgId#,
+				#orgName#,
+				#systemId#,
+				#systemName#,
+				#userId#,
+				#userName#,
+				#inputDate#,
+				#aOneXY#,
+				#aOneMX#,
+				#aOneYW#,
+				#aOneCM#,
+				#aOneLC#,
+				#aOneQKL#,
+				#aOneKF#,
+				#bOne#,				
+				#aEightXY#,
+				#aEightYW#,
+				#cOne#,
+				#bEight#,
+				#cEight#,
+				#dOne#,
+				#dTwo#,
+				#dThree#,
+				#ygSale#,
+				#totalSale#,
+				#totalMoney#,
+				'Y'
+				)
+		]]>
+	</insert>
+</sqlMap>

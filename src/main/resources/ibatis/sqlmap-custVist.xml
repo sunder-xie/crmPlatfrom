@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="GB2312"?>
+<!DOCTYPE sqlMap
+	PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="custVist">
+	<typeAlias alias="bCustVwDetail"
+		type="com.kintiger.platform.custvist.pojo.BCustVwDetail" />
+	<select id="showCustVistList" parameterClass="bCustVwDetail"
+		resultClass="bCustVwDetail">
+<!--  	 <include refid="global.paginationStart" />  --> 
+	<![CDATA[    
+	     select detail.CUST_DETAIL_ID    as custDetailId, 
+           station.station_id            as posId,
+           station.station_name           as posName,
+           org.ORG_NAME          as custOrgName,
+           customer.contact_name      as contactName,
+           customer.contact_phone     as contactPhone,
+           org.ORG_ID            as orgId,
+           info.EMP_NAME          as empName,
+           customer.CUST_NUMBER       as custNumber,
+           customer.CUST_NAME      as custNameZH,
+           customer.CUST_ADDRESS      as custAddress,
+          chanel.CHANNEL_NAME      as channelName,
+           dict2.item_name        as itemName,
+           detail.VISIT_TIME        as visitTime,
+           dict.item_name          as weekDay,
+           detail.VISIT_ORDER       as visitOrder,
+           customer.CUST_LEVEL   as custLevelName
+      from crm.crm_tb_customer_detail detail 
+     left join crm.crm_tb_customer customer 
+       on detail.cust_id = customer.cust_id 
+      
+     left join crm.crm_tb_channel chanel 
+       on chanel.channel_id = customer.channel_id
+           
+     left join basis.basis_tb_dict dict  
+       on dict.item_id = detail.week_day
+       
+     left join basis.basis_tb_station_user us
+       on us.id = customer.station_user_id
+       
+     left join basis.basis_tb_stations station 
+       on station.station_id = us.station_id
+           
+     left join basis.basis_tb_salesemp_info info
+       on  info.emp_id = us.user_id
+       
+     left join basis.basis_tb_org org
+       on  org.org_id = us.org_id
+     
+     left join basis.basis_tb_dict dict2 
+       on dict2.item_id = detail.visit_freq    
+	]]>
+
+       <dynamic>
+              		<isNotEmpty property="orgId" prepend=" where ">
+			<![CDATA[  us.ORG_ID =#orgId# ]]>
+			</isNotEmpty>
+       		<isNotEmpty property="weekDay" prepend=" and ">
+			<![CDATA[   dict.item_id = detail.week_day and dict.item_value =#weekDay# ]]>
+			</isNotEmpty>
+
+			<isNotEmpty property="posId" prepend=" and ">
+			<![CDATA[ us.id =#posId# ]]>
+			</isNotEmpty>
+
+		</dynamic>
+
+    <include refid="global.orderBy" />
+    
+<!--    <include refid="global.paginationEnd" />  --> 
+	</select>
+	<select id="showCustVistListTotal" parameterClass="bCustVwDetail"
+	resultClass="java.lang.Integer">
+			<![CDATA[
+   select count(*)
+      from crm.crm_tb_customer_detail detail 
+     left join crm.crm_tb_customer customer 
+       on detail.cust_id = customer.cust_id 
+      
+     left join crm.crm_tb_channel chanel 
+       on chanel.channel_id = customer.channel_id
+           
+     left join basis.basis_tb_dict dict  
+       on dict.item_id = detail.week_day
+       
+     left join basis.basis_tb_station_user us
+       on us.id = customer.station_user_id
+       
+     left join basis.basis_tb_stations station 
+       on station.station_id = us.station_id
+           
+     left join basis.basis_tb_salesemp_info info
+       on  info.emp_id = us.user_id
+       
+     left join basis.basis_tb_org org
+       on  org.org_id = us.org_id
+     
+     left join basis.basis_tb_dict dict2 
+       on dict2.item_id = detail.visit_freq    
+
+	]]>
+
+      <dynamic>
+                   <isNotEmpty property="orgId" prepend=" where ">
+			<![CDATA[ us.ORG_ID=#orgId# ]]>
+			</isNotEmpty>
+       			<isNotEmpty property="weekDay" prepend=" and ">
+			<![CDATA[   dict.item_id = detail.week_day and dict.item_value =#weekDay# ]]>
+			</isNotEmpty>	
+			<isNotEmpty property="posId" prepend=" and ">
+			<![CDATA[ us.id =#posId# ]]>
+			</isNotEmpty>
+
+		</dynamic>
+
+		</select>
+		<update id="updatacustomerdetail" parameterClass="bCustVwDetail">
+	    update crm.crm_tb_customer_detail detail set detail.visit_order=#visitOrder# 
+	    where detail.cust_detail_id=#custDetailId#
+	</update>
+	
+</sqlMap>

@@ -1,0 +1,102 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+        #CSSM(["easyui","style"])
+        #JSM(["jquery", "easyui"])
+        #JS_ENV_VAL()
+        <script src="http://pv.sohu.com/cityjson?ie=utf-8"></script>   
+    </head>
+    <body>
+        <form method="post" id="acyivityPlanRepotySerarchForm">
+         <input type="hidden"  id="kunnrId" value="$!{kunnrId}"/>
+         <input type="hidden"  id="otherIp" name="otherIp" />
+          #if($kunnrId)
+            <div class="easyui-panel" title="提交反馈" data-options="collapsible:true,iconCls:'icon-search'" style="padding: 2px;">
+                <table height="150" width="100%" border="0" cellpadding="0" cellspacing="1">
+                    <tr>
+                       <td class="head" noWrap>账单年月:</td>
+                       <td><input type="text" id="startDate" name = "startDate" onfocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy-MM'})" class="Wdate"/></td>
+                       <input type="hidden" id="kunnr" name="kunnr" value="$!{kunnrId}"/>
+                    </tr>
+                    <tr>
+                       <td class="head" noWrap>反馈意见：</td>
+                       <td>
+                          <select class="easyui-combobox" id="create_state" name="orderCheck.state" data-options="editable:false">
+					      <option value="A">确认无误</option>
+					      <option value="B">确认有差异</option>
+					      <option value="C">看不懂无法确认</option>
+					    </select>
+                        </td>
+                    </tr>
+                    <tr>
+                       <td class="head" noWrap>详细描述：</td>
+                       <td>
+                          <textarea style="resize:none;" maxlength="240" cols="50" rows="4"  id="create_checkDesc"   name="orderCheck.checkDesc" class="easyui-validatebox"
+						  ></textarea>
+                       </td>
+                    </tr>
+                    <tr>
+                       <td colspan="2" align="center">
+                          <a href="javascript:save()"  class="easyui-linkbutton" iconCls="icon-ok">提交</a>
+                       </td>
+                    </tr>
+                </table>
+            </div>
+            #else
+            <div class="easyui-panel" title="查询条件" data-options="collapsible:true,iconCls:'icon-search'" style="padding: 2px;">
+                <table width="100%" border="0" cellpadding="0" cellspacing="1">
+                    <tr>
+                        <td class="head" noWrap>组织：</td>
+                    	<td>
+                    		<input class="easyui-validatebox"  id="orgName" name="orgName" value='$!{orgName}' readonly="true">
+							<input type='hidden' id="orgId" name="orgIds" value='$!{orgId}'> 
+							<a class="easyui-linkbutton"  href="javascript:choseOrg()">选择</a>
+            			</td>
+            			<td class="head" noWrap>经销商：</td>
+                        <td><input id="kunnr" name="kunnr" data-options="editable:false"></td>
+					    <div id="toolbarKonzs" class="datagrid-toolbar">
+					    <input class="easyui-searchbox" searcher="searcherKonzs" prompt="请输入经销商名称查询" style="width:300px"></input>		
+				        </div>
+                        <td class="head" noWrap>账单年月:</td>
+                        <td colspan="4"><input type="text" id="startDate" name = "startDate" onfocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy-MM'})" class="Wdate"/>至
+                        <input type="text" id="endDate" name = "endDate" onfocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy-MM'})" class="Wdate"/></td>
+                  </tr>
+                  <tr>
+                        <td class="head" noWrap>反馈意见：</td>
+                        <td>
+                          <select class="easyui-combobox" id="state" name="state" data-options="editable:false">
+					      <option value="">请选择</option>
+					      <option value="A">确认无误</option>
+					      <option value="B">确认有差异</option>
+					      <option value="C">看不懂无法确认</option>
+					    </select>
+                        </td>
+                        <td class="head" noWrap>是否查看：</td>
+                        <td>
+                          <select class="easyui-combobox" id="flag" name="flag" data-options="editable:false">
+					      <option value="">请选择</option>
+					      <option value="Y">已查看</option>
+					      <option value="N">未查看</option>
+					    </select>
+                        </td>
+                        <td class="head" noWrap>点击查询:</td>
+                        <td >
+                           <a href="javascript:search()"  class="easyui-linkbutton" iconCls="icon-search">查询</a>
+                        </td>
+                        <td colspan="2">&nbsp;</td>
+                   </tr>
+             </table>
+        </div>
+        #end
+   <table id="datagrid">  
+   </table>
+ </form>
+<iframe id="hideFrame" name="hideFrame"  style="height: 0; width: 0"></iframe>
+<div id="maintActivityPlanInfo"/>
+</body>
+	
+    <script type="text/javascript" src="$!{env.imgUrl}/js/My97DatePicker/WdatePicker.js"></script>
+    <script type="text/javascript" src="$!{env.imgUrl}/js/platform/stockReport/searchOrderCheck.js?version=20160913"></script>
+    
+</html>

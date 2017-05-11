@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui"])
+		#JS_ENV_VAL()
+	</head>
+	<body>
+		<form method="post">
+			<input type="hidden" id="format_id" name="printFormat.format_id" value="$!{printFormat.format_id}"/>
+			<input type="hidden" id="default_kunnr" name="default_kunnr" value="$!{isOffice}"/>
+			<input type="hidden" id="isOffice" name="isOffice" value="$!{isOffice}"/>
+			<input type="hidden" id="default_memo" name="default_memo" value="$!{printFormat.memo}"/>
+			<div style="overflow:auto">
+				<table width="100%" border="0" cellpadding="0" cellspacing="1" >
+					<tr id='org'>
+						<td class="head" noWrap>组织:</td>
+	                    <td><input id="orgId" name="orgId" type="hidden" value="$!{orgId}">
+							<input type="text" id="orgName" name="orgName"  value="$!{orgName}" style="width:148px;"readonly>
+	    					<input type="checkbox" name="bhxjFlag" id="bhxjFlag" checked="true" value="C" onchange="change_bhxjFlag();"/>包含下级
+							<a class="easyui-linkbutton"  href="javascript:selectOrgTree()">组织</a>
+						</td>
+					</tr>
+					<tr id='k'>
+						<td class="head" noWrap>经销商:</td>    				   				
+	            		<td >
+							<input type="hidden" id="kunnr" name="printFormat.kunnr" value="$!{printFormat.kunnr}"/>
+					        <input type="hidden" id="kunnr_name" name="printFormat.kunnr_name" value="$!{printFormat.kunnr_name}"/>	            		
+							<select  id="kunnrs" name="kunnrs" style="width:260px;">
+							</select>	            		
+						</td> 
+					</tr>
+					<tr>
+						<td class="head" noWrap>单据显示内容:</td>    				   				
+	            		<td >
+	            			<input type="hidden" id="properties_code" name="printFormat.properties_code" value="$!{printFormat.properties_code}"/>
+	            			<input type="hidden" id="properties_name" name="printFormat.properties_name" value="$!{printFormat.properties_name}"/>
+							<select  id="properties" name="properties" style="width:260px;">
+							</select>	            		
+						</td> 
+					</tr>
+					<tr>
+						<td class="head" noWrap>类型:</td>    				   				
+	            		<td >
+	            		    <input type="hidden" id="default_type" name="default_type" value="$!{printFormat.type}"/>
+							<select class="easyui-combobox" id="type" name="printFormat.type"  style="width:260px;">
+							</select>	            		
+						</td> 
+					</tr>
+					<tr>
+						<td class="head" noWrap>排列顺序:</td>    				   				
+	            		<td >
+							<input type="text" class="easyui-numberspinner" data-options="min:1,max:2000,required:true" missingMessage="请输入数字！" id="order_desc" name="printFormat.order_desc"  value="$!{printFormat.order_desc}" style="width:260px;">            		
+						</td> 
+					</tr>
+					<tr id="m">
+						<td class="head" noWrap>页脚:</td>    				   				
+	            		<td >
+							<textarea  id="memo" name="printFormat.memo"  value="$!{printFormat.memo}" style="width:255px;height:100px;overflow-x:hidden;"maxlength="400">
+							</textarea> 
+						</td> 
+					</tr>
+				</table>
+				<div id="toolbar" class="datagrid-toolbar" >
+					<input id="ss" class="easyui-searchbox" searcher="searcher" prompt="请填写查询条件" menu="#mm" style="width:300px"></input>
+				</div>					
+			</div>			
+			<input type="hidden" id="ids" name="ids" />
+		</form>
+		<div border="false" style="text-align:center;height:30px;line-height:30px;clear:both">
+			<a href="javascript:submit()" class="easyui-linkbutton" iconCls="icon-save">确定</a>
+			<a href="javascript:cancel()" class="easyui-linkbutton" iconCls="icon-clear">重置</a>
+		</div><br><br>
+		<div style="color:red">
+			<h5>*单据显示内容不得重复！</h5>
+			<h5>*排列顺序为：主题>抬头>SKU清单>合计>页脚</h5>
+		</div>
+		<iframe id="hideFrame" name="hideFrame"  style="height: 0; width: 0"></iframe>
+		<div id="maintModelAtt"/>
+	</body>
+	<script type="text/javascript" src="$!{env.imgUrl}/js/platform/order/order_new/modifyFormatPre.js"></script>
+</html>

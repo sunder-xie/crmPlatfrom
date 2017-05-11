@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+ 	
+	<bean id="goalAction" class="com.kintiger.platform.goal.action.GoalAction"
+		parent="baseAction" scope="request">
+		<property name="wfeServiceHessian" ref="wfeServiceHessian" ></property>
+		<property name="goalService" ref="goalService"/>
+		<property name="dictServiceHessian" ref="dictServiceHessian"/>
+		<property name="allUserServiceHessian" ref="allUserServiceHessian"/>
+		<property name="orgServiceHessian" ref="orgServiceHessian"/>
+		<property name="newOrgService" ref="newOrgService"/>
+		<property name="xmlFilePath">
+			<value>${wfe.xml.filePath}</value>
+		</property>
+		<property name="appUrl">
+			<value>${appUrl}</value>
+		</property>
+		<property name="approveFlag">
+			<value>${crm.budgetTargetAmount}</value>
+		</property>
+	</bean>
+	<bean id="goalDao" class="com.kintiger.platform.goal.dao.impl.GoalDaoImpl"
+        parent="baseDao">
+    </bean>
+    <bean id="goalService" class="com.kintiger.platform.goal.service.impl.GoalServiceImpl">
+        <property name="goalDao" ref="goalDao"/>
+        <property name="transactionTemplate" ref="transactionTemplate"></property>
+    </bean>
+</beans>

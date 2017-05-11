@@ -1,0 +1,145 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui"])
+		#JS_ENV_VAL()
+	</head>
+	<body>
+			<form id="ff" method="post" enctype="multipart/form-data">
+			<input type="hidden" id="title" name="title"  value="终端门店开户申请"/>
+			<input type="hidden" id="userId" name="userId" value="$!{customer.createUser}"/>
+			<input type="hidden" id="nextUserId" name="nextUserId" />
+			
+			<div class="easyui-panel" title="终端客户基本资料" data-options="collapsible:true,iconCls:'icon-list'" style="padding: 2px; background: #fafafa;">
+				<table width="100%" border="0" cellpadding="1" cellspacing="1">
+			<tr>
+				<td class="head" noWrap>门店名称:</td>
+				<td><input class="easyui-validatebox" id="custName" name="customer.custName" value='$!{customer.custName}' data-options="required:true" readonly></td>
+				<td class="head" noWrap>门店状态:</td>
+				<td>
+					<input id="custState"  name="customer.custState" style="width:150px;" value='$!{custState}' required="true" readonly	>
+					</input>	
+				</td>
+				<td class="head" noWrap>配送方式:</td>
+				<td>
+					<input id="custReceive"  name="customer.custReceive" value='$!{custReceive}' style="width:150px;" required="true" readonly>
+					</input>	
+				</td>
+			</tr>
+			<tr>
+				
+				<td class="head" noWrap>资产信息:</td>
+				<td><input class="easyui-validatebox" id="registerCapital" name="customer.registerCapital" value='$!{customer.registerCapital}' data-options="required:true" readonly></td>
+				<td class="head" noWrap>售点面积:</td>
+				<td><input class="easyui-validatebox" id="shopArea" name="customer.shopArea" value='$!{customer.shopArea}' data-options="required:true" readonly></td>
+				<td class="head" noWrap>业务代表:</td>
+				<td>
+					<input class="easyui-validatebox" id="stationUserName" name="stationUserName" value='$!{stationUserName}' data-options="required:true" readonly/>
+				</td>	
+			</tr>
+			<tr>
+				<td class="head" noWrap>身份证号码:</td>
+				<td><input class="easyui-validatebox" id="idCopy" name="customer.idCopy" value='$!{customer.idCopy}' data-options="required:true" readonly></td>
+				<td class="head" noWrap>营业执照号码:</td>
+				<td><input class="easyui-validatebox" id="businessLicense" name="customer.businessLicense" value='$!{customer.businessLicense}' readonly></td>
+				<td class="head" noWrap>营业执照有效期:</td>
+				<td><input class="easyui-datebox" id="licenceValidity" name="customer.licenceValidity" value='$!{customer.createDate}' readonly></td>
+			</tr>
+			<tr>
+				<td class="head" noWrap>所属经/分销商:</td>
+				<td><input class="easyui-validatebox" id="custKunnr" name="customer.custKunnr" value="$!{custKunnr}" readonly></td>
+				<td class="head" noWrap>渠道：</td>
+				<td><input class="easyui-validatebox" id="channelId" name="customer.channelId"  value="$!{channelName}" readonly/></td>
+				<td class="head" noWrap>所属系统：</td>
+				<td><input class="easyui-validatebox" id="custSystem" name="customer.custSystem"  value="$!{customer.custSystem}" readonly></td>
+				<td class="head" noWrap></td>
+			</tr>	
+			<tr>
+				<td class="head" noWrap>是否有理货员:</td>
+				<td>
+					#if($!{customer.custLhy} == '1')
+					<input type="radio" name="customer.custLhy" value="1" checked> 有  </input>
+                     <input type="radio" name="customer.custLhy" value="0"> 无  </input>
+					 #else
+						<input type="radio" name="customer.custLhy" value="1" > 有  </input>
+                     <input type="radio" name="customer.custLhy" value="0" checked> 无  </input>
+					 #end	
+                </td>	 
+				<td class="head" noWrap>拜访日期:</td>
+				<td>
+					<input class="easyui-validatebox" id="visitDays" name="customer.visitDays" value='$!{visitDays}' style="width:152px;" readonly/>
+				</td>
+				<td class="head" noWrap>拜访频次:</td>
+				<td>
+					<input class="easyui-validatebox" id="visitFreq" name="customer.visitFreq" value='$!{visitFreq}' style="width:152px;" readonly>
+						
+                    </input>	
+                </td>	
+				</tr>
+		    </table>
+            </div>
+			
+			<div class="easyui-panel" title="终端客户详细资料" data-options="collapsible:true,iconCls:'icon-list'" style="padding: 2px; background: #fafafa;">
+				<table width="100%" border="0" cellpadding="0" cellspacing="1">
+			<tr>
+				<td class="head" noWrap>法人代表:</td>
+				<td>
+					<input class="easyui-validatebox"  data-options="required:true,missingMessage:'姓名'" style="width:75px;" id="corporateDeputy" name="customer.corporateDeputy" value='$!{customer.corporateDeputy}' readonly>
+					<select class="easyui-combobox" data-options="required:true,missingMessage:'性别'" style="width:60px;" id="contactSex" name="customer.contactSex" value='$!{customer.contactSex}'>  
+						#if($!{customer.contactSex} == 'M')
+						<option value="F">男</option>  
+						#else
+						<option value="M">女</option>  
+					#end	
+					</select>  	
+					
+				</td>
+				 <td class="head" noWrap>联系人:</td>
+				<td><input class="easyui-validatebox" id="contactName" name="customer.contactName" value='$!{customer.contactName}' data-options="required:true" readonly></td>
+				<td class="head" noWrap>联系手机:</td>
+				<td><input class="easyui-numberbox" id="contactMobile" name="customer.contactMobile" value='$!{customer.contactMobile}' data-options="required:true" readonly></td>
+				<td class="head" style='width:100px' noWrap></td>
+			</tr>	
+			<tr>
+				<input  type="hidden" name="citylevel" id="citylevel" />
+				<input  type="hidden" name="parent_city_id" id="parent_city_id" />
+				<td class="head" noWrap>省/直辖市/自治区:</td>
+				<td><input class="easyui-validatebox" id="city2" name="customer.custProvince" value='$!{custProvince}' readonly ></td>
+				<td class="head" noWrap>地级城市(所在城市):</td>
+				<td><input class="easyui-validatebox" id="city3" name="customer.custProvince"  value='$!{custCity}' readonly></td>
+				<td class="head" noWrap>县级城市(所在区)</td>
+				<td><input class="easyui-validatebox" id="city4" name="customer.custProvince" value="$!{custDistrict}" readonly></td>
+				
+			</tr>
+            <tr>
+				<td class="head" noWrap>村/社区:</td>
+				<td><input class="easyui-validatebox" id="custTown" name="customer.custTown" value="$!{customer.custTown}" readonly></td>
+				<td class="head" noWrap>路/街/巷/里/弄:</td>
+				<td><input class="easyui-validatebox" id="custStreet" name="customer.custStreet" value="$!{customer.custStreet}" readonly></td>
+				<td class="head" noWrap>门牌号：</td>
+				<td><input class="easyui-validatebox" id="custHouserNumber" name="customer.custHouserNumber" value="$!{customer.custHouserNumber}" readonly></td>
+				<td class="head" noWrap></td>
+				<td></td>
+				</tr>
+			<tr>
+				<td class="head" noWrap>参考位置:</td>
+				<td><input class="easyui-validatebox" id="custAddress" name="customer.custAddress" value='$!{customer.custAddress}' readonly></td>
+			</tr> 
+			<tr>
+				<td class="head" noWrap>备注:</td>
+				<td colspan="3">
+				<textarea class="easyui-validatebox" id="remark" name="customer.remark" style="width:93%;height:40px;" data-options="required:true" readonly>$!{customer.remark}</textarea>
+				</td>
+			</tr>
+			 </table>
+            </div>	
+				
+			<iframe id="hideFrame" name="hideFrame"  style="height: 0; width: 0"></iframe>
+		</form>
+		<div id="maintWindow"/> 
+		<div id="nextUserDialog"/>
+	</body>
+	<script type="text/javascript" src="$!{env.imgUrl}/js/platform/customer/customerFormView.js"></script>
+</html>

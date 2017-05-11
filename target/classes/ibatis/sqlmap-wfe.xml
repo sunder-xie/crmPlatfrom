@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="GB2312"?>
+<!DOCTYPE sqlMap
+	PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="wfe">
+	<typeAlias alias="allUsers" type="com.kintiger.platform.allUser.pojo.AllUsers" />
+	<typeAlias alias="proEventTotal" type="com.kintiger.platform.wfe.pojo.ProEventTotal" />
+	<typeAlias alias="proEventDetail" type="com.kintiger.platform.wfe.pojo.ProEventDetail" />
+	
+	<!--获取事务指定当前处理人对应的流程Detail(第一条,有可能多条)-->
+	<select id="getDeatilByCurUserAndEventID" parameterClass="java.util.HashMap" resultClass="java.lang.String">
+	<![CDATA[
+		select t.event_dtl_id as eventDtlId from (
+			select a.event_dtl_id from workflow.workflow_tb_event_detail a
+			where a.event_id = #event_id# 
+		 	and a.cur_user_id = #cur_user_id#
+		 	order by a.event_dtl_id ) t
+		where rownum = 1
+	]]>
+	</select>
+
+	<select id="getWfeActionId" parameterClass="java.lang.String" resultClass="java.lang.String">
+		<![CDATA[
+		select t.action_id from workflow.workflow_tb_event_total t where t.event_id = #eventId#
+		]]>
+	</select>
+	
+	<select id="getEvent_XmlTempID" resultClass="java.lang.Long">
+		select osap.wfe_event_xmlid.nextval from dual
+	</select>
+	
+	
+	<select id="getEventTotalById" parameterClass="java.lang.Long" resultClass="proEventTotal">
+	<![CDATA[
+		select distinct t.event_id    as eventId,
+         t.event_title as eventTitle,
+         q.name_  as modelName,
+         t.creatdate   as createDate,
+         t.model_id as modelId,
+         t.status,
+         t.keys,
+         t.ui_xml_flag as uiXmlFlag,
+         t.action_id   as actionId,
+         t.condition,
+         t.sub_folders as subFolders
+      from workflow.workflow_tb_event_total t, osap.act_re_procdef q
+     where t.model_id = q.key_
+       and t.event_id = #eventId#
+       and q.suspension_state_= 1
+	]]>
+	</select>
+	
+	<!-- 查询某个事务的已处理detail节点-->
+	<select id="getEventDetailList" parameterClass="proEventDetail" resultClass="proEventDetail">
+	<![CDATA[
+		select d.event_dtl_id     as eventDtlId,
+			   d.cur_user_id      as curUserId,
+			   r.role_name        as roleName,
+			   i.emp_name         as userName,
+			   d.last_modify      as lastModify,
+			   d.operation,
+			   d.memo,
+			   b.fileid,
+			   b.filename,
+			   b.filename_new     as filenameNew,
+			   i.org_id       as curOrgId,
+			   d.time,
+			   b.sub_folders      as subFolders,
+			   d.cur_model_dtl_id as curModelDtlId,
+			   d.cur_sta_id       as curStaId
+		  from workflow.workflow_tb_event_detail d,
+			   basis.basis_tb_roles                 r,
+			   basis.basis_tb_salesemp_info    i,
+			   workflow.workflow_tb_file  b
+		 where d.cur_sta_id = r.role_id(+)
+		   and d.cur_user_id = i.emp_id
+		   and d.event_dtl_id = b.event_dtl_id(+)
+		   and d.operation in (0, 1, 2, 9)
+		   and d.cur_user_id is not null
+		   and d.event_id = #eventId#
+		   order by d.event_dtl_id asc
+	]]>
+	</select>
+	
+
+	
+	
+	
+	
+	<select id="getEventIdList" parameterClass="java.lang.String" resultClass="java.lang.String">
+		<![CDATA[
+			select event_id from workflow.workflow_tb_event_auth a where a.user_id=#userId# and a.state='Y'
+		]]>
+	</select>
+	
+	
+	
+	
+	
+	
+	<select id="getStationListByEventId" parameterClass="java.lang.Long" resultClass="proEventDetail">
+		<![CDATA[
+			select  a.cur_user_id  as curUserId,
+       				a.event_dtl_id as eventDtlId,
+       				a.cur_sta_id   as curStaId,
+      				p.emp_name     as curUserName,
+       				b.role_name    as roleName
+  			from workflow.workflow_tb_event_detail a
+  			left join basis.basis_tb_salesemp_info p on a.cur_user_id = p.emp_id
+  			left join basis.basis_tb_roles b on a.cur_sta_id = b.role_id
+ 			where a.event_dtl_id in (select min(t.event_dtl_id)
+                            			from workflow.workflow_tb_event_detail t
+                          			  where t.event_id = #event_id#
+                             				and t.operation <> 9
+                           			  group by t.cur_sta_id)
+ 			order by a.event_dtl_id
+		]]>
+	</select>
+	
+	
+	
+	<select id="getTripApplyListCount" parameterClass="proEventTotal" 
+			resultClass="java.lang.Integer">
+		<![CDATA[
+			select count(*)
+			  from workflow.workflow_tb_event_total l
+			  left join basis.basis_tb_salesemp_info o
+			    on o.emp_id = l.initator
+			 where l.model_id = 'fix_travel'
+			   and l.status in('1', '2')
+		]]>
+		<dynamic>
+			<isNotEmpty property="eventId" prepend="and">
+			<![CDATA[ l.event_id = #eventId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="userName" prepend="and">
+			<![CDATA[ o.emp_name like #userName,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="eventTitle" prepend="and">
+			<![CDATA[ l.event_title like #eventTitle,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	
+	<select id="getTripApplyList" parameterClass="proEventTotal" 
+			resultClass="proEventTotal">
+		<include refid="global.paginationStart" />
+		<![CDATA[
+			select l.event_id eventId,
+       			   o.emp_name userName,
+       			   l.sub_folders subFolders,
+       			   l.status,
+       			   l.event_title eventTitle
+			  from workflow.workflow_tb_event_total l
+			  left join basis.basis_tb_salesemp_info o
+			    on o.emp_id = l.initator
+			 where l.model_id = 'fix_travel'
+			   and l.status in('1', '2')
+		]]>
+		<dynamic>
+			<isNotEmpty property="eventId" prepend="and">
+			<![CDATA[ l.event_id = #eventId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="userName" prepend="and">
+			<![CDATA[ o.emp_name like #userName,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="eventTitle" prepend="and">
+			<![CDATA[ l.event_title like #eventTitle,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+		</dynamic>
+		<![CDATA[
+			order by l.event_id desc
+		]]>
+		<include refid="global.paginationEnd" />
+	</select>
+</sqlMap>

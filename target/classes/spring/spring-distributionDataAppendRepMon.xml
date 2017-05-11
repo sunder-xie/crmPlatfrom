@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+ 	
+	<bean id="distributionDataAppendRepMonAction" class="com.kintiger.platform.distributionDataAppendRepMon.action.DistributionDataAppendRepMonAction"
+		parent="baseAction" scope="request">
+		<property name="distributionDataAppendRepMonService" ref="distributionDataAppendRepMonService"/>
+		<property name="kunnrService" ref="kunnrService"/>
+		<property name="xmlFilePath">
+			<value>${wfe.xml.filePath}</value>
+		</property>	
+		<property name="orgServiceHessian" ref="orgServiceHessian"/>
+	</bean>
+	<bean id="distributionDataAppendRepMonService" class="com.kintiger.platform.distributionDataAppendRepMon.service.impl.DistributionDataAppendRepMonServiceImpl">
+        <property name="distributionDataAppendRepMonDao" ref="distributionDataAppendRepMonDao"/>
+    </bean>
+	<bean id="distributionDataAppendRepMonDao" class="com.kintiger.platform.distributionDataAppendRepMon.dao.impl.DistributionDataAppendRepMonDaoImpl"
+        parent="baseDao">
+    </bean>
+    
+</beans>

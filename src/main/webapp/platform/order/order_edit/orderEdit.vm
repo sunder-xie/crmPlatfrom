@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+        #CSSM(["easyui","style"])
+        #JSM(["jquery", "easyui"])
+        #JS_ENV_VAL()
+    </head>
+    <body>
+    <form id="ff" method="post" target="hideFrame">
+        <!-- title="经销商信息"-->
+        <div class="easyui-panel" style="padding: 5px 20px;">
+         <input id="order_id" name="orderTitle.order_id" value="$!{orderTitle.order_id}" type="hidden"/>
+         <input id="kunnr_num" name="orderTitle.kunnr_num" value="$!{orderTitle.kunnr_num}" type="hidden"/>
+         <input id="operFlag" name="operFlag" value="$!{operFlag}" type="hidden"/>
+         <input id="orderState" value="$!{orderTitle.order_state}" type="hidden"/>
+         <input id="ids" name="ids" type="hidden"/>
+                            经销商名称：
+        #if('K'==$!{viewFlag})
+           <input id="kunnr_id" name="orderTitle.kunnr_id" value="$!{orderTitle.kunnr_id}" type="hidden"/>
+           <input id="kunnr_name" name="orderTitle.kunnr_name" value="$!{orderTitle.kunnr_name}"  type="text" style="width: 180px;" readOnly/>&nbsp;&nbsp;
+        #else
+          <input id="kunnrId" name="orderTitle.kunnr_id" value="$!{orderTitle.kunnr_id}" type="hidden"/>
+          <input id="kunnr_name" name="orderTitle.kunnr_name" value="$!{orderTitle.kunnr_name}"  type="hidden"/>
+          <input id="kunnr_id"/>
+			<div id="toolbarKunnr" class="datagrid-toolbar">
+				<input class="easyui-searchbox" searcher="searcherKunnr" prompt="请输入经销商名称查询" style="width:300px"></input>		
+			</div>
+        #end
+			可用预打款金额：<input id="kyykkje" type="text" style="width: 100px;" readonly="true"/>&nbsp;&nbsp;
+			可兑现折扣金额：<input id="kdxzkje" type="text" style="width: 100px;" readonly="true"/>&nbsp;&nbsp;
+                                    单据日期: <input id="djrq" type="text" name="orderTitle.order_date" value="$!{orderTitle.order_date}"  class="easyui-datebox" data-options="required:true" style="width:100%;"/>
+            <a href="#" class="easyui-linkbutton" onclick="openKHWin()">考核返点清单</a>
+            <div style="height: 5px"></div>
+            <textarea id="tz" rows=5 name="orderTitle.msg" cols="150" disabled>$!{orderTitle.msg}</textarea>
+        </div>
+        <div style="height: 5px"></div>
+        <table id="ddxq" style="height:300px"></table>
+        <div style="height: 5px"></div>
+        <div class="easyui-panel" style="padding: 5px 20px;">
+         <!-- 订单信息填写 start-->
+            <div>
+            <textarea id="dxtx" rows=5 name="orderTitle.memo" cols="150" placeholder="订单备注:填写到货需求日期等.">$!{orderTitle.memo}</textarea>
+            </div>
+            <div style="height: 5px"></div>
+          <!-- 订单信息填写end -->
+                                    订单总金额：<input id="ddzje" name="orderTotalMoney" value="$!{orderTitle.orderTotalMoney}" type="text" style="width: 100px;" readonly="true"/>&nbsp;&nbsp;
+			使用预打款金额：<input id="syydkje" type="text" name="orderTitle.order_up_fund" value="$!{orderTitle.order_up_fund}" style="width: 100px;" readonly="true"/>&nbsp;&nbsp;
+			使用可兑现折扣金额：<input id="sykdxzkje" name="orderTitle.order_use_fund" value="$!{orderTitle.order_use_fund}"type="text" style="width: 100px;" readonly="true"/>&nbsp;&nbsp;
+            #if('A'==$!{orderTitle.order_state})
+            <a href="#" class="easyui-linkbutton" onclick="submitForm('A')">保存草稿</a>&nbsp;&nbsp;
+            <a href="#" class="easyui-linkbutton" onclick="submitForm('B')">提交订单</a>
+            #end
+            #if(!$!{orderTitle.order_state})
+            <a href="#" class="easyui-linkbutton" onclick="submitForm('A')">保存草稿</a>&nbsp;&nbsp;
+            <a href="#" class="easyui-linkbutton" onclick="submitForm('B')">提交订单</a>
+            #end
+            #if('B'==$!{orderTitle.order_state})
+            <a href="#" class="easyui-linkbutton" onclick="submitForm('B')">提交订单</a>
+            #end
+        </div>
+        <!-- 新增订单明细弹出窗 begin -->
+       <div id="winAdd" class="easyui-window" style="width:350px;height:400px;padding:5px;">
+            <div>
+                <input class="easyui-searchbox" searcher="searcherPx" prompt="请输入名称查询"></input>
+                &nbsp;&nbsp;<a href="#" class="easyui-linkbutton" onclick="addItem()">添加</a>
+            </div>
+            <table id="tt"></table>
+        </div>
+        <!-- 新增订单明细弹出窗 end -->
+        
+        <!-- 考核返点清单弹出窗 begin -->
+        <div id="winKHFDQD" class="easyui-window" style="width:900px;height:300px;padding:5px;">
+            <table id="khfdqd" style="height:250px"></table>
+        </div>
+        <!-- 考核返点清单弹出窗 end -->
+        <input type="hidden" id="orderDetailList" name="orderDetailList"/>
+        </form>
+        <iframe id="hideFrame" name="hideFrame"  style="height: 0; width: 0"></iframe>
+    </body>
+<script type="text/javascript">
+var viewFlag='$!{viewFlag}';
+var orgId='$!{orgId}';
+</script>
+<script type="text/javascript" src="$!{env.imgUrl}/js/platform/order/order_edit/orderEdit.js?t=7"></script>
+<script type="text/javascript" src="$!{env.imgUrl}/js/platform/FDate.js"></script>
+</html>

@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="GB2312"?>
+<!DOCTYPE sqlMap
+	PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="distributionDataAppendRep">
+	<typeAlias alias="distributionDataAppendRep"
+		type="com.kintiger.platform.distributionDataAppendRep.pojo.DistributionDataAppendRep" />
+		
+	<select id="getDistributionDataAppendRepCount" parameterClass="distributionDataAppendRep" resultClass="java.lang.Integer">
+	   <![CDATA[
+		     select count(count(distinct dg.kunnr_id))
+           from crm.crm_tb_distribution_dataappend dg 
+           left join crm.crm_tb_kunnr k on k.kunnr = dg.kunnr_id
+               left join basis.basis_tb_org o on o.org_id = k.org_id  
+               left join crm.crm_tb_cg cg on cg.sap_groups_code = dg.matter
+               left join basis.basis_tb_salesemp_info s on dg.user_id = s.emp_id
+             where  1=1
+		]]>
+		<dynamic>
+			<isNotEmpty property="kunnrId" prepend="and">
+				<![CDATA[ dg.kunnr_id = #kunnrId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="kunnrName" prepend="and">
+					<![CDATA[ dg.kunnr_id in (select kk.kunnr 
+					from crm.crm_tb_kunnr kk where kk.name1 like #kunnrName,handler=wildcard# escape '\') ]]>
+			</isNotEmpty>
+			<isNotEmpty property="startDate" prepend="and">
+				<![CDATA[  to_date(dg.input_date,'yyyy-MM-dd')>=to_date(#startDate#,'yyyy-MM-dd')]]>
+			</isNotEmpty>
+			<isNotEmpty property="endDate" prepend="and">
+				<![CDATA[  to_date(dg.input_date,'yyyy-MM-dd')<=to_date(#endDate#,'yyyy-MM-dd')]]>
+			</isNotEmpty>
+			<isNotEmpty property="trFlag" prepend="and">				
+				<![CDATA[ dg.state= #trFlag# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[ o.org_id in 
+				(select oo.org_id
+                       from basis.basis_tb_org oo
+                       where oo.state = 'Y'
+                      start with oo.org_id=#orgId#
+                       connect by nocycle prior oo.org_id = oo.org_parent_id)]]>
+			</isNotEmpty>		
+			<isNotEmpty property="orgName" prepend="and">
+			<![CDATA[ o.org_id in 
+				(select oo.org_id
+                       from basis.basis_tb_org oo
+                       where oo.state = 'Y'
+                      start with oo.org_name like #orgName,handler=wildcard# escape '\' 
+                       connect by nocycle prior oo.org_id = oo.org_parent_id)]]>
+			</isNotEmpty>
+			
+		</dynamic>
+		<![CDATA[group by dg.kunnr_Id,dg.input_Date,dg.first_user]]>
+	</select>
+	
+	<select id="getDistributionDataAppendRepSize" parameterClass="distributionDataAppendRep"
+		resultClass="java.lang.Integer">
+	   <![CDATA[
+		     select count(distinct dg.kunnr_id)
+           from crm.crm_tb_distribution_dataappend dg            
+             where dg.kunnr_id = #kunnrId#
+               and to_date(dg.input_date,'yyyy-MM-dd') = to_date(#inputDate#,'yyyy-MM-dd')
+               and dg.first_user = #firstUser#
+		]]>		
+	</select>
+
+	<select id="getDistributionDataAppendRepList" parameterClass="distributionDataAppendRep" resultClass="distributionDataAppendRep">
+		<include refid="global.paginationStart" />
+	   <![CDATA[
+			select min(dg.dg_id) as dgId,
+			       dg.kunnr_id as kunnrId,
+			       max(k.name1) as kunnrName,
+			       dg.input_date as inputDate,
+			       max(dg.first_user) as firstUser,
+			       max(dg.position) as position,
+			       max(dire_super_name) as dire_super_name,
+			       max(dire_super_position) as dire_super_position ,
+			       max(channel) as channel ,
+			       max(resign_date) as resign_date ,
+			       max(store_category) as store_category ,
+			       max(s.emp_name) as inputName,
+			       max(q.org_name) as orgRegion,
+			       max(p.org_name) as orgProvince,
+			       max(o.org_name) as orgCity,
+			       max(dg.check_name) as checkOpName,
+			       max(dg.state) as trFlag,
+			       max(to_char(dg.create_date,'yyyy-MM-dd')) as createDate,
+			       sum(decode(dg.matter ,'A1',dg.box_num,0)) as aOne,
+			       sum(decode(dg.matter ,'A2',dg.box_num,0))*1.2 as aTwo,
+			       sum(decode(dg.matter ,'A3',dg.box_num,0)) as aThree,
+			       sum(decode(dg.matter ,'A4',dg.box_num,0))*3.2 as aFour,
+			       sum(decode(dg.matter ,'A5',dg.box_num,0))*2.67 as aFive,
+			       sum(decode(dg.matter ,'A6',dg.box_num,0))*3.2 as aSix,
+			       sum(decode(dg.matter ,'A7',dg.box_num,0))*3 as aSeven,
+			       sum(decode(dg.matter ,'A8',dg.box_num,0)) as aEight,
+			       sum(decode(dg.matter ,'B1',dg.box_num,0)) as bOne,
+			        sum(decode(dg.matter ,'B8',dg.box_num,0)) as bEight,
+			       sum(decode(dg.matter ,'C1',dg.box_num,0)) as cOne,
+			       sum(decode(dg.matter ,'C6',dg.box_num,0))*3.2 as cSix,
+			       sum(decode(dg.matter ,'C7',dg.box_num,0))*3 as cSeven,
+			       sum(decode(dg.matter ,'C8',dg.box_num,0)) as cEight,
+			       sum(decode(dg.matter ,'D9',dg.box_num,0)) as dNine,
+			       sum(decode(dg.matter ,'D10',dg.box_num,0))*3 as dTen,
+			       sum(decode(dg.matter ,'E1',dg.box_num,0))*2.4 as eOne,
+			       sum(decode(dg.matter ,'H7',dg.box_num,0)) as hSeven      
+			   from crm.crm_tb_distribution_dataappend dg   
+		         left join crm.crm_tb_kunnr k on k.kunnr = dg.kunnr_id
+		         left join basis.basis_tb_org o on o.org_id = k.org_id
+		         left join basis.basis_tb_org p on p.org_id = o.org_parent_id
+		         left join basis.basis_tb_org q on q.org_id = p.org_parent_id
+		         left join crm.crm_tb_cg cg on cg.sap_groups_code = dg.matter
+		         left join basis.basis_tb_salesemp_info s on dg.user_id = s.emp_id
+		         where 1=1
+	   ]]>
+		<dynamic>
+			<isNotEmpty property="kunnrId" prepend="and">
+				<![CDATA[ dg.kunnr_Id = #kunnrId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="kunnrName" prepend="and">
+					<![CDATA[ dg.kunnr_Id in (select kk.kunnr 
+					from crm.crm_tb_kunnr kk where kk.name1 like #kunnrName,handler=wildcard# escape '\') ]]>
+			</isNotEmpty>
+			<isNotEmpty property="startDate" prepend="and">
+				<![CDATA[  to_date(dg.input_date,'yyyy-MM-dd')>=to_date(#startDate#,'yyyy-MM-dd')]]>
+			</isNotEmpty>
+			<isNotEmpty property="endDate" prepend="and">
+				<![CDATA[  to_date(dg.input_date,'yyyy-MM-dd')<=to_date(#endDate#,'yyyy-MM-dd')]]>
+			</isNotEmpty>
+			<isNotEmpty property="trFlag" prepend="and">				
+				<![CDATA[ dg.state= #trFlag# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[ o.org_id in 
+				(select oo.org_id
+                       from basis.basis_tb_org oo
+                       where oo.state = 'Y'
+                      start with oo.org_id=#orgId#
+                       connect by nocycle prior oo.org_id = oo.org_parent_id)]]>
+			</isNotEmpty>		
+			<isNotEmpty property="orgName" prepend="and">
+			<![CDATA[ o.org_id in 
+				(select oo.org_id
+                       from basis.basis_tb_org oo
+                       where oo.state = 'Y'
+                      start with oo.org_name like #orgName,handler=wildcard# escape '\' 
+                       connect by nocycle prior oo.org_id = oo.org_parent_id)]]>
+			</isNotEmpty>
+				
+		</dynamic>
+		<![CDATA[group by dg.kunnr_Id,dg.input_Date,dg.first_user]]>
+		<![CDATA[order by dg.input_Date desc,dg.kunnr_Id,dg.first_user]]>
+			<include refid="global.paginationEnd" />
+	</select>
+
+
+	<insert id="insertDistributionDataAppendRep" parameterClass="distributionDataAppendRep">
+		<selectKey resultClass="java.lang.Long" keyProperty="dgId">
+			<![CDATA[
+		select crm.CRM_SEQ_DISTRIBUTIONDATAAPPEND.NEXTVAL as dgId from dual
+			]]>
+		</selectKey>
+		<![CDATA[
+			insert into crm.CRM_TB_DISTRIBUTION_DATAAPPEND (
+			   DG_ID,
+			   KUNNR_ID,
+			   INPUT_DATE,
+			   ORG_CITY,
+			   FIRST_USER,
+			   POSITION,
+			   dire_super_name,
+			   dire_super_position,
+			   channel,
+			   store_category,
+			   resign_date,
+			   MATTER,
+			   BOX_NUM,
+			   STATE,
+			   USER_ID,
+			   LAST_MODIFY			   
+				)
+			values (
+				#dgId#,
+				#kunnrId#,
+				#inputDate#,
+				#orgCity#,
+				#firstUser#,
+				#position#,
+				#dire_super_name#,
+			    #dire_super_position#,
+			    #channel#,
+			    #store_category#,
+			    #resign_date#,
+				#matter#,
+				#boxNum#,
+				#trFlag#,
+				#userId#,
+				sysdate
+				)
+		]]>
+	</insert>
+	
+    <delete id="deleteDistributionDataAppendRep" parameterClass="distributionDataAppendRep">
+		<![CDATA[delete from crm.crm_tb_distribution_dataappend dg 
+		where (dg.kunnr_id||dg.input_date||dg.first_user) in (select d.kunnr_id||d.input_date||d.first_user 
+		from crm.crm_tb_distribution_dataappend d where d.dg_id in  ]]>	
+		<iterate property="ids" open="(" close=")" conjunction=",">#ids[]#
+		</iterate>	
+		<![CDATA[ )  ]]>
+	</delete> 
+	
+	 <update id="updateDistributionDataAppendRep" parameterClass="distributionDataAppendRep">
+		<![CDATA[update crm.crm_tb_distribution_dataappend dg 
+		set dg.box_num = #boxNum#,
+		    dg.last_modify = sysdate
+		where (dg.kunnr_id||dg.input_date||dg.first_user) in (select d.kunnr_id||d.input_date||d.first_user 
+		from crm.crm_tb_distribution_dataappend d where d.dg_id = #dgId# )
+	    and dg.matter = #matter#]]>
+	</update> 
+</sqlMap>

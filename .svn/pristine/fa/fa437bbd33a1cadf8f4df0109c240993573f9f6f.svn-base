@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui"])
+		#JS_ENV_VAL()
+	</head>
+	<body>
+	    <form method="post" >
+			<input type="hidden" id="ids" name="ids"/>
+			<input type="hidden" name="flagTemp" id="flagTemp" value="$!{flagTemp}" />
+			<input type="hidden" id="userId" name="userId" value="$!{userId}"/>
+			<input type="hidden" id="nextUserId" name="nextUserId" />
+			<div class="easyui-panel" title="查询条件" data-options="collapsible:true,iconCls:'icon-search'" 
+				style="padding: 2px; background: #fafafa;">
+			<table width="100%" border="0" cellpadding="0" cellspacing="1">
+				<tr>
+				<!--<td class="head" noWrap style="text-align: right">
+						组织查询
+                    </td>
+					<td>
+					<input id="orgName" name="orgName" type='text' value="$!{orgName}" class="easyui-validatebox"  />
+						&nbsp;<a class="easyui-linkbutton" href="javascript:selectOrgTree();">组织</a>
+					<input id="orgId" name="orgName" type='hidden' value='$!{orgId}' /> 	
+					</td>-->
+			   <td class="head" noWrap>开始时间:</td>
+			   <td><input class="easyui-datebox"  id="beginDate" name="beginDate"  readonly></input>
+                 </td>
+				<td class="head" noWrap>结束时间:</td>
+			   <td><input class="easyui-datebox"  id="endDate" name="endDate"   readonly></input>
+               </td>
+				<td class="head" noWrap>经销商:</td>
+				<td><input id="id" name="id"   class="easyui-combobox"    style="width:147px;"   />
+                </td>
+				<!--<td class="head" noWrap>目标物料:</td>
+				<td><input id="wid" name="wid"   class="easyui-combobox"   style="width:147px;"   />
+                </td>-->
+				<!--<td class="head" noWrap>是否经销商:</td>
+				<td><select class="easyui-combobox" id="mark" name="mark"  style="width:65px;" data-options="required:false">
+						<option value="Y">是</option>
+						<option value="N">否</option>
+						<option value="" selected></option>
+                </select>
+				</td>-->
+				<td>			
+				<a href="javascript:search()" class="easyui-linkbutton" iconCls="icon-search">Search</a>
+			    <a href="javascript:clear()" class="easyui-linkbutton" iconCls="icon-clear">Clear</a>
+				</td>
+				</tr>
+                </table>
+				</div>
+			<table id="datagrid"></table>
+			 <div id="toolbar">
+					<a href="javascript:createInstock()" class="easyui-linkbutton" id="add" icon="icon-add" plain="true">入库单创建</a>
+					 <!-- <a href="javascript:createOrgGoal()" class="easyui-linkbutton" id="addOrg" icon="icon-add" plain="true">组织目标新增</a>
+				    <a href="javascript:exportMould()" class="easyui-linkbutton" id ="mould"icon="icon-excel" plain="true">模板</a>
+					<a href="javascript:importMould()" class="easyui-linkbutton" id ="import"icon="icon-ad" plain="true">导入</a>
+					 <a href="javascript:deleteGoal()" class="easyui-linkbutton" id="remove" icon="icon-remove" plain="true">删除</a>
+					<a href="javascript:rejectGoal()" class="easyui-linkbutton" id ="reject"icon="icon-cancel" plain="true">驳回</a>
+				    <a href="javascript:approveGoal()" class="easyui-linkbutton" id ="approve"icon="icon-ok" plain="true">审批</a>-->
+					
+			 </div>
+			 <div id="toolbar2" class="datagrid-toolbar" >
+		        <input id="ss" class="easyui-searchbox" searcher="searcher" prompt="请填写客户代码或客户名称" customer="#mm" style="width:300px"></input>		
+		     </div>
+			<!--  <div id="toolbar1" class="datagrid-toolbar" >
+		        <input id="ss" class="easyui-searchbox" searcher="searcher1" prompt="请填写物料号或物料名" customer="#mm" style="width:300px"></input>		
+			</div>-->
+	       </form>
+	<iframe id="hideFrame" name="hideFrame"  style="height: 0; width: 0"></iframe>
+	<div id="MaintGoal"/> 
+	</body>
+<script type="text/javascript" src="$!{env.imgUrl}/js/platform/instock/InStockSearch.js"></script>
+</html>

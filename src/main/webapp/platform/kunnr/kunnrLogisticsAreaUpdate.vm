@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui"])
+		#JS_ENV_VAL()
+	</head>
+	<body>
+		<form method="post">
+		<input type="hidden" id="areaList" name="areaList"/>
+		<input type="hidden" id="areaLists" name="areaLists"/>
+			<div style="overflow:auto;width:48%;float:left">
+				<div class="easyui-panel" title="经销商原销售区域信息" data-options="collapsible:true">
+				<table width="100%" border="0" cellpadding="0" cellspacing="1">
+				<tr>
+				<td class="head" noWrap>销售大区:</td>
+        		<td><input class="easyui-combogrid" id="vkgrp_1" name="vkgrp"  data-options="editable:false"></td>
+        		<div id="toolbarVkgrp_1" class="datagrid-toolbar">
+				<input id="vkgrpSearch_1" class="easyui-searchbox" style="width:120px" prompt="请输入大区名称查询"></input>		
+				</div>
+				<td class="head" noWrap>销售省份:</td>
+        		<td colspan="2"><input class="easyui-combogrid" id="bzirk_1" name="bzirk" data-options="editable:false"></td>
+        		<div id="toolbarBzirk_1" class="datagrid-toolbar">
+				<input id="bzirkSearch_1" class="easyui-searchbox" style="width:120px" prompt="请输入省份名称查询"></input>		
+				</div>
+				</tr>
+				<tr>
+        		<td class="head" noWrap>城市办:</td>
+        		<td><input class="easyui-combobox" id="vkbur_1" name="vkbur" data-options="editable:false" readonly ></td>
+				<td class="head" noWrap>
+				</td>
+				<td>			
+				<a href="javascript:search1()"  class="easyui-linkbutton" iconCls="icon-search">查询</a>
+				<a href="javascript:clearValue()" class="easyui-linkbutton" iconCls="icon-clear">重置</a> 	
+				</td>
+				</tr>
+				</table>
+                </div>
+				<table id="datagrid1"></table> 
+			</div>
+			
+			<div style="width:48%;float:right"> 
+				<div class="easyui-panel" title="销售区域确认修改" data-options="collapsible:true">
+			  <table width="100%" border="0" cellpadding="0" cellspacing="1">
+			  <tr>
+				<td class="head" noWrap>销售大区:</td>
+        		<td><input class="easyui-combogrid" id="vkgrp_2" name="kunnrBusiness.vkgrp"  data-options="editable:false"></td>
+        		<div id="toolbarVkgrp_2" class="datagrid-toolbar">
+				<input id="vkgrpSearch_2" class="easyui-searchbox" style="width:120px"  prompt="请输入大区名称查询"></input>		
+				</div>
+        		<td class="head" noWrap>销售省份:</td>
+        		<td><input class="easyui-combogrid" id="bzirk_2" name="kunnrBusiness.bzirk" data-options="editable:false"></td>
+        		<div id="toolbarBzirk_2" class="datagrid-toolbar">
+				<input id="bzirkSearch_2" class="easyui-searchbox" style="width:120px" prompt="请输入省份名称查询"></input>		
+				</div>
+				</tr>
+				<tr>
+        		<td class="head" noWrap>城市办:</td>
+        		<td><input class="easyui-combobox" id="vkbur_2" name="kunnrBusiness.vkbur" data-options="editable:false" readonly ></td>
+				<td class="head" noWrap>
+				</td>
+				<td>			
+				<a href="javascript:check()"  class="easyui-linkbutton" iconCls="icon-add">保存</a>
+				</td>
+					</tr>
+				</table>
+                </div>
+				<table id="datagrid2">  
+				</table> 
+			</div>			
+			<input type="hidden" id="ids" name="ids" />
+		</form>
+		<iframe id="hideFrame" name="hideFrame"  style="height: 0; width: 0"></iframe>
+		<div id="maintModelAtt"/>
+	</body>
+	<script type="text/javascript" src="$!{env.imgUrl}/js/platform/kunnr/kunnrLogisticsAreaUpdate.js"></script>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui","uploda"])
+		#JS_ENV_VAL()	
+	</head>
+	<body class="easyui-layout">
+		<form method="post" enctype="multipart/form-data" target="hideFrame" name="FileupzdqForm">
+			<div region="center" class="easyui-panel" title="经销商协议目标量打印界面" data-options="iconCls:'icon-excel'">
+			<table width="100%" border="2" cellpadding="0" cellspacing="1" style="border-collapse:collapse">
+				<br/>
+				<br/>
+					<tr>
+						<td class="head" noWrap style="text-align: right">
+							组织查询
+                 	    </td>
+						<td>
+						<input id="orgName" name="orgName" type='text' value="$!{orgName}" onchange="change()" class="easyui-validatebox" />
+							&nbsp;<a class="easyui-linkbutton" href="javascript:selectOrgTree();">组织</a>
+						<input id="orgId" name="orgId" type='hidden' value='$!{orgId}' /> 	
+						</td>
+					</tr>
+					<tr>
+						<td class="head" noWrap>
+							请选择经销商:
+                        </td>
+						<td class="even" noWrap>
+							<input id="custId" name="custId"   class="easyui-combobox"    style="width:250px;"   />
+                        </td>
+                    </tr>
+					<tr >
+					</tr>	
+					<tr>
+						<td class="head" noWrap>
+							打印品牌:
+                        </td>
+						<td class="even" noWrap>
+							&nbsp;<input class="easyui-combobox" style="width:120px;"  data-options ="required:true" type='text' id="brand" name="brand" value=''></input>  	
+                        </td>
+                    </tr>	
+					<tr>
+						<td class="head" noWrap>
+							打印年:
+                        </td>
+						<td class="even" noWrap>
+							&nbsp;<input class="easyui-combobox" style="width:70px;" data-options ="required:true" type='text' id="yearFlag" name="yearFlag" value=''></input>  	
+                        </td>
+                    </tr>
+                    <tr>
+                    <td class="head" noWrap>
+                    <a class="easyui-linkbutton" icon="icon-ok" href="javascript:submit()">确定</a>
+                    </td>
+                    <td>
+					<a class="easyui-linkbutton" icon="icon-cancel" href="javascript:close()">重置</a>
+					</td>
+					<tr>
+					
+		    </table>
+		    <div region="south" border="false" style="text-align:center;height:30px;line-height:30px;">
+		    </div>
+			<div id="toolbar2" class="datagrid-toolbar" >
+		       <input id="ss" class="easyui-searchbox" searcher="searcher" prompt="请填写客户代码或客户名称" customer="#mm" style="width:300px"></input>		
+		    </div>
+		    </div>
+		</form>
+		<div id="MaintGoal"/> 
+		<iframe id="hideFrame" name="hideFrame"  style="height: 0; width: 0"></iframe>
+		
+	</body>
+<script type="text/javascript" src="$!{env.imgUrl}/js/platform/goal/printContractGoal.js?version=20160714"></script>
+</html>

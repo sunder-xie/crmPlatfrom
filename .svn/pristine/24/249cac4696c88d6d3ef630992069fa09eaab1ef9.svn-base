@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+	"http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="visitInfo" extends="kintiger-default">
+		<action name="visitInfoAction" class="visitInfoAction">
+	        <result name="toVisitInfo">/platform/visitInfo/getVisitInfo.vm</result>
+	        <result name="toVisitInfoUser">/platform/visitInfo/getVisitInfoUser.vm</result>
+	        <result name="toOrderInfo">/platform/visitInfo/getOrderInfo.vm</result>
+	        <result name="toStock">/platform/visitInfo/getStock.vm</result>
+	        <result name="toStockKunnr">/platform/visitInfo/getStockKunnr.vm</result>
+	        <result name="orgTree">/platform/org/orgTree.vm</result>
+		</action>
+	</package>
+</struts>

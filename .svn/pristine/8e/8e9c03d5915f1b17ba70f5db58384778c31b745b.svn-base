@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head> 
+	<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui"])
+		#JS_ENV_VAL()	
+	</head>
+	<body class="easyui-layout">
+		<form method="post" target="hideFrame">
+			<div region="center" class="easyui-panel" title="行政区划信息创建" data-options="iconCls:'icon-edit'">
+			<table width="100%" border="0" cellpadding="0" cellspacing="1">
+		<tr>
+				<td class="head" noWrap><font color='red'>行政区划名称:</td>
+				<td><input class="easyui-validatebox"  id="cityName" name="city.cityName" data-options="required:true"></td>
+       	</tr>
+			<tr>
+				<td class="head" noWrap><font color='red'>行政区划编号:</td>
+				<td><input class="easyui-validatebox"  id="cityNumber" name="city.cityNumber" data-options="required:true"></td>
+			</tr>
+			<tr>
+				<td class="head" noWrap><font color='red'>上级区域等级:</td>
+				<td>
+				<select  name="city.citylevel" id="citylevel"  class="easyui-combobox" style="width:152px;"  data-options="required:true,editable:false"  >
+						<option >请选择
+                        </option>
+						<option value="-1">国家</option>
+						<option value="0">省</option>
+						<option value="1">市</option>
+						<option value="2">县、区</option>
+                    </select>
+				</td>
+			</tr>
+			<tr>
+				<td class="head" noWrap><font color='red'>上级区划:</td>
+				<td>
+					<input   id="parent_city_name" name="parent_city_name"  class="easyui-combobox" style="width:152px;" data-options="required:true" >
+						<input  type="hidden" name="city.parent_city_id" id="parent_city_id" />
+						<input  type="hidden" name="city.parent_city_number" id="parent_city_number" />
+						<font color='green'>输入正确区划名称，才能看见下拉框数据</font>
+		</td>
+			</tr>
+			<tr>
+				<td class="head" noWrap>区号:</td>
+				<td><input class="easyui-validatebox"  id="phone_area" name="city.phone_area" ></td>
+			</tr>
+			<tr>
+				<td class="head" noWrap>是否分配:</td>
+				<td>
+					<select  name="city.city_fp_flag" id="city_fp_flag" style="width:152px;" class="easyui-combobox"   data-options="required:true,editable:false"  >
+						<!--  <option >请选择
+                        </option>-->
+						<option value="T">已分配</option>
+						<option value="F">未分配</option>
+                    </select>
+				</td>
+			</tr>
+			<tr>
+				<td class="head" noWrap>区划简写:</td>
+				<td><input class="easyui-validatebox"  id="city_abbreviation" name="city.city_abbreviation" data-options="required:true" onkeyup="value=value.replace(/[^\A-Z]/g,'')" onbeforepaste="clipboardData.setData.setData('text',clipboardData.getData('text').replace(/[^\A-Z]/g,''))"><font color='green'>英文大写</font></td>
+			</tr>
+			<tr>
+				<td class="head" noWrap></td>
+			</tr>
+		    </table>
+			</div>
+			<div region="south" border="false" style="text-align:right;height:30px;line-height:30px;">
+				<a class="easyui-linkbutton" icon="icon-ok" href="javascript:submit()">保存</a>
+					<!--<a class="easyui-linkbutton" icon="icon-cancel" href="javascript:close()">Cancel</a>-->
+			</div>
+		</form>
+		<iframe id="hideFrame" name="hideFrame"  style="height: 0; width: 0"></iframe>
+		
+	</body>
+</html>
+	<script type="text/javascript" src="$!{env.imgUrl}/js/platform/citydict/createCityDict.js"></script>

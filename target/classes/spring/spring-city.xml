@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<bean id="cityDictAction" class="com.kintiger.platform.citydict.action.CityDictAction"
+		 parent="baseAction" scope="request">
+			<property name="cityDictService" ref="cityDictService" />
+			<!-- <property name="questionService" ref="questionService" /> -->
+            <property name="dictServiceHessian" ref="dictServiceHessian"></property>
+            <property name="cityFpFlag">
+			<value>${cityFpFlag}</value>
+		</property>
+		<property name="cityType">
+			<value>${cityType}</value>
+		</property>
+	</bean>
+	<bean id="cityDictService" class="com.kintiger.platform.citydict.service.impl.CityDictServiceImpl">
+		<property name="cityDictDao" ref="cityDictDao" />
+	</bean>
+		<bean id="cityDictDao" class="com.kintiger.platform.citydict.dao.impl.CityDictDaoImpl"
+		parent="baseDao"></bean>
+</beans>

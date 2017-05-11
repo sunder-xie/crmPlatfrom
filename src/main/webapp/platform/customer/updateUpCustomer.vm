@@ -1,0 +1,148 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui"])
+		#JS_ENV_VAL()
+	</head>
+	<body >	
+		<form id="ff" method="post" enctype="multipart/form-data" >
+			<div class="easyui-panel" title="批量修改客户信息" data-options="iconCls:'icon-detail'" style="padding: 2px; background: #fafafa;">
+            <div>
+			<table width="100%" border="0" cellpadding="0" cellspacing="1">
+        			<tr>
+        				<td class="head" noWrap>操作人:</td>
+        				<td>
+        					<input disabled  class="easyui-validatebox" id="userName" name="userName"  value='$!{userName}'    >
+        					<input type="hidden" id="userId" name="userId"  value='$!{userId}' readonly  >
+        				</td>
+        			</tr>
+        	</table>
+			</div>
+			<div class="easyui-tabs"  style="padding: 2px; background: #fafafa;">
+				<div title="门店所属经销商修改" style="overflow:auto;padding:5px;">  
+					
+					<table  width="100%" border="0" cellpadding="0" cellspacing="1">
+						<tr style="height:10px">
+							<td > 
+								<a  class="easyui-linkbutton"  data-options="plain:true,iconCls:'icon-excel'" onclick=javascript:exportCsv();> 门店所属经销商修改模版下载</a>
+					
+							<!--<a  class="easyui-linkbutton" onclick=javascript:exportXlsx();>2007模版下载</a>-->
+							
+							</td>
+							##<td style="color:red">*在模板中填入“经销商SAP编号”前，请先把单元格设置为文本格式</td>
+						</tr>
+						<tr>
+        				<td class="head" noWrap>附件:</td>
+        				<td><input type="file" name="upload" id="accessFile" style="width:200px" /></td>
+						<td style="width:50%"></td>
+        				<td></td>
+						</tr>
+		    		</table> 
+					</br>
+					<div region="south" border="false" style="text-align:right;height:30px;line-height:30px;">
+						<a class="easyui-linkbutton" icon="icon-ok" href="javascript:importGoal()">查看</a>
+						<a class="easyui-linkbutton" icon="icon-save" href="javascript:importGoaldb()">保存</a><font color='red'>*查看是数据进行筛选，保存是直接把数据导入</font>
+
+					</div>
+					<div >
+					<table id="up_list"></table></div>
+					
+				</div>
+				<!--<div title="批量渠道修改" style="overflow:auto;padding:5px;">  
+					<table  width="100%" border="0" cellpadding="0" cellspacing="1">
+						<tr style="height:10px">
+                            <td >
+								<a class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-excel'"  onclick=javascript:exportQdCsv();> 客户渠道模版下载</a>
+								<a  class="easyui-linkbutton"  data-options="plain:true,iconCls:'icon-excel'" onclick=javascript:exportQdTypeCsv();> 渠道信息下载</a>
+							</td>
+						</tr>
+						<tr>
+        				<td class="head" noWrap>附件:</td>
+        				<td><input type="file" name="uploadFile" id="uploadFile" style="width:200px" /></td>
+						<td style="width:50%"></td>
+        				<td></td>
+						
+						</tr>
+		    		</table> 
+					</br>
+					
+					 <div region="south" border="false" style="text-align:right;height:30px;line-height:30px;">
+							 <a class="easyui-linkbutton" icon="icon-ok" href="javascript:importQd()">查看</a>
+							<a class="easyui-linkbutton" icon="icon-save" href="javascript:importQdDb()">保存</a><font color='red'>*查看是数据进行筛选，保存是直接把数据导入</font>
+					</div>
+					<div >
+					<table id="qd_list">
+					</table>
+                    </div>
+				</div>-->
+				<div title="批量客户修改" style="overflow:auto;padding:5px;">  
+					<table  width="100%" border="0" cellpadding="0" cellspacing="1">
+						<tr>
+						   <td class="head" nowrap>修改前经销商sap编号：</td>
+						   <td><input type="text"  id="kunnrId_before"   name="kunnrId_before" class="easyui-validatebox"></td>
+						   <td class="head" nowrap>修改前经销商名称：</td>
+						   <td><input type="text"  id="kunnrName_before"   name="kunnrName_before" class="easyui-validatebox"></td>
+						</tr>
+						<tr>
+						   <td class="head" nowrap>修改后经销商sap编号：</td>
+						   <td><input type="text"  id="kunnrId_after"   name="kunnrId_after" class="easyui-validatebox"></td>
+						   <td class="head" nowrap>修改后经销商名称：</td>
+						   <td><input type="text"  id="kunnrName_after"   name="kunnrName_after" class="easyui-validatebox"></td>
+						</tr>
+		    		</table> 
+					</br>
+					
+					 <div region="south" border="false" style="text-align:right;height:30px;line-height:30px;">
+							<a class="easyui-linkbutton" icon="icon-save" href="javascript:importCustKunnr()">修改</a>
+					</div>
+				</div>
+				<div title="客户业务员批量修改" style="overflow:auto;padding:5px;">  
+					<table  width="100%" border="0" cellpadding="0" cellspacing="1">
+						<tr style="height:10px">
+							<td > 
+								<a  class="easyui-linkbutton"  data-options="plain:true,iconCls:'icon-excel'" onclick=javascript:exportCustomerEmpCsv();> 客户业务员批量修改模版下载</a>
+							</td>
+						</tr>
+						<tr>
+        				<td class="head" noWrap>附件:</td>
+        				<td><input type="file" name="uploadFile" id="businessFile" style="width:200px" /></td>
+						<td style="width:50%"></td>
+        				<td></td>
+						</tr>
+		    		</table> 
+					</br>
+					<div region="south" border="false" style="text-align:right;height:30px;line-height:30px;">
+						<a class="easyui-linkbutton" icon="icon-save" href="javascript:importCustomerEmp()">保存</a>
+					</div>
+				</div>
+				<div title="门店重要度批量修改" style="overflow:auto;padding:5px;">  
+					<table  width="100%" border="0" cellpadding="0" cellspacing="1">
+						<tr style="height:10px">
+							<td > 
+								<a  class="easyui-linkbutton"  data-options="plain:true,iconCls:'icon-excel'" onclick=javascript:exportCustomerImprotanceCsv();> 门店重要度批量修改模版下载</a>
+							</td>
+						</tr>
+						<tr>
+        				<td class="head" noWrap>附件:</td>
+        				<td><input type="file" name="uploadCustFile" id="uploadCustFile" style="width:200px" /></td>
+						<td style="width:50%"></td>
+        				<td></td>
+						</tr>
+		    		</table> 
+					</br>
+					<div region="south" border="false" style="text-align:right;height:30px;line-height:30px;">
+						<a class="easyui-linkbutton" icon="icon-save" href="javascript:importCustomerImprotance()">保存</a>
+					</div>
+				</div>
+			</div>  
+			</div>
+			</br>
+				<input type="hidden" id="type" name="type" value="$!{type}"/>
+		 </form>
+			<iframe id="hideFrame" name="hideFrame"  style="height: 0; width: 0"></iframe>
+	</body>
+      <script type="text/javascript" src="$!{env.imgUrl}/js/platform/customer/updateUpCustomer.js?version=20161226"></script>
+
+</html>

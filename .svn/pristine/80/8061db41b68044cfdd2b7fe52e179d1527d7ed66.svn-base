@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui"])
+		#JS_ENV_VAL()
+	</head>
+	<body>
+			<form id="ff" method="post" enctype="multipart/form-data">
+			<input type="hidden" id="kunnrId" name="kunnrId" value="$!{kunnrId}"/>
+			<input type="hidden" id="freezeOrClose" name="freezeOrClose" value="$!{freezeOrClose}"/>
+			<input type="hidden" id="title" name="title"  value="关户提报信息"/>
+			<input type="hidden" id="userId" name="userId" value="$!{userId}"/>
+			<input type="hidden" id="nextUserId" name="nextUserId" />
+			<div class="easyui-panel" title="关户提报信息" data-options="collapsible:false,iconCls:'icon-tip'" style="padding: 2px; background: #fafafa;">
+			<table width="100%" border="0" cellpadding="0" cellspacing="1">
+			<tr>
+				<td class="head" noWrap>申请人:</td>
+				<td>
+					<input class="easyui-validatebox" id="createUser" name="kunnr.createUser"  value='$!{kunnr.createUser}' readonly   >
+					<input type="hidden" id="createUserId" name="kunnr.createUserId"  value='$!{kunnr.createUserId}' readonly  >
+				</td>
+				<td class="head" noWrap>申请日期:</td>
+				<td><input class="easyui-validatebox" id="createDate" name="kunnr.createDate"  value='$!{kunnr.createDate}' readonly  ></td>
+			</tr>
+		    </table>
+			</div>
+			</br>
+			<div class="easyui-panel" title="关户原因"  data-options="collapsible:false,iconCls:'icon-tip'" style="padding: 2px; background: #fafafa;">
+			<table width="100%" border="0" cellpadding="0" cellspacing="1">
+			<tr>
+				<td>
+				<textarea class="easyui-validatebox" id="createReason" name="kunnr.createReason" style="width:96%;height:80px;"></textarea>
+				</td>
+			</tr>
+		    </table>
+			</div>
+		    <div class="easyui-panel" title="整改通知书附件上传" data-options="collapsible:false,iconCls:'icon-tip'" style="padding: 2px; background: #fafafa;">
+					<table  width="100%" border="0" cellpadding="0" cellspacing="1">
+						<tr style="height:10px">
+						</tr>
+						<tr>
+						<input type="hidden" name="type" id="type" >
+        				<td class="head" noWrap>附件1:</td>
+        				<td><input type="file" name="upload" id="noticeFile1" style="width:200px" ></td>
+						<td style="width:50%"></td>
+        				<td></td>
+						</tr>
+						<tr style="height:10px">
+						</tr>
+						<tr>
+        				<td class="head" noWrap>附件2:</td>
+        				<td><input type="file" name="upload" id="noticeFile2" style="width:200px" ></td>
+						<td></td>
+						</tr>
+						<tr style="height:10px">
+						</tr>
+						<tr>
+        				<td class="head" noWrap>附件3:</td>
+        				<td><input type="file" name="upload" id="noticeFile3" style="width:200px" ></td>
+						<td></td>
+						</tr>
+						<tr style="height:10px">
+						</tr>
+						<tr>
+        				<td class="head" noWrap>附件4:</td>
+        				<td><input type="file" name="upload" id="noticeFile4" style="width:200px" ></td>
+						<td></td>
+						</tr>
+		    		</table> 
+				</div>
+			</br>
+			<div  border="false" style="text-align:center;height:30px;line-height:30px;">
+				<a class="easyui-linkbutton" icon="icon-ok" href="javascript:submit()">提交</a>
+				<a class="easyui-linkbutton" icon="icon-cancel" href="javascript:close()">取消</a>
+			</div>
+			<iframe id="hideFrame" name="hideFrame"  style="height: 0; width: 0"></iframe>
+		</form>
+			<div id="nextUserDialog"/>
+	</body>
+		<script type="text/javascript" src="$!{env.imgUrl}/js/platform/kunnr/freezeOrClose.js?version=20160622"></script>
+</html>

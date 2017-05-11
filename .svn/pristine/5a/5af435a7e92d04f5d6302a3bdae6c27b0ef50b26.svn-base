@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui"])
+		#JS_ENV_VAL()
+	</head>
+	<body>
+		<!-- 查询 -->
+	        <form method="post">
+			<div id="p_search" class="easyui-panel" title="查询条件"
+				style="padding: 2px; background: #fafafa;" data-options="collapsible:true,iconCls:'icon-search'">
+				<table width="100%" border="0" cellpadding="0" cellspacing="1">
+				<tr>
+				    <td class="head" noWrap>所属组织</td>
+                    <td><input id="orgId" name="orgId" type="hidden" value="$!{orgId}">
+						<input type="text" id="orgName" name="orgName"  value="$!{orgName}" readonly>
+    					<input type="checkbox" name="bhxjFlag" id="bhxjFlag" value="C"/>包含下级
+						<a class="easyui-linkbutton"  href="javascript:selectOrgTree()">组织</a>
+					</td>
+                    <td class="head" noWrap>经销商SAP代码</td>
+                    <td><input class="easyui-validatebox" id="kunnr" name="kunnrId" data-options="required:false,validType:'length[8,8]',invalidMessage:'请输入8位代码'"></td>
+					<td class="head" noWrap>经销商名称</td>
+                    <td><input class="easyui-validatebox" id="name1" name="name1"></td>
+                </tr>
+				<tr>
+					<td class="head" noWrap>客户渠道</td>
+                    <td><input class="easyui-combobox" id="channelId" name="channelId" style="width:155px;" data-options="editable:false"></td>
+                    <td class="head" noWrap>城市经理</td>
+                    <td><input class="easyui-validatebox" id="businessManager" name="businessManager"></td>
+                    <td class="head" noWrap>客户状态</td>
+                    <td>
+						<select  class="easyui-combobox" id="status" name="status" style="width:155px;" data-options="editable:false">
+						<option value="">所有客户</option>  
+						<option value="1">正常客户</option>  
+						<option value="2">已关客户</option>  
+						<option value="3">关户中</option> 
+                    </select>
+					</td>	
+                </tr>
+                <tr>
+                	<td class="head" noWrap>客户经理</td>
+                    <td><input class="easyui-validatebox" id="businessCompetent" name="businessCompetent"></td>
+                    <td class="head" noWrap>经营品牌:</td>
+		           <td> <input id="brands" name="brands" type="text" class="easyui-combobox" style="width:155px;">
+						</input>
+												<td>
+					<td colspan="2">
+						<a id="search" href="javascript:search()" class="easyui-linkbutton" data-options="iconCls:'icon-search'">查询</a>
+                    	<a href="javascript:clearValue()" class="easyui-linkbutton" iconCls="icon-clear">重置</a> 	
+					</td>	
+                </tr>
+                </table>
+				</div>
+			</div>
+			<table id="datagrid"></table>
+	</form>
+	</div>
+	<iframe id="hideFrame" name="hideFrame"  style="height: 0; width: 0"></iframe>
+	<div id="hiddenWin"/> 
+	</body>
+<script type="text/javascript" src="$!{env.imgUrl}/js/platform/kunnr/kunnrSearch.js"></script>
+</html>

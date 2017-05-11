@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="GB2312"?>
+<!DOCTYPE sqlMap
+	PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="batOrg">
+	<typeAlias alias="cust"
+		type="com.kintiger.platform.customer.pojo.Customer" />
+	<typeAlias alias="kunnr" type="com.kintiger.platform.kunnr.pojo.Kunnr" />
+
+
+	<update id="updateCustomerOrgs" parameterClass="cust">
+	<![CDATA[
+		update  crm.crm_tb_customer a set a.LAST_MODIFY=sysdate,a.org_id=#orgId#
+		 where a.cust_number=#custNumber#
+	]]>
+	</update>
+	
+	<update id="updateKunnrOrgs" parameterClass="kunnr">
+	<![CDATA[
+		update  crm.crm_tb_kunnr k set k.last_modify_date=sysdate,
+		k.org_id=#orgId#,k.org_name=#orgName#
+		 where k.kunnr=#kunnr#
+	]]>
+	</update>
+
+</sqlMap>

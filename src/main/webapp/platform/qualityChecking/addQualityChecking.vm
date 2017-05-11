@@ -1,0 +1,29 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui"])
+		#JS_ENV_VAL()
+	</head>
+	<body>
+		<form method="post">
+			<div class="easyui-panel" title="操作按钮" data-options="collapsible:true,iconCls:'icon-search'" style="padding:5px">
+				<table width="100%" border="0" cellpadding="0" cellspacing="1">
+					<tr>
+						<td align="center">
+							<a href="javascript:qualityCheckingImport()" class="easyui-linkbutton" iconCls="icon-add">提报调整模版excel导入</a>
+						</td>
+                    </tr>
+				</table>
+			</div>
+			<table id="datagrid"></table> 
+			<div class="easyui-panel" border="false" style="text-align:center">
+				<a id="submitBtn" class="easyui-linkbutton" icon="icon-ok" href="javascript:saveToCreate()">提交</a>
+			</div>
+		</form>
+        <iframe id="hideFrame" name="hideFrame" style="height:0; width:0"></iframe>
+		<div id="maintWindow"/>
+	</body>
+	<script type="text/javascript" src="$!{env.imgUrl}/js/platform/qualityChecking/addQualityChecking.js"></script>
+</html>

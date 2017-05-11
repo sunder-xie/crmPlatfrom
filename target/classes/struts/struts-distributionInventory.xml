@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+	"http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="distributionInventory" extends="kintiger-default">
+		<action name="distributionInventoryAction" class="distributionInventoryAction">
+			<result name="distributionInventorySearch">/platform/distributionInventory/distributionInventorySearch.vm</result>
+			<result name="toDistributionInventorySearch">/platform/distributionInventory/toDistributionInventorySearch.vm</result>
+			<result name="orgtree">/platform/org/orgTree.vm</result>
+			<result name="orgAllTree">/platform/org/orgTreeAll.vm</result>
+		</action>
+	</package>
+</struts>

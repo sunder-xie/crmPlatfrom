@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+	"http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="customer" extends="kintiger-default">
+		<action name="customerAction" class="customerAction">
+		    <result name="toCustomerApply">/platform/customer/toCustomerApply.vm</result>
+		    <result name="customerFormView">/platform/customer/customerFormView.vm</result>
+		    <result name="toCutomerSearch">/platform/customer/toCutomerSearch.vm</result>
+		    <result name="toCutomerSearchKunnr">/platform/customer/toCutomerSearchKunnr.vm</result>
+		    <result name="orgtree">/platform/org/orgTree.vm</result>
+		    <result name="orgAllTree">/platform/org/orgTreeAll.vm</result>
+		    <result name="viewCustomer">/platform/customer/viewCustomer.vm</result>
+		    <result name="toUpdateCustomer">/platform/customer/updateCustomer.vm</result>
+		     <result name="toSearchZwlqy">/platform/customer/searchZwlqy.vm</result>
+		     <result name="selectUpKunnrUser">/platform/customer/selectUpKunnrUser.vm</result>
+		</action>
+		<action name="custBatchModifyAction" class="custBatchModifyAction" >
+			<result name="toUpdateAll">/platform/customer/updateUpCustomer.vm</result>
+			<result name="batchUpdateList">/platform/customer/batchUpdateList.vm</result>
+		</action>
+		<action name="batChangeAction" class="batChangeAction" >
+			<result name="batChange">/platform/customer/batchange/batChange.vm</result>
+			<result name="toSearchMan">/platform/customer/batchange/searchMan.vm</result>
+			<result name="toSearchMan1">/platform/customer/batchange/searchMan1.vm</result>
+			<result name="selectOrgTree4Station">/platform/customer/batchange/selectOrgTree4Station.vm</result>
+			
+			<result name="selectOrgTreeUser">/platform/customer/selectOrgTreeUser.vm</result>
+			<result name="selectOrgTreeUserWithBusMobile">/platform/customer/selectOrgTreeUserWithBusMobile.vm</result>
+			<result name="selectOrgTreeUserAndUserIdWithBusMobile">/platform/customer/selectOrgTreeUserAndUserIdWithBusMobile.vm</result>
+			<result name="selectOrgTreeUserAndUserIdWithBusMobileAndOrg">/platform/customer/selectOrgTreeUserAndUserIdWithBusMobileAndOrg.vm</result>
+		</action>
+	</package>
+</struts> 

@@ -1,0 +1,904 @@
+<?xml version="1.0" encoding="GB2312"?>
+<!DOCTYPE sqlMap
+	PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+	
+<sqlMap namespace="question">
+  <typeAlias alias="question" type="com.kintiger.platform.question.pojo.Question"/>
+  <typeAlias alias="file" type="com.kintiger.platform.question.pojo.FileTmp" />
+  <typeAlias alias="communit" type="com.kintiger.platform.question.pojo.Communit"/>
+  <typeAlias alias="bo" type="com.kintiger.platform.question.pojo.Borg" />
+  <typeAlias alias="users" type="com.kintiger.platform.allUser.pojo.AllUsers" />
+  <typeAlias alias="demand" type="com.kintiger.platform.question.pojo.Demand" />
+  <typeAlias alias="demandUser" type="com.kintiger.platform.question.pojo.DemandUser" />
+  <typeAlias alias="demandCommunit" type="com.kintiger.platform.question.pojo.DemandCommunit" />
+  
+  <select id="getQuestionCount" parameterClass="question" resultClass="java.lang.Integer">
+    <![CDATA[
+      select 
+			 count(e.question_id)
+			from crm.crm_tb_question e 
+			  where e.question_state ='U'
+	]]>
+	<dynamic>
+			<isNotEmpty property="qId" prepend="and">
+			<![CDATA[  e.question_id=#qId#]]>
+			</isNotEmpty>
+			<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[  e.orgId in (select oo.org_id from basis.basis_tb_org oo 
+				         start with oo.org_id = #orgId#
+				         connect by nocycle prior oo.org_id= oo.org_parent_id) ]]>
+			</isNotEmpty>
+			<isNotEmpty property="orgName" prepend="and">
+			<![CDATA[   e.orgId in (select oo.org_id from basis.basis_tb_org oo 
+		                  start with oo.org_name like #orgName,handler=wildcard# escape '\' 
+		                  connect by nocycle prior oo.org_id=oo.org_parent_id) ]]>
+			</isNotEmpty>
+			<isNotEmpty property="author" prepend="and">
+			<![CDATA[  e.author like #author,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="qTime" prepend="and">
+			<![CDATA[  e.question_time>=#qTime#]]>
+			</isNotEmpty>
+			<isNotEmpty property="qTemp" prepend="and">
+			<![CDATA[  e.question_temp=#qTemp#]]>
+			</isNotEmpty>
+			<isNotEmpty property="qTemp2" prepend="and">
+			<![CDATA[  e.question_temp2=#qTemp2#]]>
+			</isNotEmpty>
+			<isNotEmpty property="qLevel" prepend="and">
+			<![CDATA[  e.question_level=#qLevel#]]>
+			</isNotEmpty>
+			<isNotEmpty property="handleState" prepend="and">
+			<![CDATA[  e.handle_state=#handleState#]]>
+			</isNotEmpty>
+			<isNotEmpty property="answerAuthor" prepend="and">
+			<![CDATA[  e.answerauthor like #answerAuthor,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="answerAuthorId" prepend="and">
+			<![CDATA[  e.answerauthor_id = #answerAuthorId#]]>
+			</isNotEmpty>
+			<isNotEmpty property="qType" prepend="and">
+			<![CDATA[  e.question_type=#qType#]]>
+			</isNotEmpty>
+			<isNotEmpty property="qTitle" prepend="and">
+			<![CDATA[  e.question_title like #qTitle,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+		</dynamic>
+  </select>
+  
+  <select id="getQuestionList" parameterClass="question" resultClass="question">
+    <include refid="global.paginationStart" /> 
+    <![CDATA[
+		select  e.question_id  as qId,
+		        e.question_title qTitle,
+		        e.author_id as authorId,
+				e.author as author,
+				e.phone as phone,
+				e.orgName as orgName,
+				e.question_time as qTime,
+				e.question_Temp as qTemp,
+				e.question_Temp2 as qTemp2,
+				e.question as question,
+				e.question_level as qLevel,
+				e.question_type as qType,
+				e.answerAuthor as answerAuthor,
+				e.answerAuthor_id as answerAuthorId,
+				e.answerauthor_email as answerAuthorEmail,
+				e.expectDate as expectDate,
+				e.lastDate as lastDate,
+				e.handle_state as handleState,
+				e.handle_speed as handleSpeed,
+				e.handle_result as handleResult,
+				e.advice as advice,
+				e.remark as remark
+			 from crm.crm_tb_question e
+			  where e.question_state ='U'
+	]]>
+	<dynamic>
+			<isNotEmpty property="qId" prepend="and">
+			<![CDATA[  e.question_id=#qId#]]>
+			</isNotEmpty>
+			<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[  e.orgId in (select oo.org_id from basis.basis_tb_org oo 
+				         start with oo.org_id = #orgId#
+				         connect by nocycle prior oo.org_id= oo.org_parent_id) ]]>
+			</isNotEmpty>
+			<isNotEmpty property="orgName" prepend="and">
+			<![CDATA[   e.orgId in (select oo.org_id from basis.basis_tb_org oo 
+		                  start with oo.org_name like #orgName,handler=wildcard# escape '\' 
+		                  connect by nocycle prior oo.org_id=oo.org_parent_id) ]]>
+			</isNotEmpty>
+			<isNotEmpty property="author" prepend="and">
+			<![CDATA[  e.author like #author,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="qTime" prepend="and">
+			<![CDATA[  e.question_time>=#qTime#]]>
+			</isNotEmpty>
+			<isNotEmpty property="qTime2" prepend="and">
+			<![CDATA[  e.question_time<=#qTime2#]]>
+			</isNotEmpty>
+			<isNotEmpty property="qTemp" prepend="and">
+			<![CDATA[  e.question_temp=#qTemp#]]>
+			</isNotEmpty>
+			<isNotEmpty property="qLevel" prepend="and">
+			<![CDATA[  e.question_level=#qLevel#]]>
+			</isNotEmpty>
+			<isNotEmpty property="handleState" prepend="and">
+			<![CDATA[  e.handle_state=#handleState#]]>
+			</isNotEmpty>
+			<isNotEmpty property="answerAuthor" prepend="and">
+			<![CDATA[  e.answerauthor like #answerAuthor,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="answerAuthorId" prepend="and">
+			<![CDATA[  e.answerauthor_id = #answerAuthorId#]]>
+			</isNotEmpty>
+			<isNotEmpty property="qType" prepend="and">
+			<![CDATA[  e.question_type=#qType#]]>
+			</isNotEmpty>
+			<isNotEmpty property="qTitle" prepend="and">
+			<![CDATA[  e.question_title like #qTitle,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+    </dynamic>
+    <![CDATA[ order by e.handle_state asc,e.question_time desc]]>
+		<include refid="global.orderBy" />
+		<include refid="global.paginationEnd" /> 
+  </select>
+  
+  <select id="getQuestionListjosn" parameterClass="question" resultClass="question">
+    <![CDATA[
+		select  e.question_id  as qId,
+		        e.question_title qTitle,
+		        e.author_id as authorId,
+				e.author as author,
+				e.phone as phone,
+				e.orgName as orgName,
+				e.question_time as qTime,
+				e.question_Temp as qTemp,
+				e.question_Temp2 as qTemp2,
+				e.question as question,
+				e.question_level as qLevel,
+				e.question_type as qType,
+				e.answerAuthor_id as answerAuthorId,
+				e.answerAuthor as answerAuthor,
+				e.answerauthor_email as answerAuthorEmail,
+				e.expectDate as expectDate,
+				e.lastDate as lastDate,
+				e.handle_state as handleState,
+				e.handle_speed as handleSpeed,
+				e.handle_result as handleResult,
+				e.advice as advice,
+				e.remark as remark
+			 from crm.crm_tb_question e
+			  where e.question_state ='U'
+			  order by e.handle_state asc,e.question_time desc
+	]]>
+  </select>
+  
+  <select id="getQuestion" parameterClass="question" resultClass="question">
+    <![CDATA[
+		select  e.question_id  as qId,
+		        e.question_title qTitle,
+		        e.author_id as authorId,
+				e.author as author,
+				e.phone as phone,
+				e.orgName as orgName,
+				e.question_time as qTime,
+				e.question_Temp as qTemp,
+				e.question_Temp2 as qTemp2,
+				e.question as question,
+				e.question_level as qLevel,
+				e.question_type as qType,
+				e.answerAuthor_id as answerAuthorId,
+				e.answerAuthor as answerAuthor,
+				e.answerauthor_email as answerAuthorEmail,
+				e.expectDate as expectDate,
+				e.lastDate as lastDate,
+				e.handle_state as handleState,
+				e.handle_speed as handleSpeed,
+				e.handle_result as handleResult,
+				e.advice as advice,
+				e.remark as remark,
+				e.author_email as authorEmail
+			 from crm.crm_tb_question e
+			  where e.question_state ='U'
+	]]>
+	<dynamic>
+			<isNotEmpty property="qId" prepend="and">
+			<![CDATA[  e.question_id=#qId#]]>
+			</isNotEmpty>
+			<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[  e.orgId in (select oo.org_id from basis.basis_tb_org oo 
+				         start with oo.org_id = #orgId#
+				         connect by nocycle prior oo.org_id= oo.org_parent_id) ]]>
+			</isNotEmpty>
+			<isNotEmpty property="orgName" prepend="and">
+			<![CDATA[   e.orgId in (select oo.org_id from basis.basis_tb_org oo 
+		                  start with oo.org_name like #orgName,handler=wildcard# escape '\' 
+		                  connect by nocycle prior oo.org_id=oo.org_parent_id) ]]>
+			</isNotEmpty>
+			<isNotEmpty property="author" prepend="and">
+			<![CDATA[  e.author=#author#]]>
+			</isNotEmpty>
+			<isNotEmpty property="qTime" prepend="and">
+			<![CDATA[  e.question_time=#qTime#]]>
+			</isNotEmpty>
+			<isNotEmpty property="qTemp" prepend="and">
+			<![CDATA[  e.question_temp=#qTemp#]]>
+			</isNotEmpty>
+			<isNotEmpty property="qLevel" prepend="and">
+			<![CDATA[  e.question_level=#qLevel#]]>
+			</isNotEmpty>
+			<isNotEmpty property="handleState" prepend="and">
+			<![CDATA[  e.handle_state=#handleState#]]>
+			</isNotEmpty>
+			<isNotEmpty property="answerAuthor" prepend="and">
+			<![CDATA[  e.answerauthor=#answerAuthor#]]>
+			</isNotEmpty>
+			<isNotEmpty property="answerAuthorId" prepend="and">
+			<![CDATA[  e.answerauthor_id = #answerAuthorId#]]>
+			</isNotEmpty>
+			<isNotEmpty property="qType" prepend="and">
+			<![CDATA[  e.question_type=#qType#]]>
+			</isNotEmpty>
+			<isNotEmpty property="qTitle" prepend="and">
+			<![CDATA[  e.question_title like #qTitle,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+    </dynamic>
+  </select>
+  
+  <insert id="createQuestion" parameterClass="question" >
+	<![CDATA[
+		insert into crm.crm_tb_question
+		  (QUESTION_ID,
+		   QUESTION_TITLE,
+		   AUTHOR_ID,
+		   AUTHOR,
+		   PHONE,
+		   ORGID,
+		   ORGNAME,
+		   QUESTION_TIME,
+		   QUESTION_TEMP,
+		   QUESTION_TEMP2,
+		   QUESTION,
+		   QUESTION_LEVEL,
+		   QUESTION_TYPE,
+		   ANSWERAUTHOR,
+		   ANSWERAUTHOR_ID,
+		   ANSWERAUTHOR_EMAIL,
+		   EXPECTDATE,
+		   LASTDATE,
+		   HANDLE_STATE,
+		   HANDLE_SPEED,
+		   HANDLE_RESULT,
+		   ADVICE,
+		   REMARK,
+		   QUESTION_STATE,
+		   AUTHOR_EMAIL
+		  )
+		values
+		  (#qId#,
+		   #qTitle#,
+		   #authorId#,
+		   #author#,
+		   #phone#,
+		   #orgId#,
+		   #orgName#,
+		   #qTime#,
+		   #qTemp#,
+		   #qTemp2#,
+		   #question#,
+		   #qLevel#,
+		   #qType#,
+		   #answerAuthor#,
+		   #answerAuthorId#,
+		   #answerAuthorEmail#,
+		   #expectDate#,
+		   #lastDate#,
+		   #handleState#,
+		   #handleSpeed#,
+		   #handleResult#,
+		   #advice#,
+		   #remark#,
+		   'U',
+		   #authorEmail#
+		 )
+	]]>
+	</insert>
+	
+	<update  id="updateQuestion" parameterClass="question" >
+	<![CDATA[
+		update crm.crm_tb_question t set t.QUESTION_ID=#qId#
+	]]>
+		<dynamic>
+			<isNotEmpty property="question" prepend=",">
+			<![CDATA[ t.question =#question# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="qLevel" prepend=",">
+			<![CDATA[ t.question_level =#qLevel# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="lastDate" prepend=",">
+			<![CDATA[ t.lastdate =#lastDate# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="handleState" prepend=",">
+			<![CDATA[ t.handle_state =#handleState# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="handleSpeed" prepend=",">
+			<![CDATA[ t.handle_speed =#handleSpeed# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="handleResult" prepend=",">
+			<![CDATA[ t.handle_result =#handleResult# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="advice" prepend=",">
+			<![CDATA[ t.advice =#advice# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="remark" prepend=",">
+			<![CDATA[ t.remark =#remark# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="qState" prepend=",">
+			<![CDATA[ t.question_state =#qState# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="qTemp" prepend=",">
+			<![CDATA[ t.question_temp =#qTemp# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="qTemp2" prepend=",">
+			<![CDATA[ t.question_temp2 =#qTemp2# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="qType" prepend=",">
+			<![CDATA[ t.question_type =#qType# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="answerAuthorId" prepend=",">
+			<![CDATA[ t.answerauthor_id =#answerAuthorId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="answerAuthor" prepend=",">
+			<![CDATA[ t.answerauthor =#answerAuthor# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="answerAuthorEmail" prepend=",">
+			<![CDATA[ t.answerauthor_email =#answerAuthorEmail# ]]>
+			</isNotEmpty>
+		</dynamic>
+	<![CDATA[
+		 where t.QUESTION_ID=#qId#
+
+	]]>
+	</update>
+    <select id="getMaxId" resultClass="java.lang.Long">
+       <![CDATA[
+            select 
+			max(question_id)
+			from crm.crm_tb_question
+	   ]]>
+    </select>
+    
+    <select id="getOrgName" parameterClass="java.lang.Long" resultClass="java.lang.String">
+	<![CDATA[
+		 select t.org_name from basis.basis_tb_org t where t.org_id = #org_id#
+	]]>
+	</select>
+	<select id="getOrgParentId" parameterClass="java.lang.Long" resultClass="java.lang.String">
+	<![CDATA[
+		 select t.org_parent_id from basis.basis_tb_org t where t.org_id = #org_id#
+	]]>
+	</select>
+	
+	<select id="getEmpPhone" parameterClass="java.lang.String" resultClass="java.lang.String">
+	<![CDATA[
+		 select nvl(t.bus_mobilephone,nvl(t.emp_phone,t.emp_mobile_phone)) phone from
+		 basis.basis_tb_salesemp_info t where t.emp_code = #empCode#
+	]]>
+	</select>
+	
+	<select id="getEmpEmail" parameterClass="java.lang.Long" resultClass="java.lang.String">
+	<![CDATA[
+		 select t.emp_email email from
+		 basis.basis_tb_salesemp_info t where t.emp_id = #empId#
+	]]>
+	</select>
+	
+	<insert id="createFileTmp" parameterClass="file">
+		<selectKey resultClass="java.lang.Long" keyProperty="fileId">
+		<![CDATA[
+			select crm.crm_seq_file_tmp.nextval as fileId from dual
+		]]>
+		</selectKey>
+	<![CDATA[
+		insert into crm.crm_tb_question_file
+		  (file_id,
+		   file_name,
+		   creator,
+		   create_date,
+		   file_name_new,
+		   question_key,
+		   sub_folders)
+		values
+		  (#fileId#,
+		   #fileName#,
+		   #creator#,
+		   sysdate,
+		   #fileNameNew#,
+		   #questionKey#,
+		   #subFolders#)
+	]]>
+	</insert>
+	
+	<select id="getFileTmpList" parameterClass="java.lang.Long" resultClass="file">
+		<![CDATA[
+			select  t.file_id			fileId,
+					t.file_name			fileName,
+					t.creator			creator,
+					t.create_date		createDate,
+					t.file_name_new 	fileNameNew,
+					t.question_key		questionkey,
+					t.sub_folders		subFolders
+			from crm.crm_tb_question_file t 
+			where t.question_key=#qId#
+		]]>
+	</select>
+	
+	<select id="getFileTmpByFileId" parameterClass="java.lang.Long" resultClass="file">
+		<![CDATA[
+			select  t.file_id			fileId,
+					t.file_name			fileName,
+					t.creator			creator,
+					t.create_date		createDate,
+					t.file_name_new 	fileNameNew,
+					t.question_key		questionkey,
+					t.sub_folders		subFolders
+			from crm.crm_tb_question_file t 
+			where t.file_id=#fileId#
+		]]>
+	</select>
+	
+	<select id="getQuestionById" parameterClass="java.lang.Long" resultClass="question">
+    <![CDATA[
+		select  e.question_id  as qId,
+		        e.question_title as qTitle,
+		        e.author_id as authorId,
+				e.author as author,
+				e.phone as phone,
+				e.orgName as orgName,
+				e.question_time as qTime,
+				e.question_Temp as qTemp,
+				e.question_Temp2 as qTemp2,
+				e.question as question,
+				e.question_level as qLevel,
+				e.question_type as qType,
+				e.answerAuthor as answerAuthor,
+				e.answerAuthor_id as answerAuthorId,
+				e.answerauthor_email as answerAuthorEmail,
+				e.expectDate as expectDate,
+				e.lastDate as lastDate,
+				e.handle_state as handleState,
+				e.handle_speed as handleSpeed,
+				e.handle_result as handleResult,
+				e.advice as advice,
+				e.remark as remark,
+				e.author_email as authorEmail
+			 from crm.crm_tb_question e
+			  where e.question_state ='U'
+			   and e.question_id =#qId#
+	]]>
+	</select>
+	
+	<select id="getCommunitListCount" parameterClass="communit" resultClass="java.lang.Integer">
+	  <![CDATA[
+	    select count(t.communit_id)
+	       from crm.crm_tb_question_communit t
+	       where t.question_id=#qId#
+	  ]]>
+	</select>
+	
+	<select id="getCommunitList" parameterClass="communit" resultClass="communit">
+	  <![CDATA[
+	    select t.communit_id as cId,
+	           t.question_id as qId,
+	           t.author as author,
+	           t.content as content,
+	           t.create_time as createTime
+	       from crm.crm_tb_question_communit t
+	       where question_id=#qId#
+	       order by t.communit_id asc
+	  ]]> 
+	</select>
+	
+	<insert id="createCommunit" parameterClass="communit">
+		<selectKey resultClass="java.lang.Integer" keyProperty="cId">
+		<![CDATA[
+			select crm.crm_seq_question_communit.nextval as cId from dual
+		]]>
+		</selectKey>
+	<![CDATA[
+		insert into crm.crm_tb_question_communit
+		  (communit_id,
+		   question_id,
+		   author,
+		   content,
+		   create_time)
+		values
+		  (#cId#,
+		   #qId#,
+		   #author#,
+		   #content#,
+		   #createTime#)
+	]]>
+	</insert>
+	
+	<select id="getOrgsByUserId" parameterClass="java.lang.String"
+		resultClass="bo">
+	<![CDATA[
+		   select      g.org_id  as orgId,
+					   g.org_code as orgCode,
+					   g.org_level as orgLevel,
+					   g.org_city as orgCity,
+					   g.org_name as orgName,
+					   g.org_parent_id as orgParentId,
+					   g.state as state ,
+					   g.remark as remark,
+					   g.last_modify as lastModify,
+					   g.root_notice as rootNotice,
+					   g.sap_org_id as sapOrgId,
+					   g.company_id as companyId,
+					   g.org_jc as orgJc,
+					   g.city_id as cityId,
+					   g.leader_station_id as leaderStationId,
+					   g.img_showorg_id  as imgOrgId,
+					   g.adgroup_name as ADGroupName,
+					   g.organise_type as OrganiseType,
+					   g.create_time as createTime,
+					   g.new_organise_id_str as NewOrganiseIdStr,
+					   g.lsorganise_ids as LSOrganiseIds,
+					   g.short_name as ShortName,
+					   g.jian_ping as JianPing,
+					   g.samaccount_name as sAMAccountName,
+					   g.if_have_mail as IfHaveMail,
+					   g.sap_company_id as sapCompanyId,
+					   g.orgunit as  orgUnit,
+					   g.org_range as orgRange,
+					   g.account_type as accountType
+		  from basis.basis_tb_org g
+		 where g.org_id in (select a.org_id from basis.basis_tb_station_user a where a.user_id=#userId#)
+		   order by g.org_id
+	]]>
+	</select>
+	
+	<select id="getEmpListByOrgId" parameterClass="java.lang.Long" 
+		resultClass="users">
+	<![CDATA[
+		select distinct a.emp_id       as userId,
+						   a.emp_name     as userName,
+						   a.org_id       as orgId,
+						   c.station_name as posName
+		  from basis.basis_tb_salesemp_info a
+		  left join basis.basis_tb_station_user b on a.emp_id = b.user_id
+		  left join basis.basis_tb_stations c on b.station_id = c.station_id
+		 where a.emp_state in ('Y','S') and a.org_id = #org_id#
+	]]>
+	</select>
+	
+	<select id="searchDemandListCount" parameterClass="demand" resultClass="java.lang.Integer">
+	<![CDATA[
+		select count(*)
+	    from crm.crm_tb_demand d 
+	    
+	    where d.state='U' ]]>
+	    <dynamic>
+			<isNotEmpty property="demandId" prepend="and">
+			<![CDATA[  d.demand_id=#demandId#]]>
+			</isNotEmpty>
+			<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[  d.org_id in (select oo.org_id from basis.basis_tb_org oo 
+				         start with oo.org_id = #orgId#
+				         connect by nocycle prior oo.org_id= oo.org_parent_id) ]]>
+			</isNotEmpty>
+			<isNotEmpty property="title" prepend="and">
+			<![CDATA[  d.title like #title,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="demandLevel" prepend="and">
+			<![CDATA[  d.demand_level=#demandLevel#]]>
+			</isNotEmpty>
+			<isNotEmpty property="demandType" prepend="and">
+			<![CDATA[  d.demand_type=#demandType#]]>
+			</isNotEmpty>
+			<isNotEmpty property="startDate" prepend="and">
+			<![CDATA[  d.create_date>=#startDate#]]>
+			</isNotEmpty>
+			<isNotEmpty property="endDate" prepend="and">
+			<![CDATA[  d.create_date<=#endDate#]]>
+			</isNotEmpty>
+			<isNotEmpty property="resultDate" prepend="and">
+			<![CDATA[  d.result_date=#resultDate#]]>
+			</isNotEmpty>
+			<isNotEmpty property="author" prepend="and">
+			<![CDATA[  d.author like #author,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="authorId" prepend="and">
+			<![CDATA[  (d.author_id=#authorId# 
+			            or d.demand_id in 
+			               (select u.demand_id from crm.crm_tb_demand_user u where u.user_id=#authorId#))]]>
+			</isNotEmpty>
+	    </dynamic>
+	        <![CDATA[order by d.demand_id desc ]]>
+	</select>
+	
+	<select id="searchDemandList" parameterClass="demand" resultClass="demand">
+	<include refid="global.paginationStart" /> 
+	<![CDATA[
+		select 
+		       d.demand_id demandId,
+	           d.title title,
+	           d.author_id authorId,
+	           d.author author,
+	           d.author_email authorEmail,
+	           d.phone phone,
+	           d.org_id orgId,
+	           o.org_name orgName,
+	           d.content content,
+	           d.demand_level demandLevel,
+	           d.demand_type demandType,
+	           d.create_date createDate,
+	           d.last_date lastDate,
+	           d.expect_date expectDate,
+	           d.handle_attitude handleAttitude,
+	           d.handle_speed handleSpeed,
+	           d.handle_quality handleQuality,
+	           d.advice advice,
+	           d.result_date resultDate
+	    from crm.crm_tb_demand d 
+	    left join basis.basis_tb_org o on d.org_id=o.org_id
+	    where d.state='U' ]]>
+	    <dynamic>
+			<isNotEmpty property="demandId" prepend="and">
+			<![CDATA[  d.demand_id=#demandId#]]>
+			</isNotEmpty>
+			<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[  d.org_id in (select oo.org_id from basis.basis_tb_org oo 
+				         start with oo.org_id = #orgId#
+				         connect by nocycle prior oo.org_id= oo.org_parent_id) ]]>
+			</isNotEmpty>
+			<isNotEmpty property="title" prepend="and">
+			<![CDATA[  d.title like #title,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="demandLevel" prepend="and">
+			<![CDATA[  d.demand_level=#demandLevel#]]>
+			</isNotEmpty>
+			<isNotEmpty property="demandType" prepend="and">
+			<![CDATA[  d.demand_type=#demandType#]]>
+			</isNotEmpty>
+			<isNotEmpty property="startDate" prepend="and">
+			<![CDATA[  d.create_date>=#startDate#]]>
+			</isNotEmpty>
+			<isNotEmpty property="endDate" prepend="and">
+			<![CDATA[  d.create_date<=#endDate#]]>
+			</isNotEmpty>
+			<isNotEmpty property="resultDate" prepend="and">
+			<![CDATA[  d.result_date=#resultDate#]]>
+			</isNotEmpty>
+			<isNotEmpty property="author" prepend="and">
+			<![CDATA[  d.author like #author,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="authorId" prepend="and">
+			<![CDATA[  (d.author_id=#authorId# 
+			            or d.demand_id in 
+			               (select u.demand_id from crm.crm_tb_demand_user u where u.user_id=#authorId#))]]>
+			</isNotEmpty>
+	    </dynamic>
+	        <![CDATA[order by d.demand_id desc ]]>
+	<include refid="global.paginationEnd" /> 
+	</select>
+	
+	<select id="getDemand" parameterClass="demand" resultClass="demand">
+	<![CDATA[
+		select 
+		       d.demand_id demandId,
+	           d.title title,
+	           d.author_id authorId,
+	           d.author author,
+	           d.author_email authorEmail,
+	           d.phone phone,
+	           d.org_id orgId,
+	           o.org_name orgName,
+	           d.content content,
+	           d.demand_level demandLevel,
+	           d.demand_type demandType,
+	           d.create_date createDate,
+	           d.last_date lastDate,
+	           d.expect_date expectDate,
+	           d.handle_attitude handleAttitude,
+	           d.handle_speed handleSpeed,
+	           d.handle_quality handleQuality,
+	           d.advice advice,
+	           d.result_date resultDate
+	    from crm.crm_tb_demand d 
+	    left join basis.basis_tb_org o on d.org_id=o.org_id
+	    where 1=1 ]]>
+	    <dynamic>
+			<isNotEmpty property="demandId" prepend="and">
+			<![CDATA[  d.demand_id=#demandId#]]>
+			</isNotEmpty>
+	    </dynamic>
+	</select>
+	
+	<select id="getDemandId" resultClass="java.lang.Long">
+	<![CDATA[
+	   select crm.crm_seq_demand.nextval as demandId from dual
+		 ]]>
+	    
+	</select>
+	
+	<insert id="createDemand" parameterClass="demand">
+	<![CDATA[
+		insert into crm.crm_tb_demand
+		  (demand_id,
+		   title,
+		   author_id,
+		   author,
+		   author_email,
+		   phone,
+		   org_id,
+		   org_name,
+		   content,
+		   demand_level,
+		   demand_type,
+		   create_date,
+		   last_date,
+		   expect_date,
+		   state)
+		values
+		  (#demandId#,
+		   #title#,
+		   #authorId#,
+		   #author#,
+		   #authorEmail#,
+		   #phone#,
+		   #orgId#,
+		   #orgName#,
+		   #content#,
+		   #demandLevel#,
+		   #demandType#,
+		   sysdate,
+		   sysdate,
+		   #expectDate#,
+		   'U')
+	]]>
+	</insert>
+	
+	<insert id="createDemandUser" parameterClass="demandUser">
+	<![CDATA[
+		insert into crm.crm_tb_demand_user
+		  (user_id,
+		   user_name,
+		   org_name,
+		   state,
+		   expect_date,
+		   demand_id,
+		   create_date)
+		values
+		  (#userId#,
+		   #userName#,
+		   #orgName#,
+		   #state#,
+		   #expectDate#,
+		   #demandId#,
+		   sysdate)
+	]]>
+	</insert>
+	
+	<insert id="createDemandCommunit" parameterClass="demandCommunit">
+	<selectKey resultClass="java.lang.Long" keyProperty="communitId">
+		<![CDATA[
+			select crm.crm_seq_demand_communit.nextval as communitId from dual
+		]]>
+	</selectKey>
+	<![CDATA[
+		insert into crm.crm_tb_demand_communit
+		  (user_id,
+		   user_name,
+		   org_name,
+		   communit_id,
+		   content,
+		   demand_id,
+		   create_date)
+		values
+		  (#userId#,
+		   #userName#,
+		   #orgName#,
+		   #communitId#,
+		   #content#,
+		   #demandId#,
+		   sysdate)
+	]]>
+	</insert>
+	
+	<select id="searchDemandUserList" parameterClass="demandUser" resultClass="demandUser">
+	<![CDATA[
+	    select 
+	          u.user_id userId,
+	          u.user_name userName,
+	          u.org_name orgName,
+	          u.create_date createDate,
+	          u.state state,
+	          nvl(u.expect_date,' ') expectDate
+	     from crm.crm_tb_demand_user u
+	     where u.demand_id = #demandId#
+	     order by u.create_date
+	]]>
+	</select>
+	
+	<select id="searchDemandCommunitList" parameterClass="demandCommunit" resultClass="demandCommunit">
+	<![CDATA[
+	    select 
+	          u.user_id userId,
+	          u.user_name userName,
+	          u.org_name orgName,
+	          u.create_date createDate,
+	          u.content content
+	     from crm.crm_tb_demand_communit u
+	     where u.demand_id = #demandId#
+	     order by u.create_date
+	]]>
+	</select>
+	
+	<update id="updateDemand" parameterClass="demand">
+	<![CDATA[
+	    update crm.crm_tb_demand d set d.last_date = sysdate ]]>
+	    <dynamic>
+			<isNotEmpty property="phone" prepend=",">
+			<![CDATA[  d.phone=#phone#]]>
+			</isNotEmpty>
+			<isNotEmpty property="authorEmail" prepend=",">
+			<![CDATA[  d.author_email=#authorEmail#]]>
+			</isNotEmpty>
+			<isNotEmpty property="title" prepend=",">
+			<![CDATA[  d.title = title]]>
+			</isNotEmpty>
+			<isNotEmpty property="demandLevel" prepend=",">
+			<![CDATA[  d.demand_level=#demandLevel#]]>
+			</isNotEmpty>
+			<isNotEmpty property="demandType" prepend=",">
+			<![CDATA[  d.demand_type=#demandType#]]>
+			</isNotEmpty>
+			<isNotEmpty property="content" prepend=",">
+			<![CDATA[  d.content=#content#]]>
+			</isNotEmpty>
+			<isNotEmpty property="handleSpeed" prepend=",">
+			<![CDATA[  d.handle_speed=#handleSpeed#]]>
+			</isNotEmpty>
+			<isNotEmpty property="handleQuality" prepend=",">
+			<![CDATA[  d.handle_quality=#handleQuality#]]>
+			</isNotEmpty>
+			<isNotEmpty property="handleAttitude" prepend=",">
+			<![CDATA[  d.handle_attitude=#handleAttitude#]]>
+			</isNotEmpty>
+			<isNotEmpty property="advice" prepend=",">
+			<![CDATA[  d.advice=#advice#]]>
+			</isNotEmpty>
+			<isNotEmpty property="resultDate" prepend=",">
+			<![CDATA[  d.result_date=#resultDate#]]>
+			</isNotEmpty>
+			<isNotEmpty property="state" prepend=",">
+			<![CDATA[  d.state=#state#]]>
+			</isNotEmpty>
+	    </dynamic>
+	    <![CDATA[
+	        where d.demand_id = #demandId#
+	             ]]>
+	</update>
+	
+	<update id="updateDemandUser" parameterClass="demandUser">
+	<![CDATA[
+	    update crm.crm_tb_demand_user d ]]>
+	    <dynamic prepend="set">
+			<isNotEmpty property="state" prepend=",">
+			<![CDATA[  d.state=#state#]]>
+			</isNotEmpty>
+			<isNotEmpty property="expectDate" prepend=",">
+			<![CDATA[  d.expect_date=#expectDate#]]>
+			</isNotEmpty>
+	    </dynamic>
+	    <![CDATA[
+	        where d.demand_id = #demandId# and d.user_id=#userId#
+	             ]]>
+	</update>
+  
+
+</sqlMap>

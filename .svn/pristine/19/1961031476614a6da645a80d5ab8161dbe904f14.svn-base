@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui"])
+		#JS_ENV_VAL()	
+	</head>
+	<body class="easyui-layout">
+		<form id="ff" method="post" >
+			<div region="center" class="easyui-panel" title="修改品项" data-options="iconCls:'icon-edit'">			
+			<table width="100%" border="0" cellpadding="0" cellspacing="1">					
+            <input type="hidden" id="saleItemsId" name="saleItems.saleItemsId" style="width:155px;" value='$!{saleItems.saleItemsId}'  data-options="required:true,editable:false">		
+			<tr>
+				<td class="head" noWrap>客户渠道</td>
+                <td>
+                    <input class="easyui-combobox" id="channelName"  value="$!{saleItems.channelName}" validType="length[0,20]" data-options="required:true" onchange="change();">
+                    <input type="hidden" id="channelId" name="saleItems.channelId"  value="$!{saleItems.channelId}">
+                </td>
+			</tr> 									 
+			<tr>
+			    <td class="head" noWrap>所属经分销商</td>
+                <td><input type="hidden" id="saleItemsKunnrId" value="$!{saleItemsId.saleItemsKunnr}">  
+                <input id="saleItemsKunnr" name="saleItems.saleItemsKunnr" style="width:180px"  data-options="required:false,editable:false" validType="length[0,200]">           
+                <input type="hidden" id="saleItemsKunnrName" name="saleItems.saleItemsKunnrName" value="$!{saleItems.saleItemsKunnrName}"  style="BACKGROUND-COLOR:pink" style="width:320px"  data-options="required:false" ></td>
+				<div id="toolbarKonzs" class="datagrid-toolbar">
+				<input class="easyui-searchbox" searcher="searcherKonzs" prompt="请输入经销商名称查询" style="width:300px"></input>
+				</div>	
+			</tr>
+			<tr>
+ 				<td class="head" noWrap>所属系统：</td>
+				<td ><input type="hidden" id="saleItemsSystemId"  value="$!{saleItems.saleItemsSystemId}" >
+				<input type="hidden" id="saleItemsSystemName"  value="$!{saleItems.saleItemsSystemName}">
+				<input id="saleItemsSystem" name="saleItems.saleItemsSystem" data-options="required:false"><td>
+				<div id="toolbarSys" class="datagrid-toolbar">
+				<input class="easyui-searchbox" searcher="searcherSys" prompt="请输入所属系统名称查询" style="width:300px"></input>		
+				</div>
+			</tr>			
+			<tr>
+				<td class="head" noWrap>对应物料:</td>
+				<td>
+				<input type="hidden" id="skuName"  value="$!{saleItems.skuNames}">
+				<input id="skuId" name="saleItems.sku_id"   data-options="required:true"  />
+                </td>
+				<div id="toolbarSku" class="datagrid-toolbar" >
+				<input class="easyui-searchbox" searcher="searcher1" prompt="请填写物料名"  style="width:300px"></input>
+				</div>
+			</tr>
+            </table>
+			
+			</div>
+			<div region="south" border="false" style="text-align:right;height:30px;line-height:30px;">
+				<a class="easyui-linkbutton" icon="icon-ok" href="javascript:submit()">提交</a>
+				<a class="easyui-linkbutton" icon="icon-cancel" href="javascript:close()">取消</a>
+			</div>			
+		</form>
+		<iframe id="hideFrame" name="hideFrame"  style="height: 0; width: 0"></iframe>
+	</body>
+	<div id="OpenGoal"/> 
+<script type="text/javascript" src="$!{env.imgUrl}/js/platform/saleItems/updateSaleItems.js"></script>
+</html>

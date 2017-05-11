@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<bean id="questionAction" class="com.kintiger.platform.question.action.QuestionAction"
+		scope="request" parent="baseAction">
+		<property name="questionService" ref="questionService" />
+		<property name="questionFilePath">
+			<value>${question.upload.filePath}</value>
+		</property>
+	</bean>
+
+	<bean id="questionService"
+		class="com.kintiger.platform.question.service.impl.QuestionServiceImpl">
+		<property name="questionDao" ref="questionDao" />
+		<property name="transactionTemplate" ref="transactionTemplate"></property>
+		<property name="questionFilePath">
+			<value>${question.upload.filePath}</value>
+		</property>
+	</bean>
+	<bean id="questionDao" class="com.kintiger.platform.question.dao.impl.QuestionDaoImpl"
+		parent="baseDao">
+	</bean>
+
+</beans>

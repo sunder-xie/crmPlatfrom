@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui","upload"])
+		#JS_ENV_VAL()
+	</head>
+	<body class="easyui-layout">	
+	<form  method="post" target="hideFrame" enctype="multipart/form-data">
+          <div id="p_add" region="center" class="easyui-panel"
+			title="分销量信息" 
+			data-options="iconCls:'icon-edit'">
+						<table id="table_01" width="100%" cellspacing="0" border="0">
+						              <tr>
+                                           <td>&nbsp;</td>
+                                         </tr>
+                                         <tr>
+                                           <td>&nbsp;</td>
+                                         <tr>
+                                           <td>&nbsp;</td>
+                                         </tr>
+                                        <tr>
+                                           <td class="head" noWrap>经销商：</td>
+                                           <td><input id="kunnr" data-options="editable:false"></td>
+					                       <div id="toolbarKunnr" class="datagrid-toolbar">
+					                       <input class="easyui-searchbox" searcher="searcherKunnr" prompt="请输入经销商名称查询" style="width:300px"></input>		
+				                           </div>
+				                       </tr>
+				                       <tr>
+                                           <td>&nbsp;</td>
+                                         </tr>
+									    <tr>
+                                           <td class="head" noWrap>门店：</td>
+                                           <input type="hidden" id="flag" name="stockReport.flag" value="sales_day">
+                                           <input type="hidden" id="orgId" value="$!{orgId}">
+                                           <td><input id="custId" name="stockReport.custId" data-options="editable:false"></td>
+					                       <div id="toolbarKonzs" class="datagrid-toolbar">
+					                       <input class="easyui-searchbox" searcher="searcherKonzs" prompt="请输入门店名称查询" style="width:300px"></input>		
+				                           </div>
+				                       </tr>
+				                       <tr>
+                                           <td>&nbsp;</td>
+                                         </tr>
+										<tr>
+										   <td class="head" nowrap>品项：</td>
+		                                   <td>
+			                               <input id="skuId" name="stockReport.skuId" data-options="editable:false">
+			                               </td>
+			                               <div id="toolbarSku" class="datagrid-toolbar" >
+			                               <input class="easyui-searchbox" searcher="searcherSku" prompt="请填写物料名"  style="width:300px" />
+			                               </div>
+			                           </tr>
+			                           <tr>
+                                           <td>&nbsp;</td>
+                                         </tr>
+                                        <tr>
+				                           <td class="head" noWrap>分销量日期：</td>
+                                           <td><input type="text" id="checkTime" name="stockReport.checkTime" onfocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy-MM-dd',maxDate:'%y-%M-%d',minDate:'%y-%M-01'})" class="Wdate" readonly/></td>
+                                       </tr>
+                                       <tr>
+                                           <td>&nbsp;</td>
+                                         </tr>
+                                        <tr>
+                                           <td class="head" noWrap>数量：</td>
+                                           <td><input type="text" id="quantity" name="stockReport.quantity" class="easyui-numberbox" data-options="precision:0" style="width : 130px">
+                                               <input type="text" id="unitDesc" style="width : 20px" readonly>
+                                           </td>
+										</tr>
+                                        <tr>
+                                           <td>&nbsp;</td>
+                                         </tr>
+										<tr>
+				                      <td colspan="2"><center><a class="easyui-linkbutton" icon="icon-ok" href="javascript:createStockReport()">提交</a>
+				                      <a class="easyui-linkbutton" icon="icon-cancel" href="javascript:cencel()">取消</a></center></td>
+				                      </tr>
+						      </table>
+		      </div>
+	
+		 </form>
+           <iframe id="hideFrame" name="hideFrame"  style="height: 0; width: 0"></iframe>
+           <div id="maintWindow"/>
+           	</body>
+         <script type="text/javascript" src="$!{env.imgUrl}/js/My97DatePicker/WdatePicker.js"></script>
+         <script type="text/javascript" src="$!{env.imgUrl}/js/platform/stockReport/createCustomerStockReportSales.js"></script>
+</html>

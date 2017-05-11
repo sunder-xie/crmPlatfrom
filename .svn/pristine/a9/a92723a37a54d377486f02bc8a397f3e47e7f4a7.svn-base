@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://www.springframework.org/schema/aop  
+	http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
+
+	<bean id="ordersAction" class="com.kintiger.platform.order.action.OrdersAction"
+		parent="baseAction" scope="request">
+		<property name="orderPlatService" ref="orderPlatService"></property>
+		<property name="kunnrAddressService" ref="kunnrAddressService" ></property>
+	</bean>
+	
+	<bean id="orderPlatService" class="com.kintiger.platform.order.service.impl.OrderPlatServiceImpl">
+		<property name="ordersDao" ref="ordersDao"></property>
+		<property name="transactionTemplate" ref="transactionTemplate"></property>
+	</bean>
+	
+	<bean id="ordersDao" class="com.kintiger.platform.order.dao.impl.OrdersDaoImpl" parent="baseDao"></bean>
+	
+   <bean id="orderAction" class="com.kintiger.platform.order.action.OrderAction"
+		parent="baseAction" scope="request">
+   <property name="orderService" ref="orderService" ></property>
+   <property name="kunnrBusinessService" ref="kunnrBusinessService" ></property>
+   <property name="allUserServiceHessian" ref="allUserServiceHessian"/> 
+   <property name="orgServiceHessian" ref="orgServiceHessian"/> 
+	</bean>
+   <bean id="orderService" class="com.kintiger.platform.order.service.impl.OrderServiceImpl">
+		<property name="orderDao" ref="orderDao" ></property>
+	</bean>
+  <bean id="orderDao" class="com.kintiger.platform.order.dao.impl.OrderDaoImpl" parent="baseDao"></bean>
+  
+  <bean id="orderNewAction" class="com.kintiger.platform.order.action.OrderNewAction"
+		parent="baseAction" scope="request">
+   <property name="orderNewService" ref="orderNewService" ></property>
+   <property name="orgServiceHessian" ref="orgServiceHessian"></property> 
+   <property name="kunnrService" ref="kunnrService"></property> 
+   <property name="kunnrBusinessService" ref="kunnrBusinessService" ></property>
+	</bean>
+  <bean id="orderResultAction" class="com.kintiger.platform.order.action.OrderResultAction"
+		parent="baseAction" scope="request">
+   <property name="orderNewService" ref="orderNewService" ></property> 
+	</bean>
+   <bean id="orderNewService" class="com.kintiger.platform.order.service.impl.OrderNewServiceImpl">
+		<property name="orderNewDao" ref="orderNewDao" ></property>
+   <property name="sapConnection" ref="sapConnection" />
+	</bean>
+  <bean id="orderNewDao" class="com.kintiger.platform.order.dao.impl.OrderNewDaoImpl" parent="baseDao"></bean>
+  
+</beans>

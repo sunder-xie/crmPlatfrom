@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui"])
+		#JS_ENV_VAL()	
+	</head>
+	<body>
+		<form method="post" target="hideFrame" enctype="multipart/form-data">
+			<div  class="easyui-panel" title="分销目标量调整" data-options="iconCls:'icon-edit'">
+				<table width="100%" border="0" cellpadding="0" cellspacing="1">
+					<input type="hidden" id="goalSalesDetailList" name="goalSalesDetailList" value="[]"/>
+					<input type="hidden" id="changeId" name="goalSales.changeId" value="$!{goalSales.changeId}"/>
+					<input type="hidden" id="eventState" name="eventState" value="$!{goalSales.eventState}"/>
+					<input type="hidden" id="token" name="token" value="$!{token}"/>
+					<input type="hidden" id="nextUserId" name="nextUserId" />
+					<tr>
+						<td class="head" noWrap>标题：</td>
+						<td>
+							<input name="goalSales.title" id="title" value="$!{goalSales.title}" size="30" readonly/>
+						</td>
+					</tr>
+					<tr>
+					    <td class="head" noWrap>
+							提报人:
+						</td>
+						<td>
+							<input class="easyui-validatebox" id="userName" value="$!{goalSales.userName}" readonly />
+						</td>
+						<td class="head" noWrap>
+							组织:
+						</td>
+						<td>
+							<input class="easyui-validatebox" id='orgName' value="$!{goalSales.orgName}" readonly />
+							<input type="hidden" id="orgId" value="$!{orgId}"/>
+						</td>
+						<td class="head" noWrap>
+							提报时间:
+						</td>
+						<td>
+							<input class="easyui-validatebox" id='createDate' value="$!{goalSales.createDate}" readonly />
+						</td>
+					</tr>
+				</table>
+			</div>
+		    <table id="datagrid"></table>
+			
+			<div border="false" style="height:15px;"></div>
+			
+			<div class="easyui-panel" border="false" style="text-align:center">
+				<a id="submitBtn" class="easyui-linkbutton" icon="icon-ok" href="javascript:submit()">提交</a>
+			</div>
+		<iframe id="hideFrame" name="hideFrame"  style="height: 0; width: 0"></iframe>
+		</form>
+		<div id="maintWindow"/>
+		<div id="dialogWindow"/>
+		<div id="mainFrame"></div>
+	</body>
+	<script type="text/javascript" src="$!{env.imgUrl}/js/platform/goal/goalDistributionChangeView.js?js_version=20161020"></script>
+</html>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+	"http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="distributionDataRepMon" extends="kintiger-default">
+		<action name="distributionDataRepMonAction" class="distributionDataRepMonAction">
+			<result name="distributionDataRepMonSearch">/platform/distributionDataRepMon/distributionDataRepMonSearch.vm</result>
+			<result name="toDistributionDataRepMonSearch">/platform/distributionDataRepMon/toDistributionDataRepMonSearch.vm</result>
+			<result name="orgtree">/platform/org/orgTree.vm</result>
+			<result name="orgAllTree">/platform/org/orgTreeAll.vm</result>
+		</action>
+	</package>
+</struts>

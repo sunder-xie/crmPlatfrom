@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+ 	
+	<bean id="distributionDataRepAction" class="com.kintiger.platform.distributionDataRep.action.DistributionDataRepAction"
+		parent="baseAction" scope="request">
+		<property name="distributionDataRepService" ref="distributionDataRepService"/>
+		<property name="kunnrService" ref="kunnrService"/>
+		<property name="xmlFilePath">
+			<value>${wfe.xml.filePath}</value>
+		</property>	
+		<property name="orgServiceHessian" ref="orgServiceHessian"/>
+	</bean>
+	<bean id="distributionDataRepService" class="com.kintiger.platform.distributionDataRep.service.impl.DistributionDataRepServiceImpl">
+        <property name="distributionDataRepDao" ref="distributionDataRepDao"/>
+        <property name="sapConnection" ref="sapConnection" />        
+    </bean>
+	<bean id="distributionDataRepDao" class="com.kintiger.platform.distributionDataRep.dao.impl.DistributionDataRepDaoImpl"
+        parent="baseDao">
+    </bean>
+    
+</beans>

@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui"])
+		#JS_ENV_VAL()	
+	</head>
+	<body class="easyui-layout">
+		<form method="post" target="hideFrame">
+			<input type="hidden" name="year" id="year" value="$!{year}" />
+			<input type="hidden" name="month" id="month" value="$!{month}" />
+			<input type="hidden" name= "ctId" id="ctId" value="$!{bct.ctId}"/ >
+		    <input type="hidden" name= "mark" id="mark" value="$!{bct.mark}"/ >
+		    <input type="hidden" name= "createDate" id="createDate" value="$!{bct.createDate}"/ >
+		    <input type="hidden" name="kunnrGoalType" value="$!{bct.kunnrGoalType}"> </input>
+		    <input id="orgId" name="orgId" type='hidden' value='$!{bct.orgId}' /> 	
+			<div region="center" class="easyui-panel" title="信息维护" data-options="iconCls:'icon-edit'">
+			<table width="100%" border="0"  height="100%" cellpadding="0" cellspacing="1">
+		    <tr>
+			<td colspan="2" class="home_title_line">
+			<table width="100%" border="0" cellpadding="0" cellspacing="1">
+			<tr>
+				<td class="head" noWrap>目标年份:</td>
+				<td><input class="easyui-combobox" id="theYear" name="theYear"  value="$!{bct.theYear}" data-options="disabled:true,valueField:'itemName',editable:false,textField:'itemName',required:true,url:appUrl + '/goalAction!getDictTypeList.jspa'" readonly>
+               </td>
+       	     </tr>
+			 <tr>
+				<td class="head" noWrap>目标月份:</td>
+				<td><select class="easyui-combobox" id="theMonth" name="theMonth"  style="width:80px"  readonly data-options="disabled:true,required:false,editable:false">
+						<option value="01">一月</option>
+						<option value="02">二月</option>
+						<option value="03">三月</option>
+						<option value="04">四月</option>
+						<option value="05">五月</option>
+						<option value="06">六月</option>
+						<option value="07">七月</option>
+						<option value="08">八月</option>
+						<option value="09">九月</option>
+						<option value="10">十月</option>
+						<option value="11">十一月</option>
+						<option value="12">十二月</option>
+						<option value="$!{bct.theMonth}"selected></option>
+                </select>
+				</td>
+       	     </tr>
+			<tr>
+				<td class="head" noWrap>目标金额(元):</td>
+				<td><input id="targetNum" name="targetNum" value="$!{bct.targetNum}"  precision="6" class="easyui-numberbox" data-options="required:true" readonly/></td>
+			</tr>
+			<tr>
+			    <input id="kbetr" name="kbetr" type="hidden" value="$!{mat.kbetr}"/>
+				<td class="head" noWrap>目标箱数(标箱):</td>
+				<td><input id="box" name="box" class="easyui-numberbox" precision="2" value="$!{bct.box}" data-options="required:true" onchange="change()"/></td>
+			</tr>
+			#if($!{bct.mark}=='N')
+			<tr>
+            <td class="head" noWrap style="text-align: right">
+						组织查询:
+                    </td>
+					<td>
+					<input id="orgName" name="orgName" type='text' value="$!{bct.orgName}" class="easyui-validatebox" data-options="required:true,editable:false" readonly/>
+						&nbsp;<a class="easyui-linkbutton" href="javascript:selectOrgTree();">组织</a>
+					</td>
+			</tr>
+			#end
+			#if($!{bct.mark}=='Y')
+			<tr>
+				<td class="head" noWrap>对应客户:</td>
+				<input id="custNumber" name="custNumber" type='hidden' value='$!{bct.custId}' /> 	
+				<input id="custNameZh" name="custNameZh" type='hidden' value='$!{bct.custNameZH}' /> 	
+				<td><input id="id" name="id"   class="easyui-combobox"  style="width:152px;"  data-options="disabled:true,required:true,editable:false"  />
+                </td>
+			</tr>
+			#end
+			<tr>
+				<td class="head" noWrap>对应品项or四级科目(SKU):</td>
+				<input id="matterId" name="matterId" type='hidden' value='$!{bct.matter}' /> 	
+				<input id="matterName" name="matterName" type='hidden' value='$!{bct.bezei}' /> 
+				<td><input id="wid" name="wid"   class="easyui-combobox"   style="width:152px;"  data-options="disabled:true,required:true,editable:false"  />
+                </td>
+			</tr>
+            </table>
+			</td>
+			</tr>
+		    </table>
+			</div>
+			#if($!{bct.mark}=='Y')
+			<div region="south" border="false" style="text-align:right;height:30px;line-height:30px;">
+				<a class="easyui-linkbutton" icon="icon-ok" href="javascript:submit()">提交</a>
+				<a class="easyui-linkbutton" icon="icon-cancel" href="javascript:close()">取消</a>
+			</div>
+			#else
+			<div region="south" border="false" style="text-align:right;height:30px;line-height:30px;">
+				<a class="easyui-linkbutton" icon="icon-ok" href="javascript:submit1()">提交</a>
+				<a class="easyui-linkbutton" icon="icon-cancel" href="javascript:close()">取消</a>
+			</div>	
+			#end
+			#if($!{bct.mark}=='Y')
+			<div id="toolbar" class="datagrid-toolbar" >
+		        <input id="ss" class="easyui-searchbox" searcher="searcher" prompt="请填写客户代码或客户名称" customer="#mm" style="width:300px"></input>		
+		       </div>
+		    #end 
+			  <div id="toolbar1" class="datagrid-toolbar" >
+		        <input id="ss" class="easyui-searchbox" searcher="searcher1" prompt="请填写品项or四级科目（SKU）代码或名称" customer="#mm" style="width:300px"></input>		
+		       </div> 
+		</form>
+		<iframe id="hideFrame" name="hideFrame"  style="height: 0; width: 0"></iframe>
+	</body>
+	<div id="OpenGoal"/> 
+<script type="text/javascript" src="$!{env.imgUrl}/js/platform/goal/updateGoal.js?version=20170106"></script>
+</html>

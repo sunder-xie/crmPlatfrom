@@ -1,0 +1,13 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui","upload"])
+		#JS_ENV_VAL()
+	</head>
+	<body  class="easyui-layout">	
+	    <center><b><font size="+1">支付成功，请刷新支付页面！</font></b></center>
+	</body>
+
+</html>

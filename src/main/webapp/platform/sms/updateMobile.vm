@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui"])
+		#JS_ENV_VAL()
+	</head>
+	<body>
+		<form method="post" enctype="multipart/form-data">
+		<input type="hidden" id="smsList" name="smsList"/>
+		<input type="hidden" id="sendInfoList" name="sendInfoList"/>
+				<div class="easyui-panel" title="电话号码批量更新" data-options="collapsible:true">
+			<table width="100%" border="0" cellpadding="0" cellspacing="1" >
+                <tr>
+					<td class="head" noWrap>组织:</td>
+                    <td><input id="orgId" name="orgId" type="hidden" value="50919">
+						<input type="text" id="orgName" name="orgName"  value="香飘飘食品股份有限公司" style="width:148px;"readonly>
+    					<input type="checkbox" name="bhxjFlag" id="bhxjFlag" checked="true" value="C"/>包含下级
+						<a class="easyui-linkbutton"  href="javascript:selectOrgTree()">组织</a>
+					</td>
+    				<td class="head" noWrap style="text-align: right">
+    					选择岗位:
+    				</td>
+    				<td  noWrap>
+						<select  id="stationIds" name="stationIds"  style="width:120px;">
+						</select>
+    				</td> 
+    				<td></td>						
+					<td>
+						<a id="search" href="javascript:search()" class="easyui-linkbutton" data-options="iconCls:'icon-search'">查询</a>
+                    	<a href="javascript:clearValue()" class="easyui-linkbutton" iconCls="icon-clear">重置</a> 	
+					</td>
+
+                </tr>
+    			<tr>
+    				<td class="head" noWrap style="text-align:right">
+    					名称:
+    				</td>
+    				<td>		
+    					<input type="text" id="userName" name="userName" style="width:288px;" >
+    				</td> 
+					<td class="head" noWrap>
+						人员类别:
+					</td>    				   				
+            		<td >
+						<select class="easyui-combobox" id="isOffice" name="isOffice"  style="width:120px;" data-options="editable:false" />
+					</td>     				
+					<td class="head" noWrap>
+						导入数据（.xls格式）:
+	                </td>
+					<td  noWrap>
+						<input type="hidden" id="fileName" name="fileName" />
+						<input type="file" id="fileContent" name="fileContent"/>
+	                </td> 		
+					  				
+            	</tr>
+           	
+            	<tr>
+            		<td>
+            		</td>
+
+					<div id="toolbar" class="datagrid-toolbar" >
+					<input id="ss" class="easyui-searchbox" searcher="searcher" prompt="请填写查询条件" menu="#mm" style="width:300px"></input>					
+            	</tr>
+    		</table>		
+				<table id="datagrid1"></table> 
+				</div>
+	
+			<input type="hidden" id="ids" name="ids" />
+			<div style="text-align: center">
+				<a class="easyui-linkbutton" icon="icon-ok" href="javascript:submitImport()">确定导入</a>
+				<a class="easyui-linkbutton" icon="icon-cancel" href="javascript:cancel()">取消导入</a>
+			</div>
+		</form>
+		<iframe id="hideFrame" name="hideFrame"  style="height: 0; width: 0"></iframe>
+		<div id="maintModelAtt"/>
+	</body>
+	<script type="text/javascript" src="$!{env.imgUrl}/js/platform/sms/updateMobile.js"></script>
+</html>

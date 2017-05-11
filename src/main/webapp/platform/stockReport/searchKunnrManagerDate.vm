@@ -1,0 +1,145 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+        #CSSM(["easyui","style"])
+        #JSM(["jquery", "easyui"])
+        #JS_ENV_VAL()
+    </head>
+    <body>
+        <form method="post" id="form">
+            <div class="easyui-panel" data-options="collapsible:true,iconCls:'icon-search'" style="padding: 2px;">
+                <table width="100%" border="0" cellpadding="0" cellspacing="1">
+                <tr>
+                <td>
+                <div class="easyui-panel" title="分销预估时间维护"   style="height:500px;width:360px;">
+                <table width="100%" border="0" cellpadding="0" cellspacing="0">
+                   <br/>
+                   <tr>
+                        <td class="head" noWrap>1月：</td>
+                        <td>
+                            <input class="easyui-datebox" id="checkDate1" name="checkTimes" data-options="editable:false">
+                        </td>
+                   </tr>
+                   <tr>
+                        <td>&nbsp;</td>
+                   </tr>
+                   <tr>
+                        <td class="head" noWrap>2月：</td>
+                        <td>
+                            <input class="easyui-datebox" id="checkDate2" name="checkTimes" data-options="editable:false">
+                        </td>
+                   </tr>
+                   <tr>
+                        <td>&nbsp;</td>
+                   </tr>
+                   <tr>
+                        <td class="head" noWrap>3月：</td>
+                        <td>
+                            <input class="easyui-datebox" id="checkDate3" name="checkTimes" data-options="editable:false">
+                        </td>
+                   </tr>
+                   <tr>
+                        <td>&nbsp;</td>
+                   </tr>
+                   <tr>
+                        <td class="head" noWrap>4月：</td>
+                        <td>
+                            <input class="easyui-datebox" id="checkDate4" name="checkTimes" data-options="editable:false">
+                        </td>
+                   </tr>
+                   <tr>
+                        <td>&nbsp;</td>
+                   </tr>
+                   <tr>
+                        <td class="head" noWrap>5月：</td>
+                        <td>
+                            <input class="easyui-datebox" id="checkDate5" name="checkTimes" data-options="editable:false">
+                        </td>
+                   </tr>
+                   <tr>
+                        <td>&nbsp;</td>
+                   </tr>
+                   <tr>
+                        <td class="head" noWrap>6月：</td>
+                        <td>
+                            <input class="easyui-datebox" id="checkDate6" name="checkTimes" data-options="editable:false">
+                        </td>
+                        <td align="center">
+                             <a href="javascript:submit()"  class="easyui-linkbutton" iconCls="icon-search">修改</a>
+                        </td>
+                   </tr>
+                   <tr>
+                        <td>&nbsp;</td>
+                   </tr>
+                   <tr>
+                        <td class="head" noWrap>7月：</td>
+                        <td>
+                            <input class="easyui-datebox" id="checkDate7" name="checkTimes" data-options="editable:false">
+                        </td>
+                   </tr>
+                   <tr>
+                        <td>&nbsp;</td>
+                   </tr>
+                   <tr>
+                        <td class="head" noWrap>8月：</td>
+                        <td>
+                            <input class="easyui-datebox" id="checkDate8" name="checkTimes" data-options="editable:false">
+                        </td>
+                   </tr>
+                   <tr>
+                        <td>&nbsp;</td>
+                   </tr>
+                   <tr>
+                        <td class="head" noWrap>9月：</td>
+                        <td>
+                            <input class="easyui-datebox" id="checkDate9" name="checkTimes" data-options="editable:false">
+                        </td>
+                   </tr>
+                   <tr>
+                        <td>&nbsp;</td>
+                   </tr>
+                   <tr>
+                        <td class="head" noWrap>10月：</td>
+                        <td>
+                            <input class="easyui-datebox" id="checkDate10" name="checkTimes" data-options="editable:false">
+                        </td>
+                   </tr>
+                   <tr>
+                        <td>&nbsp;</td>
+                   </tr>
+                   <tr>
+                        <td class="head" noWrap>11月：</td>
+                        <td>
+                            <input class="easyui-datebox" id="checkDate11" name="checkTimes" data-options="editable:false">
+                        </td>
+                   </tr>
+                   <tr>
+                        <td>&nbsp;</td>
+                   </tr>
+                   <tr>
+                        <td class="head" noWrap>12月：</td>
+                        <td>
+                            <input class="easyui-datebox" id="checkDate12" name="checkTimes" data-options="editable:false">
+                        </td>
+                   </tr>
+                   <tr>
+                        <td>&nbsp;</td>
+                   </tr>
+                   </table>
+                   </div>
+                   </td>
+                   <td>
+                   <table id="datagrid" width="100%" border="0" cellpadding="0" cellspacing="0">  
+                   </table>
+                   </td>
+                   </tr>
+             </table>
+        </div>
+ </form>
+<iframe id="hideFrame" name="hideFrame"  style="height: 0; width: 0"></iframe>
+<div id="maintActivityPlanInfo"/>
+</body>
+	<script type="text/javascript" src="$!{env.imgUrl}/js/My97DatePicker/WdatePicker.js"></script>
+    <script type="text/javascript" src="$!{env.imgUrl}/js/platform/stockReport/searchKunnrManagerDate.js"></script>
+</html>

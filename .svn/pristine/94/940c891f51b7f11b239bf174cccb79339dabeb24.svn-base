@@ -1,0 +1,1081 @@
+<?xml version="1.0" encoding="GB2312"?>
+<!DOCTYPE sqlMap
+	PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="sales">
+
+	<typeAlias alias="tvko" type="com.kintiger.platform.sales.pojo.Tvko" />
+	<typeAlias alias="tvtwt" type="com.kintiger.platform.sales.pojo.Tvtwt" />
+	<typeAlias alias="tspa" type="com.kintiger.platform.sales.pojo.Tspa" />
+	<typeAlias alias="tvkbt" type="com.kintiger.platform.sales.pojo.Tvkbt" />
+	<typeAlias alias="tvkbz" type="com.kintiger.platform.sales.pojo.Tvkbz" />
+	<typeAlias alias="tvgrt" type="com.kintiger.platform.sales.pojo.Tvgrt" />
+	<typeAlias alias="t171t" type="com.kintiger.platform.sales.pojo.T171t" />
+	<typeAlias alias="t001w" type="com.kintiger.platform.sales.pojo.T001w" />
+	<typeAlias alias="t001" type="com.kintiger.platform.sales.pojo.T001" />
+	<typeAlias alias="tvv1t" type="com.kintiger.platform.sales.pojo.Tvv1t" />
+	<typeAlias alias="tvv2t" type="com.kintiger.platform.sales.pojo.Tvv2t" />
+	<typeAlias alias="tvbot" type="com.kintiger.platform.sales.pojo.Tvbot" />
+	<typeAlias alias="zwlqy" type="com.kintiger.platform.sales.pojo.Zwlqy" />
+	<typeAlias alias="region" type="com.kintiger.platform.sales.pojo.Region" />
+	<typeAlias alias="zdqsf" type="com.kintiger.platform.sales.pojo.Zdqsf" />
+	<typeAlias alias="tvbvk" type="com.kintiger.platform.sales.pojo.Tvbvk" />
+	<typeAlias alias="a603Konp" type="com.kintiger.platform.sales.pojo.A603Konp" />
+
+	<delete id="deleteTvko">
+	<![CDATA[
+		delete from crm.crm_tb_tvko
+	]]>
+	</delete>
+
+	<insert id="createTvko" parameterClass="tvko">
+	<![CDATA[
+		 insert into crm.crm_tb_tvko(
+		   mandt,
+		   vkorg,
+		   bukrs
+		   )
+		values
+		  (#mandt#,
+		   #vkorg#,
+		   #bukrs#
+		   )
+	]]>
+	</insert>
+
+	<select id="getTvkoCount" parameterClass="tvko" resultClass="java.lang.Integer">
+	<![CDATA[
+		 select count(1) from crm.crm_tb_tvko t  where 1 = 1 
+	]]>
+		<dynamic>
+			<isNotEmpty property="vkorg" prepend="and">
+			<![CDATA[t.vkorg like #vkorg,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="bukrs" prepend="and">
+			<![CDATA[ t.bukrs like #bukrs,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<select id="getTvkoList" parameterClass="tvko" resultClass="tvko">
+		<include refid="global.paginationStart" />
+	<![CDATA[
+		 select
+			t.mandt, 
+			t.vkorg, 
+			t.bukrs
+		  from crm.crm_tb_tvko t  where 1 = 1 
+	]]>
+		<dynamic>
+			<isNotEmpty property="vkorg" prepend="and">
+			<![CDATA[t.vkorg like #vkorg,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="bukrs" prepend="and">
+			<![CDATA[ t.bukrs like #bukrs,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+		</dynamic>
+		<include refid="global.paginationEnd" />
+	</select>
+
+	<delete id="deleteTvtwt">
+	<![CDATA[
+		delete from crm.crm_tb_tvtwt
+	]]>
+	</delete>
+
+	<insert id="createTvtwt" parameterClass="tvtwt">
+	<![CDATA[
+		 insert into crm.crm_tb_tvtwt(
+		   mandt,
+		   spras,
+		   vtweg,
+		   vtext
+		   )
+		values
+		  (#mandt#,
+		   #spras#,
+		   #vtweg#,
+		   #vtext#
+		   )
+	]]>
+	</insert>
+
+	<select id="getTvtwtCount" parameterClass="tvtwt" resultClass="java.lang.Integer">
+	<![CDATA[
+		 select count(1) from crm.crm_tb_tvtwt t  where t.spras='1'
+	]]>
+		<dynamic>
+			<isNotEmpty property="vtweg" prepend="and">
+			<![CDATA[t.vtweg like #vtweg,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="vtext" prepend="and">
+			<![CDATA[ t.vtext like #vtext,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<select id="getTvtwtList" parameterClass="tvtwt" resultClass="tvtwt">
+		<include refid="global.paginationStart" />
+	<![CDATA[
+		 select
+			t.mandt, 
+			t.spras, 
+			t.vtweg,
+			t.vtext
+		  from crm.crm_tb_tvtwt t where t.spras='1'
+	]]>
+		<dynamic>
+			<isNotEmpty property="vtweg" prepend="and">
+			<![CDATA[t.vtweg like #vtweg,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="vtext" prepend="and">
+			<![CDATA[ t.vtext like #vtext,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+		</dynamic>
+		<include refid="global.paginationEnd" />
+	</select>
+
+	<delete id="deleteTspa">
+	<![CDATA[
+		delete from crm.crm_tb_tspa
+	]]>
+	</delete>
+
+	<insert id="createTspa" parameterClass="tspa">
+   		<![CDATA[
+   		  insert into crm.crm_tb_tspa(
+               mandt,
+               spart,
+               vtext
+               )
+            values
+              (#mandt#,
+               #spart#,
+               #vtext#
+               )
+		]]>
+	</insert>
+
+	<select id="getTspaCount" parameterClass="tspa" resultClass="java.lang.Integer">
+	<![CDATA[
+		 select count(1) from crm.crm_tb_tspa t  where 1 = 1 
+	]]>
+		<dynamic>
+			<isNotEmpty property="spart" prepend="and">
+			<![CDATA[t.spart like #spart,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="vtext" prepend="and">
+			<![CDATA[t.vtext like #vtext,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<select id="getTspaList" parameterClass="tspa" resultClass="tspa">
+		<include refid="global.paginationStart" />
+	<![CDATA[
+		 select
+			t.mandt, 
+			t.spart,
+			t.vtext
+		  from crm.crm_tb_tspa t  where 1 = 1 
+	]]>
+		<dynamic>
+			<isNotEmpty property="spart" prepend="and">
+			<![CDATA[t.spart like #spart,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="vtext" prepend="and">
+			<![CDATA[t.vtext like #vtext,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+		</dynamic>
+		<include refid="global.paginationEnd" />
+	</select>
+
+	<delete id="deleteTvkbt">
+	<![CDATA[
+		delete from crm.crm_tb_tvkbt
+	]]>
+	</delete>
+
+	<insert id="createTvkbt" parameterClass="tvkbt">
+	<![CDATA[
+		 insert into crm.crm_tb_tvkbt(
+		   mandt,
+		   spras,
+		   vkbur,
+		   bezei
+		   )
+		values
+		  (#mandt#,
+		   #spras#,
+		   #vkbur#,
+		   #bezei#
+		   )
+	]]>
+	</insert>
+
+	<select id="getTvkbtCount" parameterClass="tvkbt" resultClass="java.lang.Integer">
+	<![CDATA[
+		 select count(1) from crm.crm_tb_tvkbt t  where t.spras='1' 
+	]]>
+		<dynamic>
+			<isNotEmpty property="vkbur" prepend="and">
+			<![CDATA[t.vkbur like #vkbur,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="bezei" prepend="and">
+			<![CDATA[t.bezei like #bezei,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<select id="getTvkbtList" parameterClass="tvkbt" resultClass="tvkbt">
+		<include refid="global.paginationStart" />
+	<![CDATA[
+		 select
+			t.mandt, 
+			t.spras,
+			t.vkbur,
+			t.bezei
+		  from crm.crm_tb_tvkbt t  where t.spras='1' 
+	]]>
+		<dynamic>
+			<isNotEmpty property="vkbur" prepend="and">
+			<![CDATA[t.vkbur like #vkbur,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="bezei" prepend="and">
+			<![CDATA[t.bezei like #bezei,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+		</dynamic>
+		<include refid="global.paginationEnd" />
+	</select>
+
+	<delete id="deleteTvkbz">
+	<![CDATA[
+		delete from crm.crm_tb_tvkbz
+	]]>
+	</delete>
+
+	<insert id="createTvkbz" parameterClass="tvkbz">
+	<![CDATA[
+		 insert into crm.crm_tb_tvkbz(
+		   mandt,
+		   vkorg,
+		   vtweg,
+		   spart
+		   )
+		values
+		  (#mandt#,
+		   #vkorg#,
+		   #vtweg#,
+		   #spart#
+		   )
+	]]>
+	</insert>
+
+	<select id="getTvkbzCount" parameterClass="tvkbz" resultClass="java.lang.Integer">
+	<![CDATA[
+		 select count(1) from crm.crm_tb_tvkbz t  where 1 = 1 
+	]]>
+		<dynamic>
+			<isNotEmpty property="vkorg" prepend="and">
+			<![CDATA[t.vkorg like #vkorg,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="vtweg" prepend="and">
+			<![CDATA[t.vtweg like #vtweg,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="spart" prepend="and">
+			<![CDATA[t.spart like #spart,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="vkbur" prepend="and">
+			<![CDATA[t.vkbur like #vkbur,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<select id="getTvkbzList" parameterClass="tvkbz" resultClass="tvkbz">
+		<include refid="global.paginationStart" />
+	<![CDATA[
+      select
+      t.mandt, 
+      t.vkorg,
+      k.bukrs as vkorgTxt,
+      t.vtweg,
+      w.vtext as vtwegTxt,
+      t.spart,
+      s.vtext as spartTxt,
+      t.vkbur,
+      b.bezei as vkburTxt
+      from crm.crm_tb_tvkbz t
+      left join crm.crm_tb_tvko k on t.vkorg=k.vkorg
+      left join crm.crm_tb_tvtwt w on t.vtweg=w.vtweg
+      left join crm.crm_tb_tspa  s on t.spart=s.spart
+      left join crm.crm_tb_tvkbt b on t.vkbur=b.vkbur
+        where 1 = 1
+	]]>
+		<dynamic>
+			<isNotEmpty property="vkorg" prepend="and">
+			<![CDATA[t.vkorg like #vkorg,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="vtweg" prepend="and">
+			<![CDATA[t.vtweg like #vtweg,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="spart" prepend="and">
+			<![CDATA[t.spart like #spart,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="vkbur" prepend="and">
+			<![CDATA[t.vkbur like #vkbur,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+		</dynamic>
+		<include refid="global.paginationEnd" />
+	</select>
+
+	<delete id="deleteTvgrt">
+	<![CDATA[
+		delete from crm.crm_tb_tvgrt
+	]]>
+	</delete>
+
+	<insert id="createTvgrt" parameterClass="tvgrt">
+	<![CDATA[
+		 insert into crm.crm_tb_tvgrt(
+		   mandt,
+		   spras,
+		   vkgrp,
+		   bezei
+		   )
+		values
+		  (#mandt#,
+		   #spras#,
+		   #vkgrp#,
+		   #bezei#
+		   )
+	]]>
+	</insert>
+
+	<select id="getTvgrtCount" parameterClass="tvgrt" resultClass="java.lang.Integer">
+	<![CDATA[
+		 select count(1) from crm.crm_tb_tvgrt t  where t.spras='1'
+	]]>
+		<dynamic>
+			<isNotEmpty property="vkgrp" prepend="and">
+			<![CDATA[t.vkgrp like #vkgrp,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="bezei" prepend="and">
+			<![CDATA[t.bezei like #bezei,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<select id="getTvgrtList" parameterClass="tvgrt" resultClass="tvgrt">
+		<include refid="global.paginationStart" />
+		<![CDATA[
+			 select
+				t.mandt, 
+				t.spras,
+				t.vkgrp,
+				t.bezei
+		 	 from crm.crm_tb_tvgrt t  where t.spras='1'
+		]]>
+		<dynamic>
+			<isNotEmpty property="vkgrp" prepend="and">
+			<![CDATA[t.vkgrp like #vkgrp,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="bezei" prepend="and">
+			<![CDATA[t.bezei like #bezei,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+		</dynamic>
+		<include refid="global.paginationEnd" />
+	</select>
+
+	<delete id="deleteT171t">
+	<![CDATA[
+		delete from crm.crm_tb_t171t
+	]]>
+	</delete>
+
+	<insert id="createT171t" parameterClass="t171t">
+	<![CDATA[
+		 insert into crm.crm_tb_t171t(
+		   mandt,
+		   spras,
+		   bzirk,
+		   bztxt
+		   )
+		values
+		  (#mandt#,
+		   #spras#,
+		   #bzirk#,
+		   #bztxt#
+		   )
+	]]>
+	</insert>
+
+	<select id="getT171tCount" parameterClass="t171t" resultClass="java.lang.Integer">
+	<![CDATA[
+		 select count(1) from crm.crm_tb_t171t t  where t.spras='1'
+	]]>
+		<dynamic>
+			<isNotEmpty property="bzirk" prepend="and">
+			<![CDATA[t.bzirk like #bzirk,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="bztxt" prepend="and">
+			<![CDATA[t.bztxt like #bztxt,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<select id="getT171tList" parameterClass="t171t" resultClass="t171t">
+		<include refid="global.paginationStart" />
+	<![CDATA[
+		 select
+			t.mandt, 
+			t.spras,
+			t.bzirk,
+			t.bztxt
+		  from crm.crm_tb_t171t t  where t.spras='1'
+	]]>
+		<dynamic>
+			<isNotEmpty property="bzirk" prepend="and">
+			<![CDATA[t.bzirk like #bzirk,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="bztxt" prepend="and">
+			<![CDATA[t.bztxt like #bztxt,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+		</dynamic>
+		<include refid="global.paginationEnd" />
+	</select>
+
+	<delete id="deleteT001w">
+	<![CDATA[
+		delete from crm.crm_tb_t001w
+	]]>
+	</delete>
+
+	<insert id="createT001w" parameterClass="t001w">
+	<![CDATA[
+		 insert into crm.crm_tb_t001w(
+		   mandt,
+		   werks,
+		   name1
+		   )
+		values
+		  (#mandt#,
+		   #werks#,
+		   #name1#
+		   )
+	]]>
+	</insert>
+
+	<select id="getT001wCount" parameterClass="t001w" resultClass="java.lang.Integer">
+	<![CDATA[
+		 select count(1) from crm.crm_tb_t001w t where 1=1
+	]]>
+		<dynamic>
+			<isNotEmpty property="werks" prepend="and">
+			<![CDATA[t.werks like #werks,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="name1" prepend="and">
+			<![CDATA[t.name1 like #name1,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<select id="getT001wList" parameterClass="t001w" resultClass="t001w">
+		<include refid="global.paginationStart" />
+	<![CDATA[
+		 select
+			t.mandt, 
+			t.werks,
+			t.name1
+		  from crm.crm_tb_t001w T where 1=1
+	]]>
+		<dynamic>
+			<isNotEmpty property="name1" prepend="and">
+			<![CDATA[t.name1 like #name1,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="werks" prepend="and">
+			<![CDATA[t.werks like #werks,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+		</dynamic>
+		<include refid="global.paginationEnd" />
+	</select>
+
+	<delete id="deleteT001">
+	<![CDATA[
+		delete from crm.crm_tb_t001
+	]]>
+	</delete>
+
+	<insert id="createT001" parameterClass="t001">
+	<![CDATA[
+		 insert into crm.crm_tb_t001(
+		   mandt,
+		   bukrs,
+		   butxt
+		   )
+		values
+		  (#mandt#,
+		   #bukrs#,
+		   #butxt#
+		   )
+	]]>
+	</insert>
+
+	<select id="getT001Count" parameterClass="t001" resultClass="java.lang.Integer">
+	<![CDATA[
+		 select count(1) from crm.crm_tb_t001 t where 1=1
+	]]>
+		<dynamic>
+			<isNotEmpty property="bukrs" prepend="and">
+			<![CDATA[t.bukrs like #bukrs,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="butxt" prepend="and">
+			<![CDATA[t.butxt like #butxt,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<select id="getT001List" parameterClass="t001" resultClass="t001">
+		<include refid="global.paginationStart" />
+	<![CDATA[
+		 select
+			t.mandt, 
+			t.bukrs,
+			t.butxt
+		  from crm.crm_tb_t001 t where 1=1
+	]]>
+		<dynamic>
+			<isNotEmpty property="bukrs" prepend="and">
+			<![CDATA[t.bukrs like #bukrs,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="butxt" prepend="and">
+			<![CDATA[t.butxt like #butxt,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+		</dynamic>
+		<include refid="global.paginationEnd" />
+	</select>
+
+	<delete id="deleteTvv1t">
+	<![CDATA[
+		delete from crm.crm_tb_tvv1t
+	]]>
+	</delete>
+
+	<insert id="createTvv1t" parameterClass="tvv1t">
+	<![CDATA[
+		 insert into crm.crm_tb_tvv1t(
+		   mandt,
+		   spras,
+		   kvgr1,
+		   bezei
+		   )
+		values
+		  (#mandt#,
+		   #spras#,
+		   #kvgr1#,
+		   #bezei#
+		   )
+	]]>
+	</insert>
+
+	<select id="getTvv1tCount" parameterClass="tvv1t" resultClass="java.lang.Integer">
+	<![CDATA[
+		 select count(1) from crm.crm_tb_tvv1t t where t.spras='1'
+	]]>
+		<dynamic>
+			<isNotEmpty property="bezei" prepend="and">
+			<![CDATA[t.bezei like #bezei,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<select id="getTvv1tList" parameterClass="tvv1t" resultClass="tvv1t">
+		<include refid="global.paginationStart" />
+	<![CDATA[
+		 select
+			t.mandt, 
+			t.spras,
+			t.kvgr1,
+			t.bezei
+		  from crm.crm_tb_tvv1t t where t.spras='1'
+	]]>
+		<dynamic>
+			<isNotEmpty property="bezei" prepend="and">
+			<![CDATA[t.bezei like #bezei,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+		</dynamic>
+		<include refid="global.paginationEnd" />
+	</select>
+
+	<delete id="deleteTvv2t">
+	<![CDATA[
+		delete from crm.crm_tb_tvv2t
+	]]>
+	</delete>
+
+	<insert id="createTvv2t" parameterClass="tvv2t">
+	<![CDATA[
+		 insert into crm.crm_tb_tvv2t(
+		   mandt,
+		   spras,
+		   kvgr2,
+		   bezei
+		   )
+		values
+		  (#mandt#,
+		   #spras#,
+		   #kvgr2#,
+		   #bezei#
+		   )
+	]]>
+	</insert>
+
+	<select id="getTvv2tCount" parameterClass="tvv2t" resultClass="java.lang.Integer">
+	<![CDATA[
+		 select count(1) from crm.crm_tb_tvv2t t where t.spras='1'
+	]]>
+		<dynamic>
+			<isNotEmpty property="bezei" prepend="and">
+			<![CDATA[t.bezei like #bezei,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<select id="getTvv2tList" parameterClass="tvv2t" resultClass="tvv2t">
+		<include refid="global.paginationStart" />
+	<![CDATA[
+		 select
+			t.mandt, 
+			t.spras,
+			t.kvgr2,
+			t.bezei
+		  from crm.crm_tb_tvv2t t where t.spras='1'
+	]]>
+		<dynamic>
+			<isNotEmpty property="bezei" prepend="and">
+			<![CDATA[t.bezei like #bezei,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+		</dynamic>
+		<include refid="global.paginationEnd" />
+	</select>
+
+	<delete id="deleteTvbot">
+	<![CDATA[
+		delete from crm.crm_tb_tvbot
+	]]>
+	</delete>
+
+	<insert id="createTvbot" parameterClass="tvbot">
+	<![CDATA[
+		 insert into crm.crm_tb_tvbot(
+		   mandt,
+		   spras,
+		   bonus,
+		   vtext
+		   )
+		values
+		  (#mandt#,
+		   #spras#,
+		   #bonus#,
+		   #vtext#
+		   )
+	]]>
+	</insert>
+
+	<select id="getTvbotCount" parameterClass="tvbot" resultClass="java.lang.Integer">
+	<![CDATA[
+		 select count(1) from crm.crm_tb_tvbot t where t.spras='1'
+	]]>
+		<dynamic>
+			<isNotEmpty property="bonus" prepend="and">
+			<![CDATA[t.bonus like #bonus,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="vtext" prepend="and">
+			<![CDATA[t.vtext like #vtext,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="flag" prepend="and">
+			<![CDATA[t.vtext not like '%停用%']]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<select id="getTvbotList" parameterClass="tvbot" resultClass="tvbot">
+		<include refid="global.paginationStart" />
+	<![CDATA[
+		 select
+			t.mandt, 
+			t.spras,
+			t.bonus,
+			t.vtext
+		  from crm.crm_tb_tvbot t where t.spras='1'
+	]]>
+		<dynamic>
+			<isNotEmpty property="bonus" prepend="and">
+			<![CDATA[t.bonus like #bonus,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="vtext" prepend="and">
+			<![CDATA[t.vtext like #vtext,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="flag" prepend="and">
+			<![CDATA[t.vtext not like '%停用%']]>
+			</isNotEmpty>
+		</dynamic>
+		<include refid="global.paginationEnd" />
+	</select>
+
+	<delete id="deleteZwlqy">
+	<![CDATA[
+		delete from crm.crm_tb_zwlqy
+	]]>
+	</delete>
+
+	<insert id="createZwlqy" parameterClass="zwlqy">
+	<![CDATA[
+		 insert into crm.crm_tb_zwlqy(
+		   zwl00,
+		   zwl01,
+		   zwl02,
+		   zwl03,
+		   zwl04,
+		   zwl00t,
+		   zwl01t,
+		   zwl02t,
+		   zwl03t,
+		   zwl04t
+		   )
+		values
+		  (#zwl00#,
+		   #zwl01#,
+		   #zwl02#,
+		   #zwl03#,
+		   #zwl04#,
+		   #zwl00t#,
+		   #zwl01t#,
+		   #zwl02t#,
+		   #zwl03t#,
+		   #zwl04t#
+		   )
+	]]>
+	</insert>
+
+	<select id="getZwlqyCount" parameterClass="zwlqy" resultClass="java.lang.Integer">
+	<![CDATA[
+		 select count(1) from crm.crm_tb_zwlqy t where 1=1
+	]]>
+		<dynamic>
+			<isNotEmpty property="zwl00" prepend="and">
+			<![CDATA[t.zwl00 =#zwl00#]]>
+			</isNotEmpty>
+			<isNotEmpty property="zwl01" prepend="and">
+			<![CDATA[t.zwl01 =#zwl01#]]>
+			</isNotEmpty>
+			<isNotEmpty property="zwl02" prepend="and">
+			<![CDATA[t.zwl02 =#zwl02#]]>
+			</isNotEmpty>
+			<isNotEmpty property="zwl03" prepend="and">
+			<![CDATA[t.zwl03 =#zwl03#]]>
+			</isNotEmpty>
+			<isNotEmpty property="zwl04" prepend="and">
+			<![CDATA[t.zwl04 =#zwl04#]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<select id="getZwlqyList" parameterClass="zwlqy" resultClass="zwlqy">
+		<include refid="global.paginationStart" />
+	<![CDATA[
+		 select
+			t.zwl00, 
+			t.zwl01,
+			t.zwl02,
+			t.zwl03,
+			t.zwl04,
+			t.zwl00t, 
+			t.zwl01t,
+			t.zwl02t,
+			t.zwl03t,
+			t.zwl04t
+		  from crm.crm_tb_zwlqy t where 1=1
+	]]>
+		<dynamic>
+			<isNotEmpty property="zwl00" prepend="and">
+			<![CDATA[t.zwl00 =#zwl00#]]>
+			</isNotEmpty>
+			<isNotEmpty property="zwl01" prepend="and">
+			<![CDATA[t.zwl01 =#zwl01#]]>
+			</isNotEmpty>
+			<isNotEmpty property="zwl02" prepend="and">
+			<![CDATA[t.zwl02 =#zwl02#]]>
+			</isNotEmpty>
+			<isNotEmpty property="zwl03" prepend="and">
+			<![CDATA[t.zwl03 =#zwl03#]]>
+			</isNotEmpty>
+			<isNotEmpty property="zwl04" prepend="and">
+			<![CDATA[t.zwl04 =#zwl04#]]>
+			</isNotEmpty>
+		</dynamic>
+		<include refid="global.paginationEnd" />
+	</select>
+
+	<select id="searchRegion" parameterClass="region" resultClass="region">
+	<![CDATA[
+		select distinct $idColumn$ as id ,$textColumn$ as text
+		from crm.crm_tb_zwlqy where 1=1
+	]]>
+		<dynamic>
+			<isNotEmpty prepend="and" property="paraColumn">
+				<![CDATA[$paraColumn$ like #pid,handler=prefix# escape '\']]>
+			</isNotEmpty>
+		</dynamic>
+	<![CDATA[order by $idColumn$]]>
+	</select>
+	
+	<delete id="deleteZdqsf">
+	<![CDATA[
+		delete from crm.crm_tb_zdqsf
+	]]>
+	</delete>
+
+	<insert id="createZdqsf" parameterClass="zdqsf">
+	<![CDATA[
+		 insert into crm.crm_tb_zdqsf(
+		   mandt,
+		   bzirk,
+		   vkgrp,
+		   bztxt,
+		   bezei
+		   )
+		values
+		  (#mandt#,
+		   #bzirk#,
+		   #vkgrp#,
+		   #bztxt#,
+		   #bezei#
+		   )
+	]]>
+	</insert>
+
+	<select id="getZdqsfCount" parameterClass="zdqsf" resultClass="java.lang.Integer">
+	<![CDATA[
+		 select count(1) from crm.crm_tb_zdqsf t  where 1 = 1 
+	]]>
+		<dynamic>
+			<isNotEmpty property="bzirk" prepend="and">
+			<![CDATA[t.bzirk like #bzirk,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="vkgrp" prepend="and">
+			<![CDATA[ t.vkgrp like #vkgrp,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<select id="getZdqsfList" parameterClass="zdqsf" resultClass="zdqsf">
+		<include refid="global.paginationStart" />
+	<![CDATA[
+		 select
+			t.mandt,
+		    t.bzirk,
+		    t.vkgrp,
+		    t.bztxt,
+		    t.bezei
+		  from crm.crm_tb_zdqsf t  where 1 = 1 
+	]]>
+		<dynamic>
+			<isNotEmpty property="bzirk" prepend="and">
+			<![CDATA[t.bzirk like #bzirk,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="vkgrp" prepend="and">
+			<![CDATA[ t.vkgrp like #vkgrp,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+		</dynamic>
+		<include refid="global.paginationEnd" />
+	</select>
+	
+	<delete id="deleteTvbvk">
+	<![CDATA[
+		delete from crm.crm_tb_tvbvk
+	]]>
+	</delete>
+
+	<insert id="createTvbvk" parameterClass="tvbvk">
+	<![CDATA[
+		 insert into crm.crm_tb_tvbvk(
+		   mandt,
+		   vkbur,
+		   vkgrp
+		   )
+		values
+		  (#mandt#,
+		   #vkbur#,
+		   #vkgrp#
+		   )
+	]]>
+	</insert>
+
+	<select id="getTvbvkCount" parameterClass="tvbvk" resultClass="java.lang.Integer">
+	<![CDATA[
+		 select count(1) from crm.crm_tb_tvbvk t  where 1 = 1 
+	]]>
+		<dynamic>
+			<isNotEmpty property="vkbur" prepend="and">
+			<![CDATA[t.vkbur like #vkbur,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="vkgrp" prepend="and">
+			<![CDATA[ t.vkgrp like #vkgrp,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<select id="getTvbvkList" parameterClass="tvbvk" resultClass="tvbvk">
+		<include refid="global.paginationStart" />
+	<![CDATA[
+		 select
+			t.mandt,
+		    t.vkbur,
+		    t.vkgrp
+		  from crm.crm_tb_tvbvk t  where 1 = 1 
+	]]>
+		<dynamic>
+			<isNotEmpty property="vkbur" prepend="and">
+			<![CDATA[t.vkbur like #vkbur,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="vkgrp" prepend="and">
+			<![CDATA[ t.vkgrp like #vkgrp,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+		</dynamic>
+		<include refid="global.paginationEnd" />
+	</select>
+	
+	<select id="getTvgrtZdqsfCount" parameterClass="zdqsf" resultClass="java.lang.Integer">
+	<![CDATA[
+		 select count(1) 
+         from  crm.crm_tb_tvgrt t
+        left join crm.crm_tb_zdqsf f on f.vkgrp=t.vkgrp and t.spras='1'  where 1=1
+	]]>
+		<dynamic>
+			<!-- <isNotEmpty property="bzirk" prepend="and">
+			<![CDATA[f.vkgrp like #bzirk,handler=wildcard# escape '\']]>
+			</isNotEmpty> -->
+			<isNotEmpty property="bzirk" prepend="and">
+			<![CDATA[f.bzirk like #bzirk,handler=wildcard# escape '\']]>
+			</isNotEmpty> 
+			<isNotEmpty property="search" prepend="and">
+			<![CDATA[(t.bezei like #search,handler=wildcard# escape '\' or t.vkgrp like #search,handler=wildcard# escape '\')]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	
+	<select id="getTvgrtListByZdqsf" parameterClass="zdqsf" resultClass="tvgrt">
+		<include refid="global.paginationStart" />
+	<![CDATA[
+	   select
+        t.mandt, 
+        t.spras,
+        t.vkgrp,
+        t.bezei
+        from  crm.crm_tb_tvgrt t
+       left join crm.crm_tb_zdqsf f on f.vkgrp=t.vkgrp and t.spras='1'  where 1=1
+	]]>
+		<dynamic>
+			<!-- <isNotEmpty property="bzirk" prepend="and">
+			<![CDATA[f.vkgrp like #bzirk,handler=wildcard# escape '\']]>
+			</isNotEmpty> -->
+			<isNotEmpty property="bzirk" prepend="and">
+			<![CDATA[f.bzirk like #bzirk,handler=wildcard# escape '\']]>
+			</isNotEmpty> 
+			<isNotEmpty property="search" prepend="and">
+			<![CDATA[(t.bezei like #search,handler=wildcard# escape '\' or t.vkgrp like #search,handler=wildcard# escape '\')]]>
+			</isNotEmpty>
+		</dynamic>
+		<include refid="global.paginationEnd" />
+	</select>
+
+	<select id="getTvkbtJsonListByTvbvkCount" parameterClass="tvbvk" resultClass="java.lang.Integer">
+	<![CDATA[
+		 select count(1) from crm.crm_tb_tvbvk f
+        left join crm.crm_tb_tvkbt t on f.vkbur=t.vkbur and t.spras='1' where 1 = 1 
+	]]>
+		<dynamic>
+			<isNotEmpty property="vkgrp" prepend="and">
+			<![CDATA[f.vkgrp like #vkgrp,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	
+	<select id="getTvkbtJsonListByTvbvk" parameterClass="tvbvk" resultClass="tvkbt">
+		<include refid="global.paginationStart" />
+	<![CDATA[
+	    select
+			t.mandt, 
+			t.spras,
+			t.vkbur,
+			t.bezei
+        from  crm.crm_tb_tvkbt t
+        left join crm.crm_tb_tvbvk f on f.vkbur=t.vkbur and t.spras='1'  where 1 = 1
+	]]>
+		<dynamic>
+			<isNotEmpty property="vkgrp" prepend="and">
+			<![CDATA[f.vkgrp like #vkgrp,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+		</dynamic>
+		<include refid="global.paginationEnd" />
+	</select>
+	
+	
+	
+	
+	
+	<delete id="deleteKbetr">
+	<![CDATA[
+		delete from crm.crm_tb_a603_konp
+	]]>
+	</delete>
+
+	<insert id="createKbetr" parameterClass="a603Konp">
+	<![CDATA[
+		 insert into crm.crm_tb_a603_konp(
+		   vkorg,
+		   kondm,
+		   kbetr,
+		   datab,
+		   datbi
+		   )
+		values
+		  (#vkorg#,
+		   #kondm#,
+		   #kbetr#,
+		   #datab#,
+		   #datbi#
+		   )
+	]]>
+	</insert>
+
+	<select id="getKbetrCount" parameterClass="a603Konp" resultClass="java.lang.Integer">
+	<![CDATA[
+		 select count(1) from crm.crm_tb_a603_konp t  where 1 = 1 
+	]]>
+		<dynamic>
+			<isNotEmpty property="kondm" prepend="and">
+			<![CDATA[t.kondm like #kondm,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<select id="getKbetrList" parameterClass="a603Konp" resultClass="a603Konp">
+		<include refid="global.paginationStart" />
+	<![CDATA[
+		 select
+			t.vkorg, 
+			t.kondm, 
+			t.kbetr,
+			t.datab,
+			t.datbi
+		  from crm.crm_tb_a603_konp t  where 1 = 1 
+	]]>
+		<dynamic>
+			<isNotEmpty property="kondm" prepend="and">
+			<![CDATA[t.kondm like #kondm,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+		</dynamic>
+		<include refid="global.paginationEnd" />
+	</select>
+</sqlMap>

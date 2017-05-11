@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui"])
+		#JS_ENV_VAL()
+	</head> 
+	<body>
+		<form method="post" target="hideFrame">
+			<input type="hidden" id="ids" name="ids"/>
+			<input  type="hidden" name="citylevel" id="citylevel" />
+			<input  type="hidden" name="parent_city_id" id="parent_city_id" />
+			<input  type="hidden" name="todictId" id="todictId" />
+			<div class="easyui-panel" title="查询条件" data-options="collapsible:true,iconCls:'icon-search'" style="padding: 2px; background: #fafafa;">
+			<table width="100%" border="0" cellpadding="0" cellspacing="1">
+			<tr>
+				<td class="head" noWrap>国家:</td>
+				<td>
+					<input id="city1" name="city1" data-options="required:false,editable:false"></input>
+				</td>
+				<td class="head" noWrap>省:</td>
+				<td>			
+					<input class="easyui-combobox"   id="city2" name="city2" data-options="required:false,editable:false"></input>
+				</td>
+					<td class="head" noWrap>市:</td>
+				<td>
+					<input class="easyui-combobox"  id="city3" name="city3" data-options="required:false,editable:false"></input>
+				</td>
+				<td class="head" noWrap></td>
+				<td>			
+				</td>
+			</tr>
+			<tr>
+				
+			<td class="head" noWrap>县、区:</td>
+			   <td>
+				<input class="easyui-combobox"   id="city4" name="city4" data-options="required:false,editable:false"></input>
+               </td>
+				<td class="head" noWrap>镇、乡:</td>
+				<td>
+					<input class="easyui-combobox"   id="city5" name="city5" data-options="required:false,editable:false"></input>
+				</td>
+				<td class="head" noWrap>区域名称:</td>
+				<td>
+					<input type="text" id="cityName" name="cityName"></input>
+				</td>
+				<td class="head" noWrap>点击查询:</td>
+				<td>			
+				<a href="javascript:search()" class="easyui-linkbutton" iconCls="icon-search">Search</a>
+				</td>
+			</tr>
+		    </table>
+			</div>
+			<table id="datagrid"> </table> 
+		    </form>
+				<iframe id="hideFrame" name="hideFrame"  style="height: 0; width: 0"></iframe>
+				<div id="citydictDiv" />
+	 <!--维护菜单DIV-->
+	</body>
+</html>
+	<script type="text/javascript" src="$!{env.imgUrl}/js/platform/citydict/searchCityDict.js"></script>

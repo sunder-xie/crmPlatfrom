@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<bean id="kunnrBusinessAction" class="com.kintiger.platform.kunnrBusinessContact.action.KunnrBusinessAction"
+		parent="baseAction" scope="request">
+		<property name="kunnrBusinessService" ref="kunnrBusinessService" ></property>
+		<property name="kunnrService" ref="kunnrService" ></property>
+		<property name="orgServiceHessian" ref="orgServiceHessian"/>
+		<property name="goalService" ref="goalService"/>
+		<property name="wfeServiceHessian" ref="wfeServiceHessian"/>
+		<property name="dictServiceHessian" ref="dictServiceHessian"/>
+		<property name="appUrl">
+			<value>${appUrl}</value>
+		</property>
+	</bean>
+	
+	<!--bean id="kunnrService" class="com.kintiger.platform.kunnr.service.impl.KunnrServiceImpl">
+		<property name="kunnrDao" ref="kunnrDao" ></property>
+	</bean  -->
+	
+	<bean id="kunnrBusinessService" class="com.kintiger.platform.kunnrBusinessContact.service.impl.KunnrBusinessServiceImpl">
+		<property name="kunnrBusinessDao" ref="kunnrBusinessDao" ></property>
+	</bean>
+
+    <!--bean id="kunnrDao" class="com.kintiger.platform.kunnr.dao.impl.KunnrDaoImpl" parent="baseDao">
+	</bean-->
+	
+	<bean id="kunnrBusinessDao" class="com.kintiger.platform.kunnrBusinessContact.dao.impl.KunnrBusinessDaoImpl" parent="baseDao">
+	</bean>
+
+</beans>

@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui"])
+		#JS_ENV_VAL()
+	</head>
+	<body>
+		<form method="post">
+			<input type="hidden" id="PIds" name="PIds"/>
+			<input type="hidden" id="subject_description" name="subject_description"/>
+			<div class="easyui-panel" title="查询条件" data-options="collapsible:true,iconCls:'icon-search'" style="padding: 2px; background: #fafafa;">
+			<table width="100%" border="0" cellpadding="0" cellspacing="1">
+			<tr>
+				<td class="head" noWrap>财年:</td>
+				<td><input type="text" id="fiscalYear" name="fiscalYear" />
+				</td>
+				<td class="head" noWrap>预算口径编码:</td>
+				<td><input type="text" id="mvgr1" name="mvgr1" />
+				</td>
+				<td class="head" noWrap >预算口径描述:</td>
+				<td><input type="text" id="mvgTxt" name="mvgTxt"></td>
+				<td class="head" noWrap >种类:</td>
+				<td><input type="text" id="cupType" name="cupType"></td>
+				<td class="head" noWrap>点击查询:</td>
+				<td>			
+				<a href="javascript:search()"  class="easyui-linkbutton" iconCls="icon-search">查询</a>
+				<a href="javascript:clearValue()" class="easyui-linkbutton" iconCls="icon-clear">重置</a> 	
+				</td>
+			</tr>
+		    </table>
+		   
+			</div>
+			
+			<table id="datagrid">  
+			</table> 
+		</form>
+		<iframe id="hideFrame" name="hideFrame"  style="height: 0; width: 0"></iframe>
+		<div id="maint"/>
+	</body>
+<script type="text/javascript">
+var store;
+</script>
+<script type="text/javascript" src="$!{env.imgUrl}/js/platform/goal/searchMatterPriceBo.js"></script>
+</html>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="master" extends="kintiger-default">
+		<action name="master" class="masterAction">
+			<result name="toSearchMateriel">/platform/master/searchMateriel.vm</result>
+			<result name="toSearchMaterielHaveSkuBtn">/platform/master/searchMaterielForSku.vm</result>
+			<result name="toSupervisorCheck">/platform/master/supervisorSearch.vm</result>
+			<result name="toSupervisorSearchCols">/platform/master/supervisorSearchCols.vm</result>
+			<result name="toAddSupervisorItems">/platform/master/addSupervisorItems.vm</result>
+		</action>
+	</package>
+</struts>
+
+

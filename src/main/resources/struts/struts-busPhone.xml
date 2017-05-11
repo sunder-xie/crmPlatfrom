@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+	"http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="busPhone" extends="kintiger-default">
+		<action name="busPhoneAction" class="busPhoneAction">
+	        <result name="toEmpList">/platform/busPhone/getEmpList.vm</result>
+	        <result name="toKunnrEmpList">/platform/busPhone/getKunnrEmpList.vm</result>
+		</action>
+	</package>
+</struts>

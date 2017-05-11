@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui"])
+		#JS_ENV_VAL()
+	</head>
+		<body>
+		<form   method="post" target="hideFrame">
+			<div region="center" class="easyui-panel" title="客户批量修改" data-options="iconCls:'icon-edit'">
+    			<table width="100%"  border="0" cellpadding="0" cellspacing="1">
+			<input type="hidden" name= "custIdList" id="custIdList">
+			<input type="hidden" name= "custIds" id="custIds">
+    			<tr>
+    				<td class="head" noWrap>业代:</td>
+    				<td>
+    					<input type="hidden" name= "userId" id="userId">
+                        				<input class="easyui-validatebox"  id="userName" name="userName" data-options="required:true"  readonly  >
+                                         <input type="button" id="tree" value="选择" onclick="chosePerson()" /></td>
+    				<td class="head" noWrap>目标业代:</td>
+    				<td><input type="hidden" name= "userId1" id="userId1">
+                        				<input class="easyui-validatebox"  id="userName1" name="userName1" data-options="required:true"  readonly  >
+                                         <input type="button" id="tree" value="选择" onclick="chosePerson1()" /></td>
+    				<td class="head" noWrap></td>
+    				<td>
+    					<a href="javascript:save()" class="easyui-linkbutton" data-options="iconCls:'icon-save'">保存</a>
+    				</td>
+    			</tr>
+    			</table>
+				<hr>
+				
+			<div style="min-height:200px;">
+				
+			<div >
+            
+					<div id="source" style="border:1px solid #95B8E7;width:300px;height:600px;float:left;"> 
+						业代客户列表
+                    </div>
+					<div id="ts"  style="border:1px solid #95B8E7;width:200px;height:600px;float:left;">
+						<center>
+						<div  align="center" style="border:1px solid #95B8E7;width:200px;float:left;">
+							<a href="javascript:toRight()" class="easyui-linkbutton" title="全部右移">&gt&gt&gt&gt</a>
+                        </div>
+						<div  align="center" style="border:1px solid #95B8E7;width:200px;float:left;">
+							<a href="javascript:toLeft()" class="easyui-linkbutton" title="全部左移">&lt&lt&lt&lt</a>
+                        </div>
+						  </center>
+					</div>
+					<div id="target" style="border:1px solid #95B8E7;width:300px;height:600px;float:left;">
+						目标业代客户列表
+					</div>
+			</div>
+			</div>
+			</div>
+		</form>
+		<iframe id="hideFrame" name="hideFrame"	 style="height: 0; width: 0"></iframe>
+        <div id="upDemo"></div>
+	</body>
+</html>
+<script type="text/javascript" src="$!{env.imgUrl}/js/platform/customer/batchange/batchange.js"></script>

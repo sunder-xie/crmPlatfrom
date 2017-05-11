@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="GB2312"?>
+<!DOCTYPE sqlMap
+	PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="city">
+	 
+		<typeAlias alias="cityDict"
+		type="com.kintiger.platform.citydict.pojo.CityDict" />
+		
+		<!-- 插入需求单总表 -->
+	
+	<select id="getCityDictList" parameterClass="cityDict"
+		resultClass="cityDict">
+		<include refid="global.paginationStart" />
+			<![CDATA[
+		select t.dict_id as dictId,
+	       t.city_number as cityNumber,
+	       t.city_name as cityName,
+	       t.city_level as citylevel,
+	       t.parent_city_id ,
+	       t.modify_date  ,
+	       t.parent_city_number,
+	       t.phone_area,
+	       t.city_fp_flag,
+	       t.city_org_id,
+	       t.city_market_level,t.state,t.city_abbreviation,
+	           tt.city_name as parent_city_name
+	      from office.office_tb_city_dict t
+	      left join office.office_tb_city_dict tt on t.parent_city_id = tt.dict_id
+	      where 1=1
+	        and  t.state='Y'  
+			]]>
+	<dynamic>
+		<isNotEmpty property="parent_city_id" prepend="and">
+						<![CDATA[  t.parent_city_id=#parent_city_id# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="dictId" prepend="and">
+						<![CDATA[  t.dict_id=#dictId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="cityName" prepend="and">
+						<![CDATA[ t.city_name like #cityName,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="citylevel" prepend="and">
+						<![CDATA[  t.city_level=#citylevel# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="parent_city_name" prepend="and">
+						<![CDATA[  tt.city_name=#parent_city_name# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="codes" prepend="and">
+			<![CDATA[  t.parent_city_id in ]]>
+			<iterate property="codes" open="(" close=")" conjunction=",">#codes[]#
+			</iterate>
+			</isNotEmpty>
+	</dynamic>
+	<include refid="global.paginationEnd" />
+	</select>
+	<select id="getCityList" parameterClass="cityDict"
+		resultClass="cityDict">
+			<![CDATA[
+			select t.dict_id as dictId,
+		   t.city_number as cityNumber,
+		   t.city_name as cityName,
+		   t.city_level as citylevel,
+		   t.parent_city_id ,
+		   t.modify_date  ,
+		   t.parent_city_number,
+		   t.phone_area,
+		   t.city_fp_flag,
+		   t.city_org_id,
+		   t.city_market_level,t.state,t.city_abbreviation
+		  from office.office_tb_city_dict t
+		  where 1=1
+				and  t.state='Y'  
+			]]>
+	<dynamic>
+			<isNotEmpty property="dictId" prepend="and">
+						<![CDATA[  t.dict_id=#dictId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="cityName" prepend="and">
+						<![CDATA[ t.city_name like #cityName,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="citylevel" prepend="and">
+						<![CDATA[  t.city_level=#citylevel# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="parent_city_id" prepend="and">
+						<![CDATA[  t.parent_city_id=#parent_city_id# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="codes" prepend="and">
+			<![CDATA[  t.dict_id in ]]>
+			<iterate property="codes" open="(" close=")" conjunction=",">#codes[]#
+			</iterate>
+			</isNotEmpty>
+			<![CDATA[  order by  t.modify_date  desc ]]>
+	</dynamic>
+	</select>
+	
+	<update id="deleteCityDict" parameterClass="cityDict">
+	<![CDATA[
+		update office.office_tb_city_dict t
+		   set t.state = 'N', t.modify_date = sysdate
+	]]>
+	<dynamic>
+		<isNotEmpty property="codes">
+		<![CDATA[ where t.dict_id in ]]>
+		<iterate property="codes" open="(" close=")" conjunction=",">#codes[]#
+		</iterate>
+			</isNotEmpty>
+		</dynamic>
+	</update>
+	<select id="getCityDictCount" parameterClass="cityDict"
+		resultClass="java.lang.Integer">
+	<![CDATA[
+	select  count(t.dict_id)
+    from office.office_tb_city_dict t
+  	left join office.office_tb_city_dict tt on t.parent_city_id = tt.dict_id
+ 	 where 1=1
+		and  t.state='Y'  
+	]]>
+	<dynamic>
+		<isNotEmpty property="dictId" prepend="and">
+						<![CDATA[  t.dict_id=#dictId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="parent_city_id" prepend="and">
+						<![CDATA[  t.parent_city_id=#parent_city_id# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="cityName" prepend="and">
+						<![CDATA[ t.city_name like #cityName,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="citylevel" prepend="and">
+						<![CDATA[  t.city_level=#citylevel# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="parent_city_name" prepend="and">
+						<![CDATA[  tt.city_name=#parent_city_name# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="codes" prepend="and">
+			<![CDATA[  t.dict_id in ]]>
+			<iterate property="codes" open="(" close=")" conjunction=",">#codes[]#
+			</iterate>
+			</isNotEmpty>
+	</dynamic>
+	</select>
+	<insert id="insertCityDict" parameterClass="cityDict">
+		<selectKey resultClass="java.lang.Long" keyProperty="dictId">
+		<![CDATA[
+			select  office.office_seq_city_dict.nextval as dictId from dual
+		]]>
+		</selectKey>
+		<![CDATA[
+		insert into office.office_tb_city_dict
+      (dict_id,
+         city_number,
+         city_name,
+         city_level,
+         parent_city_id,
+         modify_date,
+         parent_city_number,
+         phone_area,
+         city_fp_flag,
+         city_market_level,
+         state,
+         city_abbreviation)
+      values (#dictId#,#cityNumber#,#cityName#,
+      #citylevel#,#parent_city_id#,sysdate,#parent_city_number#,#phone_area#,
+      #city_fp_flag#,#city_market_level#,'Y',#city_abbreviation#)
+		]]>
+	</insert>
+	
+	<update  id="updateCityDict" parameterClass="cityDict" >
+	<![CDATA[
+		  update office.office_tb_city_dict t set t.modify_date =sysdate  
+	]]>
+		<dynamic>
+			<isNotEmpty property="cityName" prepend=",">
+			<![CDATA[ t.city_name =#cityName# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="cityNumber" prepend=",">
+			<![CDATA[ t.city_number =#cityNumber# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="parent_city_id" prepend=",">
+			<![CDATA[ t.parent_city_id =#parent_city_id# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="parent_city_number" prepend=",">
+			<![CDATA[ t.parent_city_number =#parent_city_number# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="phone_area" prepend=",">
+			<![CDATA[ t.phone_area =#phone_area# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="city_fp_flag" prepend=",">
+			<![CDATA[ t.city_fp_flag =#city_fp_flag# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="citylevel" prepend=",">
+			<![CDATA[ t.city_level =#citylevel# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="city_abbreviation" prepend=",">
+			<![CDATA[ t.city_abbreviation =#city_abbreviation# ]]>
+			</isNotEmpty>
+		</dynamic>
+	<![CDATA[
+		 where t.dict_id=#dictId# 
+	]]>
+	</update>
+	
+	
+<!--	<update id="updateCityDictDtype" parameterClass="cityDict">
+	<![CDATA[
+		update office.office_tb_city_dict t
+		   set t.city_fp_flag = #city_fp_flag#, t.modify_date = sysdate
+	]]>
+	<dynamic>
+		<isNotEmpty property="codes">
+		<![CDATA[ where t.dict_id in ]]>
+		<iterate property="codes" open="(" close=")" conjunction=",">#codes[]#
+		</iterate>
+			</isNotEmpty>
+		</dynamic>
+	</update>-->
+	
+	
+	<select id="getCityListExcel" parameterClass="cityDict"
+		resultClass="cityDict">
+			<![CDATA[
+			select t.dict_id as dictId,
+                       t.city_number as cityNumber,
+                       t.city_name as cityName,
+                       t.city_level as citylevel,
+                       t.parent_city_id,
+                       t.modify_date,
+                       t.parent_city_number,
+                       t.phone_area,
+                       t.city_fp_flag,
+                       t.city_org_id,
+                       t.city_market_level,
+                       t.state,
+                       t.city_abbreviation,
+                       tt.city_name as parent_city_name,
+                       ttt.city_name as  parent_city_name1,
+                       tttt.city_name as  parent_city_name2,
+                       ttttt.city_name as  parent_city_name3
+                  from office.office_tb_city_dict t
+                  left join office.office_tb_city_dict tt on t.parent_city_id =
+                                                           tt.dict_id
+                   left join office.office_tb_city_dict ttt on tt.parent_city_id =
+                 ttt.dict_id
+                  left join office.office_tb_city_dict tttt on ttt.parent_city_id =
+                 tttt.dict_id
+                  left join office.office_tb_city_dict ttttt on tttt.parent_city_id =
+                 ttttt.dict_id
+                 where 1 = 1
+                   and t.state = 'Y'
+			]]>
+	<dynamic>
+		<isNotEmpty property="parent_city_id" prepend="and">
+						<![CDATA[  t.parent_city_id=#parent_city_id# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="dictId" prepend="and">
+						<![CDATA[  t.dict_id=#dictId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="cityName" prepend="and">
+						<![CDATA[ t.city_name like #cityName,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="citylevel" prepend="and">
+						<![CDATA[  t.city_level=#citylevel# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="parent_city_name" prepend="and">
+						<![CDATA[  tt.city_name=#parent_city_name# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="codes" prepend="and">
+			<![CDATA[  t.parent_city_id in ]]>
+			<iterate property="codes" open="(" close=")" conjunction=",">#codes[]#
+			</iterate>
+			</isNotEmpty>
+			<![CDATA[  order by  t.city_level  asc ]]>
+	</dynamic>
+	</select>
+	<select id="getCity4ListExcel" 
+		resultClass="cityDict">
+			<![CDATA[
+			select t.dict_id as dictId,
+                       t.city_number as cityNumber,
+                       t.city_name as cityName,
+                       t.city_level as citylevel,
+                       t.parent_city_id,
+                       t.modify_date,
+                       t.parent_city_number,
+                       t.phone_area,
+                       t.city_fp_flag,
+                       t.city_org_id,
+                       t.city_market_level,
+                       t.state,
+                       t.city_abbreviation,
+                       tt.city_name as parent_city_name,
+                       ttt.city_name as  parent_city_name1,
+                       tttt.city_name as  parent_city_name2
+                  from office.office_tb_city_dict t
+                  left join office.office_tb_city_dict tt on t.parent_city_id =
+                                                           tt.dict_id
+                   left join office.office_tb_city_dict ttt on tt.parent_city_id =
+                 ttt.dict_id
+                  left join office.office_tb_city_dict tttt on ttt.parent_city_id =
+                 tttt.dict_id
+                  
+                 where 1 = 1
+                   and t.state = 'Y'
+                   and t.city_level in ('-1','0','1','2') 
+                   order by  t.city_level  asc
+			]]>
+	</select>
+</sqlMap>

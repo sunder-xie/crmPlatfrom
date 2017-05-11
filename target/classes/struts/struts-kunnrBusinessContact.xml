@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+	"http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="kunnrBusiness" extends="kintiger-default">
+		<action name="kunnrBusinessAction" class="kunnrBusinessAction">
+			<result name="kunnrBusinessSearch">/platform/kunnrBusinessContact/kunnrBusinessSearch.vm</result>
+			<result name="updateKunnrBusiness">/platform/kunnrBusinessContact/kunnrBusinessViewInfo.vm</result>
+			<result name="resultMessage">/platform/common/resultMessage.vm</result>
+			<result name="toSearchKunnrBusinessReport">/platform/kunnrBusinessContact/searchKunnrBusinessReport.vm</result>
+			<result name="toSearchKunnrBusinessEmp">/platform/kunnrBusinessContact/searchKunnrBusinessEmp.vm</result>
+			<!--经销商目标量提报调整-->
+			<result name="toDealerAdjustment">/platform/dealerAdjustment/dealerAdjustment.vm</result>
+			<result name="toAddDealerAdjustment">/platform/dealerAdjustment/addDealerAdjustment.vm</result>
+			<result name="toDealerAdjustmentSub">/platform/dealerAdjustment/dealerAdjustmentSub.vm</result>
+			<result name="toDealerAdjustmentView">/platform/dealerAdjustment/dealerAdjustView.vm</result>
+			<result name="toCreateDealerAdjustView">/platform/dealerAdjustment/dealerAdjustView.vm</result>
+		</action>
+	</package>
+</struts>

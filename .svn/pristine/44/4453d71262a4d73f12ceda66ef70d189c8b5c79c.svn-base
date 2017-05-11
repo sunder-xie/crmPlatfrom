@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui"])
+		#JS_ENV_VAL()
+	</head>
+	<body class="easyui-layout">	
+		<form method="post"  target="hideFrame"> 
+		 <div id="p_add" region="center" class="easyui-panel"
+			title="数据详细修改" 
+			data-options="iconCls:'icon-edit'">
+									<!--  <input type="hidden" id="dictTypeId" name="crmDict.dictTypeId" value="$!{crmDict.dictTypeId}" />-->
+	                               <input type="hidden" id="itemId" name="crmdict.itemId" value="$!{crmdict.itemId}" />
+									<table width="100%" border="0" cellpadding="0" cellspacing="1" >
+                                       <tr>
+											<td  class="head" nowrap>
+												数据类型<font color='red'>*</font>：
+											</td>
+											<td  nowrap>
+											<input id="dictTypeId" name="dictTypeId" class="easyui-combobox"   data-options="valueField:'dictTypeId',textField:'dictTypeName',required:true,url:appUrl + '/crmdictAction!getCrmDictTypeJosn.jspa'"  value=$!{dictTypeId}  />
+											</td>
+                                         </tr>
+										<tr>
+											<td  class="head" nowrap>
+												详细名称<font color='red'>*</font>：
+											</td>
+											<td  nowrap>
+												<input type="text"  id="itemName"   name="itemName" value="$!{crmdict.itemName}" class="easyui-validatebox" data-options="required:true"  >
+											</td>
+                                         </tr>
+                                        <tr>
+                                            <td  class="head" nowrap>
+												详细内容<font color='red'>*</font>：
+											</td>
+											
+											<td nowrap>
+												<input type="text"  id="itemValue"   name="crmdict.itemValue" value="$!{crmdict.itemValue}" class="easyui-validatebox"
+								data-options="required:true" >
+											
+											</td>
+                                        </tr>
+											<tr>
+											
+											<td  class="head" nowrap>
+                                                                                                                                  描述：
+											</td>
+											<td nowrap >
+												<input type="text" name="crmdict.itemDescription"  id="itemDescription" value="$!{crmdict.itemDescription}">
+													
+											</td>
+										</tr>
+										<tr>
+											
+											<td class="head" nowrap>
+                                                                                                                                   备注：
+											</td>
+											<td nowrap >
+												 <textarea name="crmdict.remark" id="remark"   cols ="26" rows = "2">$!{crmdict.remark}</textarea>
+													
+											</td>
+										</tr>
+                                  </table>
+                           	  </div>
+		<div region="south" border="false" style="text-align:right;height:30px;line-height:30px;">
+				<a class="easyui-linkbutton" icon="icon-ok" href="javascript:save_dict()">Submit</a>
+				<a class="easyui-linkbutton" icon="icon-cancel" href="javascript:cencel()">Cancel</a>
+			</div>
+	
+		 </form>
+			<iframe id="hideFrame" name="hideFrame"  style="height: 0; width: 0"></iframe>
+		
+	</body>
+	
+       <script type="text/javascript" src="$!{env.imgUrl}/js/platform/crmdict/dictUpdate.js"></script>
+
+</html>

@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+	"http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="order" extends="kintiger-default">
+		<action name="ordersAction" class="ordersAction">
+			<result name="ordersPlat">/platform/order/ordersPlat.vm</result>
+			<result name="orderEdit">/platform/order/order_edit/orderEdit.vm</result>
+			<!-- 审核 -->
+			<result name="ordersPlatReview">/platform/order/ordersPlatReview.vm</result>
+			<!-- 考核返还清单 -->
+			<result name="toSearchReturnListPre">/platform/order/order_edit/searchReturnList.vm</result>
+		</action>
+	
+		<action name="orderAction" class="orderAction">
+			<result name="searchOrder">/platform/order/searchOrder.vm</result>
+			<result name="searchOrderInfo">/platform/order/searchOrderInfo.vm</result>
+	        <result name="success">/platform/common/resultMessage.vm</result>
+	        <result name="toUpdateOrder">/platform/order/updateOrder.vm</result>
+	        <result name="toUpdateOrderEmp">/platform/order/updateOrderEmp.vm</result>
+			<result name="toCreateOrder">/platform/order/createOrder.vm</result>
+			<result name="toPrintOrder">/platform/order/printOrder.vm</result>
+		</action>
+		
+		<action name="orderNewAction" class="orderNewAction">
+			<result name="searchOrderNew">/platform/order/order_new/searchOrderNew.vm</result>
+			<result name="searchOrderNewInfo">/platform/order/order_new/searchOrderNewInfo.vm</result>
+	        <result name="success">/platform/common/resultMessage.vm</result>
+	        <result name="toUpdateOrderNew">/platform/order/order_new/updateOrderNew.vm</result>
+	        <result name="toUpdateOrderNewEmp">/platform/order/order_new/updateOrderNewEmp.vm</result>
+			<result name="toCreateOrderNew">/platform/order/order_new/createOrderNew.vm</result>
+			<result name="toPrintOrderNew">/platform/order/order_new/printOrderNew.vm</result>
+			<result name="toPay">/platform/order/order_new/payPage.vm</result>
+			<result name="getB2bMsg">/platform/order/order_new/getB2bMsg.vm</result>
+			<result name="toSearchAccount">/platform/order/myAccount.vm</result>
+			<result name="toAccountPayPage">/platform/order/accountPayPage.vm</result>
+			<result name="orderSuccess">/platform/order/orderSuccess.vm</result>
+			<result name="orderError">/platform/order/orderError.vm</result>
+			<result name="toSearchKunnrBalance">/platform/order/searchKunnrBalance.vm</result>
+			<result name="toPrintAccount">/platform/order/printAccount.vm</result>
+			<result name="toPrintFormatList">/platform/order/order_new/printFormatList.vm</result>
+			<result name="toModifyFormatPre">/platform/order/order_new/modifyFormatPre.vm</result>
+			<result name="toFormatView">/platform/order/order_new/formatView.vm</result>
+		</action>
+	</package>
+</struts>

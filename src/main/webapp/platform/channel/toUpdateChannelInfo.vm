@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui"])
+		#JS_ENV_VAL()
+	</head>
+	<body class="easyui-layout">
+		<form id="form1" action="" method="post" >
+			<div region="center" class="easyui-panel" title="渠道修改" data-options="iconCls:'icon-edit'">
+				<input id="flag" type='hidden' value='Y'/>
+			<table width="100%" border="0" cellpadding="0" cellspacing="1">
+				<tr>
+						<table width="100%" border="0" cellspacing="0" cellpadding="0" >
+							<tr>
+                                <td colspan="2" class="home_title_line">
+									<table width="100%" border="0" cellpadding="0" cellspacing="1" class=outer>
+										<tr>
+											<td class="head">
+												父级渠道名称:
+											</td>
+											<td class="even">
+												<input class="easyui-validatebox"  name="bchannel.parentChannelName" id="parentChannelName"
+													value=$!{bchannel.parentChannelName} data-options="required:true" readonly/>
+												<a class="easyui-linkbutton"  href="javascript:selectChannelListTree()">选择</a>
+											</td>
+                                        </tr>
+										<tr>
+											<td class="head">
+												父级渠道ID:
+											</td>
+											<td class="even">
+												<input class="easyui-validatebox"  name="bchannel.channelParentId" id="channelParentId" value=$!{bchannel.channelParentId} readonly/>	
+											</td>
+										</tr>
+										<tr>
+											<td class="head">
+												渠道名称:
+											</td>
+											<td class="even">
+												<input class="easyui-validatebox" size="24" name="bchannel.channelName" id="channelName" value=$!{bchannel.channelName} data-options="required:true" validType="length[0,100]"/>
+												<input type="hidden"  name="bchannel.channelId" id="channelId" value=$!{bchannel.channelId} />
+											</td>
+										</tr>
+										<!--
+										<tr>
+											<td class="head">
+												所属公司:
+											</td>
+											<td class="even">
+												<input type="text"  id="companyName" readonly="readonly" name="companyName"/>
+												<input type="hidden" id="companyMark"  name="companyMark"/>
+											</td>
+										</tr>-->
+										<tr>
+											<td class="head">
+												备注:
+											</td>
+											<td class="even" style="">
+												<textarea class="easyui-validatebox" rows="5" cols="4" id="remark" name="bchannel.remark"  style="width:270px;" validType="length[0,100]">$!{bchannel.remark}</textarea>
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+			
+			</div>
+			<div region="south" border="false" style="text-align:right;height:30px;line-height:30px;">
+				<a class="easyui-linkbutton" icon="icon-ok" href="javascript:submit()">修改</a>
+				<a class="easyui-linkbutton" icon="icon-cancel" href="javascript:close()">取消</a>
+			</div>
+	 <iframe id="hideFrame" name="hideFrame"  style="height: 0; width: 0"></iframe>
+		</form>
+		
+			 <div id="maintWindow"/> 
+	</body>
+
+
+<script type="text/javascript" src="$!{env.imgUrl}/js/platform/channel/toUpdateChannelInfo.js"></script>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui","upload"])
+		#JS_ENV_VAL()
+	</head>
+		<body  class="easyui-layout">	
+	<form  method="post" target="hideFrame" enctype="multipart/form-data"> 
+           <div id="p_add" region="center" class="easyui-panel"
+			title="系统问题录入" 
+			data-options="iconCls:'icon-edit'">
+          
+						<table id="table_01" width="100%" cellspacing="1" border="0">
+						   <input type="hidden" id="orgId" name="q.orgId" value="$!{q.orgId}">
+						   <input type="hidden" id="orgName" name="q.orgName" value="$!{q.orgName}">
+                                        <tr>
+                                            <td class="head" nowrap>
+												提报人：
+											</td>
+											<td>
+						                        <input type="text" id="author" name="q.author" 
+						                         value="$!{author}" class="easyui-validatebox" readonly="true">
+						                         <input type="hidden" id="authorId" name="q.authorId" value="$!{authorId}" />
+											</td>
+											<td class="head" nowrap>
+												提报人电话：
+											</td>
+											<td>
+						                        <input type="text" id="phone" name="q.phone" 
+						                         value="$!{phone}" class="easyui-validatebox">
+											</td>
+                                        </tr>
+                                        <tr>
+                                            <td>&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="head" nowrap>
+												提报人邮箱：
+											</td>
+											<td>
+						                        <input type="text" id="authorEmail" name="q.authorEmail" 
+						                         value="$!{authorEmail}" class="easyui-validatebox" data-options="validType:['email'],required:true">
+											</td>
+											<td class="head" nowrap>
+												系统分类<font color='red'>*</font>：
+											</td>
+											<td>
+												<select id="qTemp" name="q.qTemp" class="easyui-combobox">
+												</select>
+											</td>
+										</tr>
+										<tr>
+											    <td>&nbsp;</td>
+										</tr>
+										<tr>
+											<td class="head" nowrap>
+												问题分类<font color='red'>*</font>：
+											</td>
+											<td>
+												<select id="qType" name="q.qType" class="easyui-combobox" readonly="true">
+												#*<option value="p101">系统缺陷</option>
+												<option value="p102">业务需求</option>
+												<option value="p103">数据错误</option>
+												<option value="p104">操作指导</option>
+												<option value="p105">信息部工作任务</option>
+												<option value="p106">权限</option>*#
+												</select>
+											</td>
+                                                <td class="head" nowrap>期望完成日期：</td>
+											    <td>
+								                    <input class="easyui-datebox" id="expectDate" name="q.expectDate"
+								                     data-options="editable:false"></input>
+											    </td>
+										</tr>
+										<tr>
+											    <td>&nbsp;</td>
+										</tr>
+										<!--<tr>
+                                                <td class="head" nowrap>处理人：</td>
+                                                <td>
+                                                    <input type="text"  id="answerAuthor" name="q.answerAuthor" 
+                                                     class="easyui-validatebox" readonly="true">
+								                <a id="chooseAnswerAuthorBut" class="easyui-linkbutton" href="javascript:chooseAnswerAuthor();">处理人</a>
+								                <input type="hidden" id="answerAuthorId" name="q.answerAuthorId"/>
+											</td>
+                                         </tr>-->
+                                         <tr>
+                                            <td class="head" nowrap>
+												问题标题<font color='red'>*</font>：
+											</td>
+											<td colspan="3">
+												<textarea style="resize:none;" maxlength="100" cols="60" rows="1"  id="qTitle"   name="q.qTitle" class="easyui-validatebox"
+								data-options="required:true"></textarea>
+											</td>
+                                         </tr>
+                                         <tr>
+											
+											<td class="head" nowrap>
+												问题描述<font color='red'>*</font>：
+											</td>
+											<td colspan="3">
+												<textarea style="resize:none;" maxlength="240" cols="80" rows="6"  id="question"   name="q.question" class="easyui-validatebox"
+								data-options="required:true"></textarea>
+											</td>
+                                         </tr>
+                                         <tr>
+                                            <td class="head" noWrap>附件上传:</td>
+        				                    <td>
+        				                    <div id="input">
+        				                        <input name="upload" id="file0" type="file" value="添加附件" onchange="addFile()">
+        				                    </div>
+        				                    <td colspan="2"><font color='red' >*每次只能提交一个问题，若有多个问题，请分开提交！</font></td>
+        				                    <div id="_file"></div>
+        				                    </td>
+                                         </tr>
+                                  </table>
+                               
+           </div>
+		<div region="south" border="false" style="text-align:right;height:30px;line-height:30px;">
+				<a class="easyui-linkbutton" icon="icon-ok" href="javascript:save_question()">提交</a>
+				<a class="easyui-linkbutton" icon="icon-cancel" href="javascript:cencel()">取消</a>
+		</div>
+	
+		 </form>
+			<iframe id="hideFrame" name="hideFrame"  style="height: 0; width: 0"></iframe>
+			<div id="maintWindow"/>
+	</body>
+	
+     <script type="text/javascript" src="$!{env.imgUrl}/js/platform/question/questionCreate.js?version=20170228"></script>
+
+</html>

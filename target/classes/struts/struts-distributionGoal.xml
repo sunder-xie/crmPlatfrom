@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+	"http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="distributionGoal" extends="kintiger-default">
+		<action name="distributionGoalAction" class="distributionGoalAction">
+			<result name="toFirstDistributionGoalSearch">/platform/distributionGoal/toFirstDistributionGoalSearch.vm</result>
+			<result name="toSecondDistributionGoalSearch">/platform/distributionGoal/toSecondDistributionGoalSearch.vm</result>
+			<result name="distributionGoalSearch">/platform/distributionGoal/distributionGoalSearch.vm</result>
+			<result name="toDistributionGoalSearch">/platform/distributionGoal/toDistributionGoalSearch.vm</result>
+			<result name="updateDistributionGoal">/platform/distributionGoal/updateDistributionGoal.vm</result>
+			<result name="orgtree">/platform/org/orgTree.vm</result>
+			<result name="orgAllTree">/platform/org/orgTreeAll.vm</result>
+		</action>
+	</package>
+</struts>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="GB2312"?>
+<!DOCTYPE sqlMap
+	PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="stock">
+	<typeAlias alias="st" type="com.kintiger.platform.stock.pojo.Stock" />
+
+	<select id="getStockByI" parameterClass="st" resultClass="st">
+	<![CDATA[    
+		select a.stock_id as stock_id,a.cust_id as cust_id,a.category_id as category_id,a.batch as batch ,a.stock_quantity as stock_quantity  from 
+		crm.crm_tb_stock  a  where 1=1 and  a.cust_id=#cust_id# and a.category_id=#category_id# and a.batch=#batch#
+	]]>
+	</select>
+
+	<select id="seachStockListCount" parameterClass="st"
+		resultClass="java.lang.Integer">
+	<![CDATA[    
+		select count( st.stock_id)
+		  from crm.crm_tb_stock st
+		  left join basis.basis_tb_materiel ma
+			on st.category_id = ma.matnr
+		  left join crm.crm_tb_kunnr k
+			on k.kunnr = st.cust_id
+		 where k.status = '1'
+		   and ma.mvgr1 is not null
+		   and ma.bezei is not null
+	]]>
+		<dynamic>
+			<isNotEmpty prepend="and" property="category_id">
+			 <![CDATA[ st.category_id=#category_id#]]>
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="cust_id">
+			 <![CDATA[ st.cust_id=#cust_id#]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	<select id="seachStockList" parameterClass="st" resultClass="st">
+		<include refid="global.paginationStart" />	
+	<![CDATA[    
+			select st.stock_id,
+			   st.cust_id,
+			   k.name1              as custName,
+			   st.stock_stock_place,
+			   st.category_id,
+			   ma.maktx             as categoryName,
+			   st.batch,
+			   st.stock_quantity
+		  from crm.crm_tb_stock st
+		  left join basis.basis_tb_materiel ma
+			on st.category_id = ma.matnr
+		  left join crm.crm_tb_kunnr k
+			on k.kunnr = st.cust_id
+		 where k.status = '1'
+		   and ma.mvgr1 is not null
+		   and ma.bezei is not null
+
+	]]>
+		<dynamic>
+			<isNotEmpty prepend="and" property="category_id">
+			 <![CDATA[ st.category_id=#category_id#]]>
+			</isNotEmpty>
+			<isNotEmpty prepend="and" property="cust_id">
+			 <![CDATA[ st.cust_id=#cust_id#]]>
+			</isNotEmpty>
+		</dynamic>
+		<include refid="global.paginationEnd" />
+	</select>
+
+	<!-- <insert id="createinstock" parameterClass="st"> <selectKey resultClass="java.lang.Long" 
+		keyProperty="instock_id"> <![CDATA[ select crm.crm_seq_instock.nextval as 
+		instock_id from dual ]]> </selectKey> <![CDATA[ insert into crm.crm_tb_instock 
+		(instock_id,instock_get_date,instock_emp,instock_flag,cust_id,showflag) values 
+		(#instock_id#,#instock_get_date#,#instock_emp#,#instock_flag#,#cust_id#,#showflag#) 
+		]]> </insert> <insert id="createStock" parameterClass="st"> <selectKey resultClass="java.lang.Long" 
+		keyProperty="stock_id"> <![CDATA[ select crm.crm_seq_stock.nextval as stock_id 
+		from dual ]]> </selectKey> <![CDATA[ insert into crm.crm_tb_stock(stock_id,cust_id,category_id,stock_quantity,stock_operator,stock_flag,stock_differ,batch,stock_modify_date,stock_create_date) 
+		values (#stock_id#,#cust_id#,#category_id#,#stock_quantity#,#stock_operator#,#stock_flag#,#stock_differ#,#batch#,sysdate,sysdate) 
+		]]> </insert> <update id="updateStock" parameterClass="st" > <![CDATA[ update 
+		crm.crm_tb_stock t set t.stock_modify_date=sysdate ]]> <dynamic> <isNotEmpty 
+		property="stock_quantity" prepend=","> <![CDATA[ t.stock_quantity =#stock_quantity# 
+		]]> </isNotEmpty> <isNotEmpty property="stock_operator" prepend=","> <![CDATA[ 
+		t.stock_operator =#stock_operator# ]]> </isNotEmpty> <isNotEmpty property="stock_flag" 
+		prepend=","> <![CDATA[ t.stock_flag =#stock_flag# ]]> </isNotEmpty> <isNotEmpty 
+		property="batch" prepend=","> <![CDATA[ t.batch =#batch# ]]> </isNotEmpty> 
+		<isNotEmpty property="stock_differ" prepend=","> <![CDATA[ t.stock_differ=#stock_differ# 
+		]]> </isNotEmpty> <isNotEmpty property="stock_quantity" prepend=","> <![CDATA[ 
+		t.stock_quantity =#stock_quantity# ]]> </isNotEmpty> <isNotEmpty property="showflag" 
+		prepend=","> <![CDATA[ t.showflag =#showflag# ]]> </isNotEmpty> </dynamic> 
+		<![CDATA[ where t.stock_id=#stock_id# ]]> </update> -->
+</sqlMap>

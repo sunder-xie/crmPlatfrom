@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui"])
+		#JS_ENV_VAL()	
+	</head>
+		<body>
+		<form method="post"  target="hideFrame">
+		<input type="hidden" name="detailList" id="detailList"/>
+		<input type="hidden" name="ids" id="ids"/>
+		<input type="hidden" name="instock_total_id" id="instock_total_id" value="$!{instock_total_id}"/>
+			<table id="datagrid">  
+			</table> 
+			<div region="south" border="false" style="text-align:right;height:30px;line-height:30px;">
+				<a class="easyui-linkbutton" icon="icon-ok" href="javascript:save()">Submit</a>
+				<a class="easyui-linkbutton" icon="icon-cancel" href="javascript:close()">Cancel</a>
+			</div>
+	  <!--  <div id="toolbar1" class="datagrid-toolbar" >
+	 <input id="ss" class="easyui-searchbox" searcher="searcher1" prompt="请填写物料号或物料名" customer="#mm" style="width:300px"></input>		
+		       </div>	-->	
+	  	<!--<div id="toolbar2" class="datagrid-toolbar" >
+		        <input id="ss" class="easyui-searchbox" searcher="searcher" prompt="请填写客户代码或客户名称" customer="#mm" style="width:300px"></input>		
+		     </div>-->
+			</form>					
+	 <iframe id="hideFrame" name="hideFrame"  style="height: 0; width: 0"></iframe>
+	 <div id="DtPlan"/>
+	 <!--维护菜单DIV-->
+	</body>
+	<div id="OpenGoal"/> 
+		<script type="text/javascript">
+var instock_total_id = '$!{instock_total_id}';
+
+</script>
+<script type="text/javascript" src="$!{env.imgUrl}/js/platform/instock/updateStock.js"></script>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui"])
+		#JS_ENV_VAL()
+	</head>
+	<body>
+		<!-- 查询 -->
+	        <form method="post" id="supervisorSearchForm">
+			<div id="p_search" class="easyui-panel" title="查询条件"
+				style="padding: 2px; background: #fafafa;" data-options="collapsible:true,iconCls:'icon-search'">
+				<table width="100%" border="0" cellpadding="0" cellspacing="1">
+				<tr>
+                    <td class="head" noWrap>门店编号</td>
+                    <td><input id="custNumber" name="custNumber"></td>
+					<td class="head" noWrap>门店名称</td>
+                    <td><input id="custName" name="custName"></td>
+					<td class="head" noWrap>客户渠道</td>
+                    <td><input class="easyui-combobox" id="channelId" name="channelId" style="width:155px;" data-options="editable:false"></td>
+                </tr>
+				<tr>
+                    <td class="head" noWrap>办事处</td>
+                 
+                  <td><input id="orgId" name="orgId" type="hidden" value="$!{orgId}">
+								<input type="text" id="orgName" name="orgName"  value="$!{orgName}" readonly>
+    							<input type="checkbox" name="bhxjFlag" id="bhxjFlag" value="C" checked onclick="return false;" />包含下级
+								<a class="easyui-linkbutton"  href="javascript:selectOrgTree()">组织</a>
+						</td>	
+                    
+					<td class="head" noWrap>业务代表</td>
+                    <td>
+					##<input type='hidden' id="businessCompetent" name="businessCompetent"/>
+					<input id="stationUserName" name="stationUserName"   readonly/>
+					<a class="easyui-linkbutton"  href="javascript:selectOrgTree4Station()">选择</a>
+					<input type='hidden' id="stationUserId" name="stationUserId"/>
+                    </td>
+                    
+					<td class="head" noWrap>客户状态</td>
+                    <td>
+						#*<select  class="easyui-combobox" id="custState" name="custState" style="width:155px;">
+						<option value="">所有客户</option>  
+						<option value="0">正常客户</option> 		 
+						<option value="1">间歇客户</option> 
+						<option value="2">新客户</option> 
+						<option value="3">已关户</option> 
+                    </select>*#
+                    	<select id="custState"  name="custState"  style="width:150px;">
+                    	<option value="">所有客户</option>  
+									#foreach($list in $cmsTbDictCustStateList)
+									
+										#if($!{list.itemValue}=='1') 
+										<option value='$list.itemValue' selected='selected' readonly>$list.itemName</option>
+										
+										 #else 
+										<option value='$list.itemValue'  readonly>$list.itemName</option>
+										
+										 #end
+										
+									#end
+									
+					</select>	
+					</td>	
+                    </tr>
+                    <tr>
+                    <td class="head" noWrap>客户类型</td>
+                    <td><select id="custType"  name="custType" style="width:150px;">
+                    	<option value="">所有客户</option>  
+                    	<option value="T">二阶客户</option>  
+                    	<option value="Z">终端门店</option>  
+					</select>	</td>
+					<td class="head" noWrap>上游客户</td>
+                    <td><input id="custParent" name="custParent" data-options="editable:false"></td>
+					<div id="toolbarParent" class="datagrid-toolbar">
+					<input class="easyui-searchbox" searcher="searcherParent" prompt="请输入客户名称查询" style="width:300px"></input>		
+				</div>
+                </tr>
+                <tr>
+                    <td class="head" noWrap>创建人组织</td>
+                    <td><input id="createOrgId" name="createOrgId" type="hidden" >
+						<input type="text" id="createOrgName" name="createOrgName"  readonly>
+    					<a class="easyui-linkbutton"  href="javascript:selectOrgTree0()">选择</a>
+				    </td>
+				    <td class="head" noWrap >创建日期:</td>
+				    <td class="even" noWrap>
+					    <input class="easyui-datebox" id="createDateStart" name="createDateStart" data-options="editable:false"/>
+                             &nbsp;至&nbsp;
+						<input class="easyui-datebox" id="createDateEnd" name="createDateEnd" data-options="editable:false"/>
+                    </td>
+                </tr>
+				<tr>
+                    <td class="head" noWrap>联系人</td>
+                    <td><input id="contactName" name="contactName"></td>
+					<td class="head" noWrap>所属经分销商</td>
+                    <td><input id="custKunnr" name="custKunnr" data-options="editable:false"></td>
+					<div id="toolbarKonzs" class="datagrid-toolbar">
+					<input class="easyui-searchbox" searcher="searcherKonzs" prompt="请输入经销商名称查询" style="width:300px"></input>		
+				</div>
+		
+						##<td class="head" noWrap></td>
+					<td>
+						<a id="search" href="javascript:search()" class="easyui-linkbutton" data-options="iconCls:'icon-search'">查询</a>
+                    	<a href="javascript:clearFormValue()" class="easyui-linkbutton" iconCls="icon-clear">重置</a> 	
+					</td>	
+                </tr>
+                </table>
+				</div>
+			</div>
+			<table id="datagrid"></table>
+			<input type="hidden" id="ids" name="ids"/>
+				<input type="hidden" id="type" name="type" value="$!{type}"/>
+	</form>
+	</div>
+	<iframe id="hideFrame" name="hideFrame"  style="height: 0; width: 0"></iframe>
+	<div id="hiddenWin"/> 
+	</body>
+<script type="text/javascript" src="$!{env.imgUrl}/js/platform/master/supervisorSearch.js?t=20150506"></script>
+</html>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="GB2312"?>
+<!DOCTYPE sqlMap
+	PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="allchannel">
+	<typeAlias alias="channel"
+		type="com.kintiger.platform.channel.pojo.Bchannel" />
+
+	
+
+
+	<select id="getAllUnderChannel" resultClass="channel">
+	<![CDATA[
+       select t.channel_id channelId, t.channel_name channelName
+      from crm.crm_tb_channel t
+     where t.channel_id not in
+         (select distinct channel_parent_id from crm.crm_tb_channel where channel_parent_id is not null and channel_state='Y')
+       and t.channel_state = 'Y' 
+	]]>
+		<dynamic>
+			<isNotEmpty property="channelName" >
+			<![CDATA[  start with t.channel_name=#channelName# connect by nocycle prior t.channel_id=t.channel_parent_id]]>
+			</isNotEmpty>
+			<isNotEmpty property="allChannelName" prepend="and">
+			<![CDATA[  t.all_channel_name=#allChannelName# ]]>
+			</isNotEmpty>
+		</dynamic>
+		<![CDATA[  order by t.channel_parent_id ]]>
+	</select>
+
+
+
+</sqlMap>

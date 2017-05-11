@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui","upload"])
+		#JS_ENV_VAL()
+	</head>
+		<body class="easyui-layout">	
+	<form  method="post" target="hideFrame" enctype="multipart/form-data"> 
+           <div id="p_add" region="center" class="easyui-panel"
+			title="订单信息" 
+			data-options="iconCls:'icon-edit'">
+          
+						<table id="table_01" width="100%" cellspacing="0" border="0">
+                                        <tr>
+											<td class="head" nowrap>
+												订单编号：
+											</td>
+											<td>
+								                <input type="text"  id="orderId"   name="order.orderId" value="$!{order.orderId}" class="easyui-validatebox"
+								  readonly="true">
+											</td>
+											<td class="head" nowrap>
+												创建时间：
+											</td>
+											<td>
+												<input type="text"  id="orderCreateDate" value="$!{order.orderCreateDate}" class="easyui-validatebox"
+								  readonly="true">
+											</td>
+                                            <td class="head" nowrap>
+												下单人组织：
+											</td>
+											<td >
+												<input type="text"  id="orgName" value="$!{order.orgName}" class="easyui-validatebox"
+								  readonly="true">
+								                <input type="hidden" id="orgId" value="$!{order.orgId}">
+											</td>
+									 </tr>
+									 <tr>
+                                            <td class="head" nowrap>
+												下单人：
+											</td>
+											<td>
+												<input type="text"  id="userName" value="$!{order.userName}" class="easyui-validatebox"
+								  readonly="true">
+											</td>
+											<td class="head" nowrap>
+												客户：
+											</td>
+											<td >
+				                                <input type="hidden" id="custName"  value="$!{order.custName}">
+				                                	
+				                                <input type="hidden" id="isOffice" name="isOffice" value="$!{order.isOffice}">
+												<input id="custId" name="order.custId" value="$!{order.custId}" data-options="required:true,editable:false">
+											</td>
+											    <div id="toolbarCust" class="datagrid-toolbar" >
+				                                <input class="easyui-searchbox" searcher="searcherCust" prompt="请填写客户名"  style="width:300px"></input>
+				                                </div>
+									  </tr>
+									<tr>
+                                            <td class="head" nowrap>
+												订单状态：
+											</td>
+											<td>
+											    <input type="hidden" id="statusValue" value="$!{order.status}" />
+												<select id="status" name="order.status">
+												<option value="U">正常</option>
+												<option value="D">作废</option>
+												</select>
+											</td>
+                                            <td class="head" nowrap>
+												是否送货：
+											</td>
+											<td>
+											    <input type="hidden" id="orderStatusValue" value="$!{order.orderStatus}" />
+												<select id="orderStatus" name="order.orderStatus">
+												<option value="Y">已送</option>
+												<option value="N">未送</option>
+												</select>
+											</td>
+											<td class="head" nowrap>
+												是否打款：
+											</td>
+											<td>
+											    <input type="hidden" id="orderFundsStatusValue" value="$!{order.orderFundsStatus}" />
+												<select id="orderFundsStatus" name="order.orderFundsStatus">
+												<option value="Y">已打款</option>
+												<option value="N">未打款</option>
+												</select>
+											</td>
+                                         </tr>
+                                         <tr>
+                                         <td class="head" nowrap>
+												订单描述：
+											</td>
+											<td colspan="4">
+												<textarea maxlength="160" cols="80" rows="2"  id="orderDesc"   name="order.orderDesc" class="easyui-validatebox"
+								  style="resize:none;">$!{order.orderDesc}</textarea>
+											</td>
+                                         </tr>
+						      </table>
+						<div class="easyui-panel" title="订单详细信息" data-options="collapsible:false,iconCls:'icon-list'" style="padding: 2px; background: #fafafa;">
+						      <table id="orderDetailList" width="100%" border="0">
+									  
+                                  </table>
+                       </div>
+                                  <table border="0" height="200">
+                                      <tr>
+                                        <td>&nbsp;</td>
+                                      </tr>
+                                  </table>
+		                          <div region="south" border="false" style="text-align:right;height:30px;line-height:30px;">
+		                          
+                 					  <a class="easyui-linkbutton" icon="icon-ok" href="javascript:updateOrder()">提交</a>
+				                      <a class="easyui-linkbutton" icon="icon-cancel" href="javascript:cencel()">取消</a> 
+    							  
+				                   
+		                          </div>
+                               
+            </div>
+	
+		 </form>
+           <iframe id="hideFrame" name="hideFrame"  style="height: 0; width: 0"></iframe>
+           <div id="maintWindow"/>
+           	</body>
+         <script type="text/javascript" src="$!{env.imgUrl}/js/platform/order/updateOrder.js"></script>
+</html>

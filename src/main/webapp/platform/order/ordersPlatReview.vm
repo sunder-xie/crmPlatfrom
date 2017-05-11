@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui"])
+		#JS_ENV_VAL()
+	</head>
+	<body>
+	 <form id="ff" method="post" target="hideFrame">
+		<div class="easyui-panel" style="padding: 5px 20px;">
+		    <input id="ddzt" type="hidden" value="$!{orderState}"/>
+			单号：<input id="dh" type="text" style="width: 100px;"/>
+			组织：<input id="orgId" name="orgId" type="hidden" value="$!{orgId}">
+				<input type="text" id="orgName" name="orgName"  value="$!{orgName}" readonly>
+    			##<input type="checkbox" name="bhxjFlag" id="bhxjFlag" value="C"/>包含下级
+				<a class="easyui-linkbutton"  href="javascript:selectOrgTree()">组织</a>
+			&nbsp;&nbsp;订单日期：从<input id="ddrq_c" type="text" value="$!{startDate}"  class="easyui-datebox" required="required" style="width:100px" />
+			至<input id="ddrq_z" type="text" value="$!{endDate}" class="easyui-datebox" required="required" style="width:100px" />
+			<br/><br/>
+			经销商代码：<input id="jxsmc" type="text" style="width: 150px;"/>
+			经销商名称：<input id="jxsmc" type="text" style="width: 180px;"/>
+			&nbsp;&nbsp;<a href="javascript:search()" class="easyui-linkbutton" data-options="iconCls:'icon-search'" style="width:80px">查询</a>
+		</div>
+		<br/>
+		<table id="ddlb" style="height:500px"></table>
+		<div id="maintWindow"/>
+		<input id="ids" name="ids"/>
+		</form>
+		 <iframe id="hideFrame" name="hideFrame"  style="height: 0; width: 0"></iframe>
+	</body>
+<script type="text/javascript" src="$!{env.imgUrl}/js/platform/FDate.js?t=1"></script>
+<script type="text/javascript" src="$!{env.imgUrl}/js/platform/order/ordersPlatReview.js?t=1"></script>
+</html>

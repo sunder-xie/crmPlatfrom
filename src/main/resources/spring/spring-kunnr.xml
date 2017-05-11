@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	
+	<bean id="kunnrAction" class="com.kintiger.platform.kunnr.action.KunnrAction"
+		parent="baseAction" scope="request">
+		<property name="wfeServiceHessian" ref="wfeServiceHessian" ></property>
+		<property name="kunnrService" ref="kunnrService" ></property>
+		<property name="channelService" ref="channelService" ></property>
+		<property name="allchannelService" ref="allchannelService" ></property>
+		<property name="crmdictService" ref="crmdictService" ></property>
+		<property name="orgServiceHessian" ref="orgServiceHessian"/>
+		<property name="goalService" ref="goalService"/>
+		<property name="eventService" ref="eventService"/>
+		<property name="stockReportService" ref="stockReportService"/>
+		
+		<property name="appUrl">
+			<value>${appUrl}</value>
+		</property>
+		<property name="xmlFilePath">
+			<value>${wfe.xml.filePath}</value>
+		</property>
+		<property name="crm_xmlFilePath">
+			<value>${crm.xml.filePath}</value>
+		</property>
+		<property name="downloadFromPath">
+			<value>${crm.download.filePath}</value>
+		</property>
+	</bean>
+	
+	<bean id="kunnrService" class="com.kintiger.platform.kunnr.service.impl.KunnrServiceImpl">
+		<property name="kunnrDao" ref="kunnrDao" ></property>
+		<property name="sapConnection" ref="sapConnection" />
+		<property name="uploadFilePath">
+			<value>${wfe.upload.filePath}</value>
+		</property>
+		<property name="licenseFilePath">
+			<value>${crm.license.filePath}</value>
+		</property>
+
+	</bean>
+
+	<bean id="kunnrDao" class="com.kintiger.platform.kunnr.dao.impl.KunnrDaoImpl" parent="baseDao">
+		<property name="kunnrAddressService" ref="kunnrAddressService" ></property>
+	</bean>
+
+</beans>

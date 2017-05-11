@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<bean id="allUserServiceHessian"
+		class="org.springframework.remoting.caucho.HessianProxyFactoryBean">
+		<property name="serviceUrl">
+			<value>${hessian.remote.alluser}</value>
+		</property>
+		<property name="serviceInterface"
+			value="com.kintiger.platform.allUser.service.IAllUserService" />
+	</bean>
+	<bean id="dictServiceHessian"
+			class="org.springframework.remoting.caucho.HessianProxyFactoryBean">
+			<property name="serviceUrl">
+				<value>${hessian.remote.dict}</value>
+			</property>
+			<property name="serviceInterface"
+				value="com.kintiger.platform.dict.service.IDictService" />
+		</bean>
+	<bean id="orgServiceHessian"
+		class="org.springframework.remoting.caucho.HessianProxyFactoryBean">
+			<property name="serviceUrl">
+				<value>${hessian.remote.org}</value>
+			</property>
+			<property name="serviceInterface"
+				value="com.kintiger.platform.org.service.IOrgService" />
+		</bean>
+		<bean id="wfeServiceHessian"
+			class="org.springframework.remoting.caucho.HessianProxyFactoryBean">
+			<property name="serviceUrl">
+				<value>${hessian.remote.wfe}</value>
+			</property>
+			<property name="serviceInterface"
+				value=" com.kintiger.platform.wfe.service.IWfeService" />
+		</bean>
+		<bean id="smsServiceHessian"
+			class="org.springframework.remoting.caucho.HessianProxyFactoryBean">
+			<property name="serviceUrl">
+				<value>${hessian.remote.sms}</value>
+			</property>
+			<property name="serviceInterface"
+				value=" com.kintiger.platform.sms.service.ISmsInterfaceService" />
+		</bean>		
+
+
+</beans>

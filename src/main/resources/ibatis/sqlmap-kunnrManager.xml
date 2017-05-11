@@ -1,0 +1,798 @@
+<?xml version="1.0" encoding="GB2312"?>
+<!DOCTYPE sqlMap
+	PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="kunnrManager">
+    <typeAlias alias="kManager" type="com.kintiger.platform.kunnrManager.pojo.KunnrManager" />
+    <typeAlias alias="stockSafety" type="com.kintiger.platform.kunnrManager.pojo.StockSafety" />
+    <typeAlias alias="kunnrManagerSku" type="com.kintiger.platform.kunnrManager.pojo.Sku" />
+    <typeAlias alias="dateControl" type="com.kintiger.platform.kunnrManager.pojo.DateControl" />
+    
+    <select id="searchKunnrManagerListCount" parameterClass="kManager" resultClass="java.lang.Integer">
+	    <![CDATA[ select count(*)
+	                     from crm.crm_tb_kunnr_manager_sku m
+                         left join crm.crm_tb_kunnr_kunag kg on kg.kunnr=m.kunnr
+                         left join crm.crm_tb_kunnr k on k.kunnr=m.kunnr
+                         left join crm.crm_tb_kunnr kk on kk.kunnr=kg.kunag
+                         left join crm.crm_tb_sku sku on sku.sku_id=m.sku_id
+                         left join basis.basis_tb_org_temp ot on ot.org_id=k.org_id
+                         left join crm.crm_tb_kunnrbusiness b on b.kunnr=k.kunnr
+	                     where m.status='U'
+	    ]]>
+	    <dynamic>
+			<isNotEmpty property="kunnr" prepend="and">
+			<![CDATA[(m.kunnr in (select kunnr 
+			                             from crm.crm_tb_kunnr_kunag g where g.kunag in 
+			                             (select kunag from crm.crm_tb_kunnr_kunag kg where kg.kunnr=#kunnr#)) 
+	                     or m.kunnr =#kunnr#)]]>
+			</isNotEmpty>
+			<isNotEmpty property="year" prepend="and">
+			<![CDATA[ m.manager_year = #year# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="month" prepend="and">
+			<![CDATA[ m.manager_month = #month# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="startDate" prepend="and">
+			<![CDATA[ (m.manager_year||'-'||m.manager_month) >= #startDate# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="endDate" prepend="and">
+			<![CDATA[ (m.manager_year||'-'||m.manager_month) <= #endDate# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="skuId" prepend="and">
+			<![CDATA[ sku.sku_id = #skuId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="orgIds" prepend="and">
+			<![CDATA[ k.org_id in (select b.org_id from basis.basis_tb_org b 
+				      start with b.org_id in ($orgIds$)
+				      connect by prior b.org_id= b.org_parent_id)]]>
+		    </isNotEmpty>
+			<isEqual compareValue="Y" property="isImportant" prepend="and">
+			<![CDATA[ b.is_important is not null ]]>
+			</isEqual>
+			<isEqual compareValue="N" property="isImportant" prepend="and">
+			<![CDATA[ b.is_important is null ]]>
+			</isEqual>
+		</dynamic>
+	</select>
+	
+	<select id="searchKunnrManagerList" parameterClass="kManager" resultClass="kManager">
+	<include refid="global.paginationStart" />
+	    <![CDATA[ select nvl(kg.kunag,m.kunnr) as kunnr,
+	                     nvl(kk.name1,k.name1) as kunnrName,
+	                     m.sku_id as skuId,
+		                 sku.sku_name as skuName,
+	                     m.manager_year as year,
+	                     m.manager_month as month,
+		                 m.sales_plan as salesPlan,
+		                 m.sales_plan_next as salesPlanNext,
+		                 m.sales_plan_next2 as salesPlanNext2,
+	                     ot.p_org_name as orgProvince,
+		                 ot.org_name as orgCity,
+		                 ot.rc_org_name as orgRegion
+	                     from crm.crm_tb_kunnr_manager_sku m
+                         left join crm.crm_tb_kunnr_kunag kg on kg.kunnr=m.kunnr
+                         left join crm.crm_tb_kunnr k on k.kunnr=m.kunnr
+                         left join crm.crm_tb_kunnr kk on kk.kunnr=kg.kunag
+                         left join crm.crm_tb_sku sku on sku.sku_id=m.sku_id
+                         left join basis.basis_tb_org_temp ot on ot.org_id=k.org_id
+                         left join crm.crm_tb_kunnrbusiness b on b.kunnr=k.kunnr
+	                     where m.status='U'
+	    ]]>
+	    <dynamic>
+			<isNotEmpty property="kunnr" prepend="and">
+			<![CDATA[(m.kunnr in (select kunnr 
+			                             from crm.crm_tb_kunnr_kunag g where g.kunag in 
+			                             (select kunag from crm.crm_tb_kunnr_kunag kg where kg.kunnr=#kunnr#)) 
+	                     or m.kunnr =#kunnr#)]]>
+			</isNotEmpty>
+			<isNotEmpty property="year" prepend="and">
+			<![CDATA[ m.manager_year = #year# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="month" prepend="and">
+			<![CDATA[ m.manager_month = #month# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="startDate" prepend="and">
+			<![CDATA[ (m.manager_year||'-'||m.manager_month) >= #startDate# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="endDate" prepend="and">
+			<![CDATA[ (m.manager_year||'-'||m.manager_month) <= #endDate# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="skuId" prepend="and">
+			<![CDATA[ sku.sku_id = #skuId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="orgIds" prepend="and">
+			<![CDATA[ k.org_id in (select b.org_id from basis.basis_tb_org b 
+				      start with b.org_id in ($orgIds$)
+				      connect by prior b.org_id= b.org_parent_id)]]>
+		    </isNotEmpty>
+			<isEqual compareValue="Y" property="isImportant" prepend="and">
+			<![CDATA[ b.is_important is not null ]]>
+			</isEqual>
+			<isEqual compareValue="N" property="isImportant" prepend="and">
+			<![CDATA[ b.is_important is null ]]>
+			</isEqual>
+		</dynamic> 
+		    <![CDATA[ order by m.kunnr,m.sku_id,m.manager_year,m.manager_month ]]>
+		<include refid="global.paginationEnd" />
+	</select>
+	
+	<select id="getKunnrManagerListSum" parameterClass="kManager" resultClass="kManager">
+	    <![CDATA[ select 
+		                 sum(m.sales_plan*nvl(u.sku_unit_coefficient,1)) as salesPlan,
+		                 sum(m.sales_plan_next*nvl(u.sku_unit_coefficient,1)) as salesPlanNext
+	                     from crm.crm_tb_kunnr_manager_sku m
+                         left join crm.crm_tb_kunnr_kunag kg on kg.kunnr=m.kunnr
+                         left join crm.crm_tb_kunnr k on k.kunnr=m.kunnr
+                         left join crm.crm_tb_sku sku on sku.sku_id=m.sku_id
+                         left join basis.basis_tb_org_temp ot on ot.org_id=k.org_id
+                         left join crm.crm_tb_kunnrbusiness b on b.kunnr=k.kunnr
+                         left join crm.crm_tb_sku_unitcoefficient u on u.sku_id=m.sku_id
+	                     where m.status='U'
+	    ]]>
+	    <dynamic>
+			<isNotEmpty property="kunnr" prepend="and">
+			<![CDATA[(m.kunnr in (select kunnr 
+			                             from crm.crm_tb_kunnr_kunag g where g.kunag in 
+			                             (select kunag from crm.crm_tb_kunnr_kunag kg where kg.kunnr=#kunnr#)) 
+	                     or m.kunnr =#kunnr#)]]>
+			</isNotEmpty>
+			<isNotEmpty property="year" prepend="and">
+			<![CDATA[ m.manager_year = #year# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="month" prepend="and">
+			<![CDATA[ m.manager_month = #month# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="startDate" prepend="and">
+			<![CDATA[ (m.manager_year||'-'||m.manager_month) >= #startDate# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="endDate" prepend="and">
+			<![CDATA[ (m.manager_year||'-'||m.manager_month) <= #endDate# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="skuId" prepend="and">
+			<![CDATA[ sku.sku_id = #skuId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="orgIds" prepend="and">
+			<![CDATA[ k.org_id in (select b.org_id from basis.basis_tb_org b 
+				      start with b.org_id in ($orgIds$)
+				      connect by prior b.org_id= b.org_parent_id)]]>
+		    </isNotEmpty>
+			<isEqual compareValue="Y" property="isImportant" prepend="and">
+			<![CDATA[ b.is_important is not null ]]>
+			</isEqual>
+			<isEqual compareValue="N" property="isImportant" prepend="and">
+			<![CDATA[ b.is_important is null ]]>
+			</isEqual>
+		</dynamic>
+	</select>
+	
+	<select id="searchSkuList" parameterClass="kunnrManagerSku" resultClass="kunnrManagerSku">
+	    <![CDATA[
+	        select s.sku_id skuId,
+	               s.sku_name skuName
+	               from crm.crm_tb_sku s
+	               where s.status='U' and s.sku_company='1'
+	    ]]>
+	    <dynamic>
+	        <isNotEmpty property="skuId" prepend="and">
+			<![CDATA[ s.sku_id = #skuId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="skuName" prepend="and">
+	          <![CDATA[ s.sku_name like #skuName,handler=wildcard# escape '\']]>
+	       </isNotEmpty>
+	    </dynamic>
+	</select>
+	
+	<select id="searchKunnrManagerDate" parameterClass="dateControl" resultClass="dateControl">
+	    <![CDATA[ select t.id as id,
+	                     t.check_time as checkTime,
+	                     t.start_date as startDateStr,
+	                     t.end_date as endDateStr,
+	                     t.modify_date as modifyDate
+	                     from crm.crm_tb_kunnr_manager_date t
+	                     where 1=1
+	    ]]>
+	    <dynamic>
+			<isNotEmpty property="id" prepend="and">
+			<![CDATA[ t.id = #id# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="modifyDate" prepend="and">
+			<![CDATA[ t.start_date <= #modifyDate# and t.end_date>=#modifyDate#]]>
+			</isNotEmpty>
+		</dynamic> 
+	</select>
+	
+	<select id="searchKunnrManagerDateCount" parameterClass="dateControl" resultClass="java.lang.Integer">
+	    <![CDATA[ select count(*)
+	                     from crm.crm_tb_kunnr_manager_date t
+	                     where 1=1
+	    ]]>
+	    <dynamic>
+			<isNotEmpty property="id" prepend="and">
+			<![CDATA[ t.id = #id# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="startDate" prepend="and">
+			<![CDATA[ to_date(t.check_time,'yyyy-MM-dd')+1 >= #startDate# ]]>
+			</isNotEmpty>
+		</dynamic> 
+	</select>
+	
+	<update id="updateKunnrManagerDate" parameterClass="dateControl">
+	    <![CDATA[ update crm.crm_tb_kunnr_manager_date t set t.modify_date = sysdate]]>
+	    <dynamic>
+			<isNotEmpty property="checkTime" prepend=",">
+			<![CDATA[ t.check_time = #checkTime# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="startDate" prepend=",">
+			<![CDATA[ t.start_date = #startDate# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="endDate" prepend=",">
+			<![CDATA[ t.end_date = #endDate#]]>
+			</isNotEmpty>
+		</dynamic>
+			<![CDATA[ where t.id=#id# ]]>
+	</update>
+	
+	<insert id="createKunnrManager" parameterClass="kManager">
+	    <![CDATA[
+	      insert into crm.crm_tb_kunnr_manager_sku(
+	             kunnr,
+                 sku_id,
+                 manager_year,
+                 manager_month,
+                 sales_plan,
+                 sales_plan_next,
+                 sales_plan_next2,
+                 create_date,
+                 user_id,
+                 status
+                 )
+                 values(
+                 #kunnr#,
+                 #skuId#,
+                 #year#,
+                 #month#,
+                 #salesPlan#,
+                 #salesPlanNext#,
+                 #salesPlanNext2#,
+                 sysdate,
+                 #userId#,
+                 'U'
+                 )
+	    ]]> 
+	</insert>
+	
+	<update id="deleteKunnrManager" parameterClass="kManager">
+	   <![CDATA[
+	      update crm.crm_tb_kunnr_manager_sku s set
+	      s.create_date=sysdate
+	   ]]>
+	   <dynamic>
+	       <isNotEmpty property="salesPlan" prepend=",">
+	          <![CDATA[ s.sales_plan = #salesPlan# ]]>
+	       </isNotEmpty>
+	       <isNotEmpty property="salesPlanNext" prepend=",">
+	          <![CDATA[ s.sales_plan_next = #salesPlanNext# ]]>
+	       </isNotEmpty>
+	       <isNotEmpty property="salesPlanNext2" prepend=",">
+	          <![CDATA[ s.sales_plan_next2 = #salesPlanNext2# ]]>
+	       </isNotEmpty>
+	       <isNotEmpty property="userId" prepend=",">
+	          <![CDATA[ s.user_id = #userId# ]]>
+	       </isNotEmpty>
+	       <isNotEmpty property="status" prepend=",">
+	          <![CDATA[ s.status = #status# ]]>
+	       </isNotEmpty>
+	    </dynamic>
+	    <![CDATA[ where 1=1 ]]>
+           <dynamic>
+	       <isNotEmpty property="kunnr" prepend="and">
+	          <![CDATA[ (s.kunnr in (select kunnr from crm.crm_tb_kunnr_kunag kg where kg.kunag=#kunnr#) 
+	                     or s.kunnr=#kunnr#)
+	          ]]>
+	       </isNotEmpty>
+	       <isNotEmpty property="skuId" prepend="and">
+	          <![CDATA[ s.sku_id = #skuId# ]]>
+	       </isNotEmpty>
+	       <isNotEmpty property="year" prepend="and">
+	          <![CDATA[ s.manager_year = #year# ]]>
+	       </isNotEmpty>
+	       <isNotEmpty property="month" prepend="and">
+	          <![CDATA[ s.manager_month = #month# ]]>
+	       </isNotEmpty>
+	    </dynamic>
+	</update>
+	
+	<update id="updateKunnrManager" parameterClass="kManager">
+	   <![CDATA[
+	      update crm.crm_tb_kunnr_manager_sku s set
+	      s.create_date=sysdate
+	   ]]>
+	   <dynamic>
+	       <isNotEmpty property="salesPlan" prepend=",">
+	          <![CDATA[ s.sales_plan = #salesPlan# ]]>
+	       </isNotEmpty>
+	       <isNotEmpty property="salesPlanNext" prepend=",">
+	          <![CDATA[ s.sales_plan_next = #salesPlanNext# ]]>
+	       </isNotEmpty>
+	       <isNotEmpty property="salesPlanNext2" prepend=",">
+	          <![CDATA[ s.sales_plan_next2 = #salesPlanNext2# ]]>
+	       </isNotEmpty>
+	       <isNotEmpty property="userId" prepend=",">
+	          <![CDATA[ s.user_id = #userId# ]]>
+	       </isNotEmpty>
+	       <isNotEmpty property="status" prepend=",">
+	          <![CDATA[ s.status = #status# ]]>
+	       </isNotEmpty>
+	    </dynamic>
+	    <![CDATA[ where 1=1 ]]>
+           <dynamic>
+	       <isNotEmpty property="kunnr" prepend="and">
+	          <![CDATA[ s.kunnr = #kunnr# ]]>
+	       </isNotEmpty>
+	       <isNotEmpty property="skuId" prepend="and">
+	          <![CDATA[ s.sku_id = #skuId# ]]>
+	       </isNotEmpty>
+	       <isNotEmpty property="year" prepend="and">
+	          <![CDATA[ s.manager_year = #year# ]]>
+	       </isNotEmpty>
+	       <isNotEmpty property="month" prepend="and">
+	          <![CDATA[ s.manager_month = #month# ]]>
+	       </isNotEmpty>
+	    </dynamic>
+	</update>
+	
+	<update id="updateKunnrImportant" parameterClass="kManager">
+	   <![CDATA[
+	      update crm.crm_tb_kunnrbusiness s set s.is_important = #isImportant#
+	   ]]>
+        <dynamic prepend="where">
+	       <isNotEmpty property="kunnr" prepend="and">
+	          <![CDATA[ s.kunnr = #kunnr# ]]>
+	       </isNotEmpty>
+	    </dynamic>
+	</update>
+	
+	<select id="searchStockSafetyListCount" parameterClass="stockSafety" resultClass="java.lang.Integer">
+	<![CDATA[
+	    select count(*)
+	           from crm.crm_tb_kunnr_stock_safety s
+               left join crm.crm_tb_kunnr_kunag kg on kg.kunnr=s.kunnr
+               left join crm.crm_tb_kunnr k on k.kunnr=s.kunnr
+               left join crm.crm_tb_kunnr kk on kk.kunnr=kg.kunag
+               left join basis.basis_tb_org_temp ot on ot.org_id=k.org_id
+               left join crm.crm_tb_kunnrbusiness b on b.kunnr=s.kunnr
+               where s.status='U'  
+	]]>
+	    <dynamic>
+	       <isNotEmpty property="kunnr" prepend="and">
+	          <![CDATA[ s.kunnr = #kunnr# ]]>
+	       </isNotEmpty>
+		   <isNotEmpty property="orgIds" prepend="and">
+			<![CDATA[ k.org_id in (select b.org_id from basis.basis_tb_org b 
+				      start with b.org_id in ($orgIds$)
+				      connect by prior b.org_id= b.org_parent_id)]]>
+		   </isNotEmpty>
+			<isEqual compareValue="Y" property="isImportant" prepend="and">
+			<![CDATA[ b.is_important is not null ]]>
+			</isEqual>
+			<isEqual compareValue="N" property="isImportant" prepend="and">
+			<![CDATA[ b.is_important is null ]]>
+			</isEqual>
+	    </dynamic>
+	</select>
+	
+	<select id="searchStockSafetyList" parameterClass="stockSafety" resultClass="stockSafety">
+	<![CDATA[
+	    select nvl(kg.kunag,s.kunnr) as kunnr,
+	           nvl(kk.name1,k.name1) as kunnrName,
+	           s.order_time orderTime,
+	           s.express_time expressTime,
+	           s.day day,
+	           s.create_date createDate,
+	           s.user_id userId,
+	           ot.p_org_name as orgProvince,
+		       ot.org_name as orgCity,
+		       ot.rc_org_name as orgRegion
+	           from crm.crm_tb_kunnr_stock_safety s
+               left join crm.crm_tb_kunnr_kunag kg on kg.kunnr=s.kunnr
+               left join crm.crm_tb_kunnr k on k.kunnr=s.kunnr
+               left join crm.crm_tb_kunnr kk on kk.kunnr=kg.kunag
+               left join basis.basis_tb_org_temp ot on ot.org_id=k.org_id
+               left join crm.crm_tb_kunnrbusiness b on b.kunnr=s.kunnr
+               where s.status='U' 
+	]]>
+	    <dynamic>
+	       <isNotEmpty property="kunnr" prepend="and">
+	          <![CDATA[ s.kunnr = #kunnr# ]]>
+	       </isNotEmpty>
+		   <isNotEmpty property="orgIds" prepend="and">
+			<![CDATA[ k.org_id in (select b.org_id from basis.basis_tb_org b 
+				      start with b.org_id in ($orgIds$)
+				      connect by prior b.org_id= b.org_parent_id)]]>
+		   </isNotEmpty>
+			<isEqual compareValue="Y" property="isImportant" prepend="and">
+			<![CDATA[ b.is_important is not null ]]>
+			</isEqual>
+			<isEqual compareValue="N" property="isImportant" prepend="and">
+			<![CDATA[ b.is_important is null ]]>
+			</isEqual>
+	    </dynamic>
+	<![CDATA[
+	    order by nvl(kg.kunag,s.kunnr)
+	]]>
+	</select>
+	
+	<insert id="createStockSafety" parameterClass="stockSafety">
+	<![CDATA[
+	    insert into crm.crm_tb_kunnr_stock_safety(
+	        kunnr,
+	        create_date,
+	        user_id,
+	        order_time,
+	        express_time,
+	        day,
+	        status
+	        )
+	        values
+	        (
+	         #kunnr#,
+	         sysdate,
+	         #userId#,
+	         #orderTime#,
+	         #expressTime#,
+	         #day#,
+	         'U'
+	        )
+	]]>
+	</insert>
+	
+	<update id="updateStockSafety" parameterClass="stockSafety">
+	   <![CDATA[
+	      update crm.crm_tb_kunnr_stock_safety s set s.create_date = sysdate
+	   ]]>
+	   <dynamic>
+	       <isNotEmpty property="status" prepend=",">
+	          <![CDATA[ s.status = #status# ]]>
+	       </isNotEmpty>
+	       <isNotEmpty property="orderTime" prepend=",">
+	          <![CDATA[ s.order_time = #orderTime# ]]>
+	       </isNotEmpty>
+	       <isNotEmpty property="expressTime" prepend=",">
+	          <![CDATA[ s.express_time = #expressTime# ]]>
+	       </isNotEmpty>
+	       <isNotEmpty property="day" prepend=",">
+	          <![CDATA[ s.day = #day# ]]>
+	       </isNotEmpty>
+	       <isNotEmpty property="userId" prepend=",">
+	          <![CDATA[ s.user_id = #userId# ]]>
+	       </isNotEmpty>
+	   </dynamic>
+        <dynamic prepend="where">
+	       <isNotEmpty property="kunnr" prepend="and">
+	          <![CDATA[ s.kunnr = #kunnr# and s.status='U' ]]>
+	       </isNotEmpty>
+	    </dynamic>
+	</update>
+	
+	<select id="getKunagByKunnr" parameterClass="java.lang.String" resultClass="java.lang.String">
+	<![CDATA[
+	    select kg.kunag
+	           from crm.crm_tb_kunnr_kunag kg
+	           where kg.kunnr=#kunnr#  
+	]]>
+	</select>
+	
+	<select id="searchProductionPlanListCount" parameterClass="kManager" resultClass="java.lang.Integer">
+	<![CDATA[
+	    select count(*)
+	           from (select k.kunnr,k.name1,s.sku_id,s.sku_name
+	                        from crm.crm_tb_kunnr k , crm.crm_tb_sku s
+	                        where s.sku_company='1' and s.status='U' and s.sku_sap_code is not null
+	                        ) t
+               left join crm.crm_tb_kunnr_kunag kg on kg.kunnr=t.kunnr
+               left join crm.crm_tb_kunnr k on k.kunnr=t.kunnr
+               left join crm.crm_tb_kunnr kk on kk.kunnr=kg.kunag
+	           left join crm.crm_tb_sku sku on sku.sku_id=t.sku_id
+               left join basis.basis_tb_org_temp ot on ot.org_id=k.org_id
+               left join (select substr(lpad(s.kunnr,10,'0'),3,8) kunnr,s.year,s.month,s.sku_id,sum(latest_stock) latest_stock
+                                           from hana_distribution_sku s
+                                           group by s.kunnr,s.year,s.month,s.sku_id
+                                           ) ds on ds.kunnr=t.kunnr 
+                                                and ds.sku_id=t.sku_id
+	           left join (select * from crm.crm_tb_kunnr_manager_sku t where t.status='U') ms 
+	                                                     on ms.kunnr=t.kunnr 
+	                                                     and ms.sku_id=t.sku_id 
+	                                                     and to_number(ms.manager_year)=to_number(ds.year) 
+	                                                     and to_number(ms.manager_month)=to_number(ds.month)
+	           left join (select * from crm.crm_tb_kunnr_manager_sku t where t.status='U') ms1 
+	                                                      on ms1.kunnr=t.kunnr 
+	                                                      and ms1.sku_id=t.sku_id 
+	                                                      and to_number(ms1.manager_year)=to_number(to_char(add_months(to_date(ds.year||ds.month,'yyyyMM'),1),'yyyy')) 
+	                                                      and to_number(ms1.manager_month)=to_number(to_char(add_months(to_date(ds.year||ds.month,'yyyyMM'),1),'MM'))
+	           left join (select * from crm.crm_tb_kunnr_manager_sku t where t.status='U') ms2 
+	                                                      on ms2.kunnr=t.kunnr 
+	                                                      and ms2.sku_id=t.sku_id 
+	                                                      and to_number(ms2.manager_year)=to_number(to_char(add_months(to_date(ds.year||ds.month,'yyyyMM'),2),'yyyy')) 
+	                                                      and to_number(ms2.manager_month)=to_number(to_char(add_months(to_date(ds.year||ds.month,'yyyyMM'),2),'MM'))
+	           left join crm.crm_tb_kunnr_stock_safety s on s.kunnr=ms.kunnr
+	           left join (select substr(lpad(s.kunnr,10,'0'),3,8) kunnr,s.year,s.month,s.sku_id,sum(s.latest_stock) latest_stock
+                                           from hana_distribution_sku s
+                                           group by s.kunnr,s.year,s.month,s.sku_id
+                                           ) ds1 on ds1.kunnr=t.kunnr 
+                                                and ds1.sku_id=t.sku_id
+                                                and to_number(ds1.year)=to_number(to_char(add_months(to_date(ds.year||ds.month,'yyyyMM'),-1),'yyyy'))
+                                                and to_number(ds1.month)=to_number(to_char(add_months(to_date(ds.year||ds.month,'yyyyMM'),-1),'MM'))
+               where 1=1
+	]]>
+	    <dynamic>
+	       <isNotEmpty property="kunnr" prepend="and">
+	          <![CDATA[ t.kunnr = #kunnr# ]]>
+	       </isNotEmpty>
+			<isNotEmpty property="skuId" prepend="and">
+			<![CDATA[ t.sku_id = #skuId# ]]>
+			</isNotEmpty>
+		   <isNotEmpty property="orgIds" prepend="and">
+			<![CDATA[ k.org_id in (select b.org_id from basis.basis_tb_org b 
+				      start with b.org_id in ($orgIds$)
+				      connect by prior b.org_id= b.org_parent_id)]]>
+		   </isNotEmpty>
+			<isNotEmpty property="startDate" prepend="and">
+			<![CDATA[ to_date(ds.year||lpad(ds.month,2,'0'),'yyyyMM') >= to_date(#startDate#,'yyyy-MM') ]]>
+			</isNotEmpty>
+			<isNotEmpty property="endDate" prepend="and">
+			<![CDATA[ to_date(ds.year||lpad(ds.month,2,'0'),'yyyyMM') <= to_date(#endDate#,'yyyy-MM')+1]]>
+			</isNotEmpty>
+	    </dynamic>
+	</select>
+	
+	<select id="searchProductionPlanList" parameterClass="kManager" resultClass="kManager">
+	<include refid="global.paginationStart" />
+	<![CDATA[
+	    select nvl(kg.kunag,t.kunnr) as kunnr,
+	           nvl(kk.name1,k.name1) as kunnrName,
+	           t.sku_id skuId,
+	           sku.sku_name skuName,
+	           sku.sku_sap_code matter,
+	           ds.year year,
+	           ds.month month,
+	           ot.p_org_name orgProvince,
+		       ot.org_name orgCity,
+		       ot.rc_org_name orgRegion,
+	           ms.sales_plan salesPlan,
+	           nvl(ms1.sales_plan,ms.sales_plan_next) salesPlanNext,
+	           ds1.latest_stock estimateStockLast,
+	           ds.latest_stock estimateStock,
+	           ds.actual salesTotal,
+	           round(s.day*nvl(nvl(ms1.sales_plan,ms.sales_plan_next),0)/30,2) stockSafety,
+	           round(s.day*nvl(nvl(ms2.sales_plan,ms1.sales_plan_next),0)/30,2) stockSafetyNext
+	           from (select k.kunnr,k.name1,s.sku_id,s.sku_name
+	                        from crm.crm_tb_kunnr k , crm.crm_tb_sku s
+	                        where s.sku_company='1' and s.status='U' and s.sku_sap_code is not null
+	                        ) t
+               left join crm.crm_tb_kunnr_kunag kg on kg.kunnr=t.kunnr
+               left join crm.crm_tb_kunnr k on k.kunnr=t.kunnr
+               left join crm.crm_tb_kunnr kk on kk.kunnr=kg.kunag
+	           left join crm.crm_tb_sku sku on sku.sku_id=t.sku_id
+               left join basis.basis_tb_org_temp ot on ot.org_id=k.org_id
+               left join (select substr(lpad(s.kunnr,10,'0'),3,8) kunnr,s.year,lpad(s.month,2,'0') month,s.sku_id,sum(latest_stock) latest_stock,sum(actual) actual
+                                           from hana_distribution_sku s
+                                           group by s.kunnr,s.year,s.month,s.sku_id
+                                           ) ds on ds.kunnr=t.kunnr 
+                                                and ds.sku_id=t.sku_id
+	           left join (select * from crm.crm_tb_kunnr_manager_sku t where t.status='U') ms 
+	                                                     on ms.kunnr=t.kunnr 
+	                                                     and ms.sku_id=t.sku_id 
+	                                                     and to_number(ms.manager_year)=to_number(ds.year) 
+	                                                     and to_number(ms.manager_month)=to_number(ds.month)
+	           left join (select * from crm.crm_tb_kunnr_manager_sku t where t.status='U') ms1 
+	                                                      on ms1.kunnr=t.kunnr 
+	                                                      and ms1.sku_id=t.sku_id 
+	                                                      and to_number(ms1.manager_year)=to_number(to_char(add_months(to_date(ds.year||ds.month,'yyyyMM'),1),'yyyy')) 
+	                                                      and to_number(ms1.manager_month)=to_number(to_char(add_months(to_date(ds.year||ds.month,'yyyyMM'),1),'MM'))
+	           left join (select * from crm.crm_tb_kunnr_manager_sku t where t.status='U') ms2 
+	                                                      on ms2.kunnr=t.kunnr 
+	                                                      and ms2.sku_id=t.sku_id 
+	                                                      and to_number(ms2.manager_year)=to_number(to_char(add_months(to_date(ds.year||ds.month,'yyyyMM'),2),'yyyy')) 
+	                                                      and to_number(ms2.manager_month)=to_number(to_char(add_months(to_date(ds.year||ds.month,'yyyyMM'),2),'MM'))
+	           left join crm.crm_tb_kunnr_stock_safety s on s.kunnr=ms.kunnr
+	           left join (select substr(lpad(s.kunnr,10,'0'),3,8) kunnr,s.year,s.month,s.sku_id,sum(s.latest_stock) latest_stock
+                                           from hana_distribution_sku s
+                                           group by s.kunnr,s.year,s.month,s.sku_id
+                                           ) ds1 on ds1.kunnr=t.kunnr 
+                                                and ds1.sku_id=t.sku_id
+                                                and to_number(ds1.year)=to_number(to_char(add_months(to_date(ds.year||ds.month,'yyyyMM'),-1),'yyyy'))
+                                                and to_number(ds1.month)=to_number(to_char(add_months(to_date(ds.year||ds.month,'yyyyMM'),-1),'MM'))
+               where 1=1
+	]]>
+	    <dynamic>
+	       <isNotEmpty property="kunnr" prepend="and">
+	          <![CDATA[ t.kunnr = #kunnr# ]]>
+	       </isNotEmpty>
+			<isNotEmpty property="skuId" prepend="and">
+			<![CDATA[ t.sku_id = #skuId# ]]>
+			</isNotEmpty>
+		   <isNotEmpty property="orgIds" prepend="and">
+			<![CDATA[ k.org_id in (select b.org_id from basis.basis_tb_org b 
+				      start with b.org_id in ($orgIds$)
+				      connect by prior b.org_id= b.org_parent_id)]]>
+		   </isNotEmpty>
+			<isNotEmpty property="startDate" prepend="and">
+			<![CDATA[ to_date(ds.year||lpad(ds.month,2,'0'),'yyyyMM') >= to_date(#startDate#,'yyyy-MM') ]]>
+			</isNotEmpty>
+			<isNotEmpty property="endDate" prepend="and">
+			<![CDATA[ to_date(ds.year||lpad(ds.month,2,'0'),'yyyyMM') <= to_date(#endDate#,'yyyy-MM')+1]]>
+			</isNotEmpty>
+	    </dynamic>
+	    <![CDATA[ order by t.kunnr,t.sku_id,ds.year,ds.month]]>
+	    <include refid="global.paginationEnd" />
+	</select>
+	
+	<select id="searchProductionNeedListCount" parameterClass="kManager" resultClass="java.lang.Integer">
+	<![CDATA[
+	    select count(*)
+	           from (select k.kunnr,k.name1,s.sku_id,s.sku_name
+	                        from crm.crm_tb_kunnr k , crm.crm_tb_sku s
+	                        where s.sku_company='1' and s.status='U' and s.sku_sap_code is not null
+	                        ) t
+	           left join crm.crm_tb_kunnr_kunag kg on kg.kunnr=t.kunnr
+               left join crm.crm_tb_kunnr k on k.kunnr=t.kunnr
+               left join crm.crm_tb_kunnr kk on kk.kunnr=kg.kunag
+	           left join crm.crm_tb_sku sku on sku.sku_id=t.sku_id
+               left join basis.basis_tb_org_temp ot on ot.org_id=k.org_id
+               left join crm.crm_tb_kunnr_stock_safety s on s.kunnr=t.kunnr
+	           left join crm.crm_tb_kunnr_manager_sku ms on ms.kunnr=t.kunnr 
+	                                                      and ms.sku_id=t.sku_id 
+	                                                      and ms.manager_year=to_number(to_char(sysdate,'yyyy')) 
+	                                                      and ms.manager_month=to_number(to_char(sysdate,'MM'))
+	           left join crm.crm_tb_kunnr_manager_sku ms1 on ms1.kunnr=t.kunnr 
+	                                                      and ms1.sku_id=t.sku_id 
+	                                                      and ms1.manager_year=to_number(to_char(add_months(sysdate,1),'yyyy')) 
+	                                                      and ms1.manager_month=to_number(to_char(add_months(sysdate,1),'MM'))
+	           left join (select substr(lpad(s.kunnr,10,'0'),3,8) kunnr,s.year,s.month,s.sku_id,sum(s.latest_stock) latest_stock
+                                           from hana_distribution_sku s
+                                           group by s.kunnr,s.year,s.month,s.sku_id
+                                           ) ds on ds.kunnr=t.kunnr 
+                                                and ds.sku_id=t.sku_id
+                                                and ds.year=to_number(to_char(sysdate,'yyyy'))
+                                                and ds.month=to_number(to_char(sysdate,'MM'))
+               where 1=1
+	]]>
+	    <dynamic>
+	       <isNotEmpty property="kunnr" prepend="and">
+	          <![CDATA[ t.kunnr = #kunnr# ]]>
+	       </isNotEmpty>
+			<isNotEmpty property="skuId" prepend="and">
+			<![CDATA[ t.sku_id = #skuId# ]]>
+			</isNotEmpty>
+		   <isNotEmpty property="orgIds" prepend="and">
+			<![CDATA[ k.org_id in (select b.org_id from basis.basis_tb_org b 
+				      start with b.org_id in ($orgIds$)
+				      connect by prior b.org_id= b.org_parent_id)]]>
+		   </isNotEmpty>
+	    </dynamic>
+	</select>
+	
+	<select id="searchProductionNeedList" parameterClass="kManager" resultClass="kManager">
+	    <include refid="global.paginationStart" />
+	<![CDATA[
+	    select nvl(kg.kunag,t.kunnr) as kunnr,
+	           nvl(kk.name1,k.name1) as kunnrName,
+	           t.sku_id skuId,
+	           sku.sku_name skuName,
+	           sku.sku_sap_code matter,
+	           (su.sku_unit_coefficient * su.volum * 30) skuVolume,
+	           mp.sales_price skuPrice,
+	           ot.p_org_name orgProvince,
+		       ot.org_name orgCity,
+		       ot.rc_org_name orgRegion,
+		       round(s.day*nvl(nvl(ms1.sales_plan,ms.sales_plan_next),0)/30,2) stockWarning,
+		       round(nvl(ms.sales_plan,0)/30*7,2) salesPlanNextWeek,
+		       ds.latest_stock estimateStock,
+		       
+	           ms.sales_plan salesPlan,
+	           ms1.sales_plan salesPlanNext
+	           from (select k.kunnr,k.name1,s.sku_id,s.sku_name
+	                        from crm.crm_tb_kunnr k , crm.crm_tb_sku s
+	                        where s.sku_company='1' and s.status='U' and s.sku_sap_code is not null
+	                        ) t
+	           left join crm.crm_tb_kunnr_kunag kg on kg.kunnr=t.kunnr
+               left join crm.crm_tb_kunnr k on k.kunnr=t.kunnr
+               left join crm.crm_tb_kunnr kk on kk.kunnr=kg.kunag
+	           left join crm.crm_tb_sku sku on sku.sku_id=t.sku_id
+	           left join crm.crm_tb_sku_unitcoefficient su on su.sku_id=sku.sku_id
+	           left join crm.crm_tb_cg cg on cg.sku_category_id=sku.sku_category_id
+	           left join (select * from crm.crm_tb_mar_price p 
+	                               where p.year=(select max(t.year) from crm.crm_tb_mar_price t)
+	                               ) mp on mp.mvgr1=cg.sap_groups_code
+               left join basis.basis_tb_org_temp ot on ot.org_id=k.org_id
+               left join crm.crm_tb_kunnr_stock_safety s on s.kunnr=t.kunnr
+	           left join crm.crm_tb_kunnr_manager_sku ms on ms.kunnr=t.kunnr 
+	                                                      and ms.sku_id=t.sku_id 
+	                                                      and ms.manager_year=to_number(to_char(sysdate,'yyyy')) 
+	                                                      and ms.manager_month=to_number(to_char(sysdate,'MM'))
+	           left join crm.crm_tb_kunnr_manager_sku ms1 on ms1.kunnr=t.kunnr 
+	                                                      and ms1.sku_id=t.sku_id 
+	                                                      and ms1.manager_year=to_number(to_char(add_months(sysdate,1),'yyyy')) 
+	                                                      and ms1.manager_month=to_number(to_char(add_months(sysdate,1),'MM'))
+	           left join (select substr(lpad(s.kunnr,10,'0'),3,8) kunnr,s.year,lpad(s.month,2,'0') month,s.sku_id,sum(s.latest_stock) latest_stock
+                                           from hana_distribution_sku s
+                                           group by s.kunnr,s.year,s.month,s.sku_id
+                                           ) ds on ds.kunnr=t.kunnr 
+                                                and ds.sku_id=t.sku_id
+                                                and ds.year=to_number(to_char(sysdate,'yyyy'))
+                                                and ds.month=to_number(to_char(sysdate,'MM'))
+               where 1=1
+	]]>
+	    <dynamic>
+	       <isNotEmpty property="kunnr" prepend="and">
+	          <![CDATA[ t.kunnr = #kunnr# ]]>
+	       </isNotEmpty>
+			<isNotEmpty property="skuId" prepend="and">
+			<![CDATA[ t.sku_id = #skuId# ]]>
+			</isNotEmpty>
+		   <isNotEmpty property="orgIds" prepend="and">
+			<![CDATA[ k.org_id in (select b.org_id from basis.basis_tb_org b 
+				      start with b.org_id in ($orgIds$)
+				      connect by prior b.org_id= b.org_parent_id)]]>
+		   </isNotEmpty>
+	    </dynamic>
+	    <![CDATA[ order by t.kunnr,t.sku_id]]>
+	    <include refid="global.paginationEnd" />
+	</select>
+	
+	<select id="getKunnrManagerYear" parameterClass="kManager" resultClass="java.lang.Double">
+	<![CDATA[
+	    select sum(nvl(t1.sales_plan,t2.sales_plan_next)) sales_plan
+               from (
+                      select t.kunnr,t.sku_id,t.manager_year year,t.manager_month month,t.sales_plan sales_plan
+                             from crm.crm_tb_kunnr_manager_sku t
+                             where t.status='U'
+                             
+                             union
+
+                      select t.kunnr,t.sku_id,t.manager_year year,to_char(t.manager_month+1) month,t.sales_plan_next sales_plan
+                             from crm.crm_tb_kunnr_manager_sku t
+                             where t.status='U'
+                      ) t
+                      left join (select * from crm.crm_tb_kunnr_manager_sku t where t.status='U') t1 on t1.kunnr=t.kunnr and t1.sku_id=t.sku_id and t1.manager_year=t.year and t1.manager_month=t.month
+                      left join (select * from crm.crm_tb_kunnr_manager_sku t where t.status='U') t2 on t2.kunnr=t.kunnr and t2.sku_id=t.sku_id and t2.manager_year=t.year and t2.manager_month+1=t.month
+                      where 1=1
+	]]>
+	    <dynamic>
+	       <isNotEmpty property="kunnr" prepend="and">
+	          <![CDATA[ t.kunnr = #kunnr# ]]>
+	       </isNotEmpty>
+			<isNotEmpty property="skuId" prepend="and">
+			<![CDATA[ t.sku_id = #skuId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="year" prepend="and">
+			<![CDATA[ t.year = #year# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="month" prepend="and">
+			<![CDATA[ t.month <= #month# ]]>
+			</isNotEmpty>
+	    </dynamic>
+	</select>
+	
+	<select id="getSalesYear" parameterClass="kManager" resultClass="java.lang.Double">
+	<![CDATA[
+	    select sum(t.actual) actual
+               from hana_distribution_sku t
+               where 1=1
+	]]>
+	    <dynamic>
+	       <isNotEmpty property="kunnr" prepend="and">
+	          <![CDATA[ t.kunnr = #kunnr# ]]>
+	       </isNotEmpty>
+			<isNotEmpty property="skuId" prepend="and">
+			<![CDATA[ t.sku_id = #skuId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="year" prepend="and">
+			<![CDATA[ t.year = #year# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="month" prepend="and">
+			<![CDATA[ t.month <= #month# ]]>
+			</isNotEmpty>
+	    </dynamic>
+	</select>
+</sqlMap>

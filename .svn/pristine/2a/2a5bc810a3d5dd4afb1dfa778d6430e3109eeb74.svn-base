@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<bean id="stockReportAction" class="com.kintiger.platform.stockReport.action.StockReportAction"
+		scope="request" parent="baseAction">
+		<property name="stockReportService" ref="stockReportService" />
+		<property name="kunnrService" ref="kunnrService" />
+		<property name="kunnrBusinessService" ref="kunnrBusinessService" ></property>
+		<property name="orgServiceHessian" ref="orgServiceHessian"/>
+		<property name="smsServiceHessian" ref="smsServiceHessian"/>
+		<property name="questionService" ref="questionService" />
+		<property name="wfeServiceHessian" ref="wfeServiceHessian" />
+		<property name="customerService" ref="customerService" />
+		<property name="iDictService" ref="dictServiceHessian" />
+		<property name="goalService" ref="goalService"/>
+		<property name="appUrl">
+			<value>${appUrl}</value>
+		</property>
+		<property name="xmlFilePath">
+			<value>${wfe.xml.filePath}</value>
+		</property>
+		<property name="crm_xmlFilePath">
+			<value>${crm.xml.filePath}</value>
+		</property>
+	</bean>
+	
+	<bean id="treeAction" class="com.kintiger.platform.stockReport.action.TreeAction"
+		parent="baseAction" scope="request">
+		<property name="orgServiceHessian" ref="orgServiceHessian" />
+		<property name="stockReportService" ref="stockReportService" />
+	</bean>
+	
+	<bean id="stockReportService"
+		class="com.kintiger.platform.stockReport.service.impl.StockReportServiceImpl">
+		<property name="stockReportDao" ref="stockReportDao" />
+		<property name="sapConnection" ref="sapConnection" />
+	</bean>
+	<bean id="stockReportDao" class="com.kintiger.platform.stockReport.dao.impl.StockReportDaoImpl" parent="baseDao">
+	</bean>
+	
+</beans>

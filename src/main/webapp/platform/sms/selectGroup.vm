@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui"])
+		#JS_ENV_VAL()
+	</head>
+	<body>
+		<form method="post">
+			<div style="overflow:auto">
+				<table width="100%" border="0" cellpadding="0" cellspacing="1" >
+					<tr>
+						<td class="head" noWrap>我的公共编组:</td>    				   				
+	            		<td >
+							<select  id="myPubGroups" name="myPubGroups" style="width:160px;">
+							</select>	            		
+						</td> 
+					</tr>
+					<tr>
+						<td class="head" noWrap>我的个人编组:</td>    				   				
+	            		<td >
+							<select  id="priGroups" name="priGroups"  style="width:160px;">
+							</select>	            		
+						</td> 
+					</tr>
+				</table>				
+			</div>			
+			<input type="hidden" id="ids" name="ids" />
+		</form>
+		<div border="false" style="text-align:center;height:30px;line-height:30px;clear:both">
+			<a href="javascript:saveGroupName()" class="easyui-linkbutton" iconCls="icon-save">确定</a>
+			<a href="javascript:cancel()" class="easyui-linkbutton" iconCls="icon-clear">重置</a>
+		</div>
+		<iframe id="hideFrame" name="hideFrame"  style="height: 0; width: 0"></iframe>
+		<div id="maintModelAtt"/>
+	</body>
+	<script type="text/javascript" src="$!{env.imgUrl}/js/platform/sms/selectGroup.js"></script>
+	##<script type="text/javascript" src="$!{env.imgUrl}/js/platform/sms/sms.js"></script>
+</html>

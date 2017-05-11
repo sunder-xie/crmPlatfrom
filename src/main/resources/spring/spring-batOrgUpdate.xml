@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+	
+  	<bean id="batOrgAction" class="com.kintiger.platform.batOrgUpdate.action.BatOrgUpdateAction"
+		scope="request" parent="baseAction">
+		<property name="customerService" ref="customerService"></property>
+		<property name="dictServiceHessian" ref="dictServiceHessian"></property>
+		<property name="kunnrService" ref="kunnrService"></property>
+		<property name="orgServiceHessian" ref="orgServiceHessian"/>
+		<property name="batOrgUpdateService" ref="batOrgUpdateService"/>
+  	</bean>
+  	
+  	<bean id="batOrgUpdateService"
+		class=" com.kintiger.platform.batOrgUpdate.service.impl.BatOrgUpdateServiceImpl">
+		<property name="batOrgUpdateDao" ref="batOrgUpdateDao" />
+		<property name="transactionTemplate" ref="transactionTemplate"/>
+	</bean>
+  	
+  	<bean id="batOrgUpdateDao"
+		class=" com.kintiger.platform.batOrgUpdate.dao.impl.BatOrgUpdateDaoImpl"  parent="baseDao">
+	</bean>
+</beans>

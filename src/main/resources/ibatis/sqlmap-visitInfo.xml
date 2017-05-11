@@ -1,0 +1,826 @@
+<?xml version="1.0" encoding="GB2312"?>
+<!DOCTYPE sqlMap
+	PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="visitInfo">
+	<typeAlias alias="visitInfo"
+		type="com.kintiger.platform.visitInfo.pojo.VisitInfo" />
+	<typeAlias alias="stockInfo"
+		type="com.kintiger.platform.visitInfo.pojo.Stock" />
+    
+    <select id="getVisitInfoCount" parameterClass="visitInfo"
+		resultClass="java.lang.Integer">
+		<![CDATA[
+	select count(*) from (
+	select 
+      k.kunnr,
+      max(k.name1) as kunnrName,
+      (select count(i.emp_id) from basis.basis_tb_kunnremp_info i where i.lifnr=k.kunnr) as empCount,
+      max(k.org_name) as orgName,
+      sum(decode(substr(t.dayType,9,10),'01',t.custCount,'')) as day1,
+      sum(decode(substr(t.dayType,9,10),'02',t.custCount,'')) as day2,
+      sum(decode(substr(t.dayType,9,10),'03',t.custCount,'')) as day3,
+      sum(decode(substr(t.dayType,9,10),'04',t.custCount,'')) as day4,
+      sum(decode(substr(t.dayType,9,10),'05',t.custCount,'')) as day5,
+      sum(decode(substr(t.dayType,9,10),'06',t.custCount,'')) as day6,
+      sum(decode(substr(t.dayType,9,10),'07',t.custCount,'')) as day7,
+      sum(decode(substr(t.dayType,9,10),'08',t.custCount,'')) as day8,
+      sum(decode(substr(t.dayType,9,10),'09',t.custCount,'')) as day9,
+      sum(decode(substr(t.dayType,9,10),'10',t.custCount,'')) as day10,
+      sum(decode(substr(t.dayType,9,10),'11',t.custCount,'')) as day11,
+      sum(decode(substr(t.dayType,9,10),'12',t.custCount,'')) as day12,
+      sum(decode(substr(t.dayType,9,10),'13',t.custCount,'')) as day13,
+      sum(decode(substr(t.dayType,9,10),'14',t.custCount,'')) as day14,
+      sum(decode(substr(t.dayType,9,10),'15',t.custCount,'')) as day15,
+      sum(decode(substr(t.dayType,9,10),'16',t.custCount,'')) as day16,
+      sum(decode(substr(t.dayType,9,10),'17',t.custCount,'')) as day17,
+      sum(decode(substr(t.dayType,9,10),'18',t.custCount,'')) as day18,
+      sum(decode(substr(t.dayType,9,10),'19',t.custCount,'')) as day19,
+      sum(decode(substr(t.dayType,9,10),'20',t.custCount,'')) as day20,
+      sum(decode(substr(t.dayType,9,10),'21',t.custCount,'')) as day21,
+      sum(decode(substr(t.dayType,9,10),'22',t.custCount,'')) as day22,
+      sum(decode(substr(t.dayType,9,10),'23',t.custCount,'')) as day23,
+      sum(decode(substr(t.dayType,9,10),'24',t.custCount,'')) as day24,
+      sum(decode(substr(t.dayType,9,10),'25',t.custCount,'')) as day25,
+      sum(decode(substr(t.dayType,9,10),'26',t.custCount,'')) as day26,
+      sum(decode(substr(t.dayType,9,10),'27',t.custCount,'')) as day27,
+      sum(decode(substr(t.dayType,9,10),'28',t.custCount,'')) as day28,
+      sum(decode(substr(t.dayType,9,10),'29',t.custCount,'')) as day29,
+      sum(decode(substr(t.dayType,9,10),'30',t.custCount,'')) as day30,
+      sum(decode(substr(t.dayType,9,10),'31',t.custCount,'')) as day31
+      from crm.crm_tb_kunnr k
+      left join 
+
+      (
+		select   count(distinct m.cust_id)   as custCount,
+                       m.create_date as dayType,
+                       k.name1       as kunnrName,
+                       c.cust_kunnr     as kunnr
+                 from  
+                 (select distinct m.cust_id,m.create_date,m.user_id,m.cloud_id from  
+                         (select a.cust_id,to_char(a.create_date,'yyyy-mm-dd') as create_date ,a.operator_id as user_id,a.cloud_id from crm.crm_tb_abnormalprice a 
+                          where a.create_date between  to_date(#beginDate#,'yyyy-mm-dd') and  to_date(#endDate#,'yyyy-mm-dd')+1
+                          union all 
+                          select a.cust_id,to_char(a.create_date,'yyyy-mm-dd') as create_date ,a.user_id,a.cloud_id from crm.crm_tb_display a 
+                          where a.create_date between  to_date(#beginDate#,'yyyy-mm-dd') and  to_date(#endDate#,'yyyy-mm-dd')+1
+                          union all 
+                          select a.cust_id,to_char(a.create_date,'yyyy-mm-dd') as create_date ,a.user_id,a.cloud_id from crm.crm_tb_distribution a 
+                          where a.create_date between  to_date(#beginDate#,'yyyy-mm-dd') and  to_date(#endDate#,'yyyy-mm-dd')+1
+                          union all 
+                          select a.cust_id,to_char(a.IMPLEMENT_DATE,'yyyy-mm-dd') as create_date ,a.user_id ,a.cloud_id from  market.market_tb_mobile_check a  
+                          where a.IMPLEMENT_DATE between to_date(#beginDate#,'yyyy-mm-dd') and  to_date(#endDate#,'yyyy-mm-dd')+1
+                          union all
+                          select a.cust_id,to_char(a.create_date,'yyyy-mm-dd') as create_date,a.operator_id as user_id,a.cloud_id from crm.crm_tb_photo a 
+                          where a.create_date between  to_date(#beginDate#,'yyyy-mm-dd') and  to_date(#endDate#,'yyyy-mm-dd')+1 ) m 
+                  )m
+                  left join crm.crm_tb_customer c on m.cust_id = c.cust_id
+                  left join crm.crm_tb_kunnr k on k.kunnr = c.cust_kunnr
+                  left join basis.basis_vw_user_psw s on s.user_id = m.user_id
+                  left join basis.basis_tb_org g1 on  g1.org_id = s.org_id 
+                  left join crm.crm_tb_zwlqy qy on qy.zwl04 = c.cust_province
+                  where s.org_id not in (select b.org_id from basis.basis_tb_org b 
+				         start with b.org_id = '51237'
+				         connect by prior b.org_id= b.org_parent_id)
+				        and s.isoffice_sign is not null]]>
+		<dynamic>
+		<isNotEmpty property="kunnr" prepend="and">
+			<![CDATA[ c.cust_kunnr = #kunnr#]]>
+		</isNotEmpty>
+		<isNotEmpty property="userName" prepend="and">
+			<![CDATA[ s.user_name like #userName,handler=wildcard# escape '\']]>
+		</isNotEmpty>
+	    </dynamic>
+			<![CDATA[	 group by c.cust_kunnr,k.name1,m.create_date
+                         order by m.create_date,c.cust_kunnr) t on t.kunnr=k.kunnr
+            where (select count(i.emp_id) from basis.basis_tb_kunnremp_info i where i.lifnr=k.kunnr)>1]]>
+        <dynamic>
+	    <isNotEmpty property="orgId" prepend="and">
+			<![CDATA[ k.org_id in (select b.org_id from basis.basis_tb_org b 
+				         start with b.org_id = #orgId#
+				         connect by prior b.org_id= b.org_parent_id)]]>
+		</isNotEmpty>
+		<isNotEmpty property="kunnr" prepend="and">
+			<![CDATA[ k.kunnr = #kunnr#]]>
+		</isNotEmpty>
+		<isNotEmpty property="userName" prepend="and">
+			<![CDATA[ t.custCount >0]]>
+		</isNotEmpty>
+	    </dynamic>
+            <![CDATA[ group by k.kunnr )]]>
+	</select>
+
+	<select id="getVisitInfo" parameterClass="visitInfo"
+		resultClass="visitInfo">
+		<include refid="global.paginationStart" />
+		<![CDATA[
+	select 
+      k.kunnr,
+      max(k.name1) as kunnrName,
+      (select count(i.emp_id) from basis.basis_tb_kunnremp_info i where i.lifnr=k.kunnr and i.emp_state in ('Y','S')) as empCount,
+      max(k.org_name) as orgName,
+      sum(decode(substr(t.dayType,9,10),'01',t.custCount,'')) as day1,
+      sum(decode(substr(t.dayType,9,10),'02',t.custCount,'')) as day2,
+      sum(decode(substr(t.dayType,9,10),'03',t.custCount,'')) as day3,
+      sum(decode(substr(t.dayType,9,10),'04',t.custCount,'')) as day4,
+      sum(decode(substr(t.dayType,9,10),'05',t.custCount,'')) as day5,
+      sum(decode(substr(t.dayType,9,10),'06',t.custCount,'')) as day6,
+      sum(decode(substr(t.dayType,9,10),'07',t.custCount,'')) as day7,
+      sum(decode(substr(t.dayType,9,10),'08',t.custCount,'')) as day8,
+      sum(decode(substr(t.dayType,9,10),'09',t.custCount,'')) as day9,
+      sum(decode(substr(t.dayType,9,10),'10',t.custCount,'')) as day10,
+      sum(decode(substr(t.dayType,9,10),'11',t.custCount,'')) as day11,
+      sum(decode(substr(t.dayType,9,10),'12',t.custCount,'')) as day12,
+      sum(decode(substr(t.dayType,9,10),'13',t.custCount,'')) as day13,
+      sum(decode(substr(t.dayType,9,10),'14',t.custCount,'')) as day14,
+      sum(decode(substr(t.dayType,9,10),'15',t.custCount,'')) as day15,
+      sum(decode(substr(t.dayType,9,10),'16',t.custCount,'')) as day16,
+      sum(decode(substr(t.dayType,9,10),'17',t.custCount,'')) as day17,
+      sum(decode(substr(t.dayType,9,10),'18',t.custCount,'')) as day18,
+      sum(decode(substr(t.dayType,9,10),'19',t.custCount,'')) as day19,
+      sum(decode(substr(t.dayType,9,10),'20',t.custCount,'')) as day20,
+      sum(decode(substr(t.dayType,9,10),'21',t.custCount,'')) as day21,
+      sum(decode(substr(t.dayType,9,10),'22',t.custCount,'')) as day22,
+      sum(decode(substr(t.dayType,9,10),'23',t.custCount,'')) as day23,
+      sum(decode(substr(t.dayType,9,10),'24',t.custCount,'')) as day24,
+      sum(decode(substr(t.dayType,9,10),'25',t.custCount,'')) as day25,
+      sum(decode(substr(t.dayType,9,10),'26',t.custCount,'')) as day26,
+      sum(decode(substr(t.dayType,9,10),'27',t.custCount,'')) as day27,
+      sum(decode(substr(t.dayType,9,10),'28',t.custCount,'')) as day28,
+      sum(decode(substr(t.dayType,9,10),'29',t.custCount,'')) as day29,
+      sum(decode(substr(t.dayType,9,10),'30',t.custCount,'')) as day30,
+      sum(decode(substr(t.dayType,9,10),'31',t.custCount,'')) as day31
+      from crm.crm_tb_kunnr k
+      left join 
+
+      (
+		select   count(distinct m.cust_id)   as custCount,
+                       m.create_date as dayType,
+                       k.name1       as kunnrName,
+                       c.cust_kunnr     as kunnr
+                 from  
+                 (select distinct m.cust_id,m.create_date,m.user_id,m.cloud_id from  
+                         (select a.cust_id,to_char(a.create_date,'yyyy-mm-dd') as create_date ,a.operator_id as user_id,a.cloud_id from crm.crm_tb_abnormalprice a 
+                          where a.create_date between  to_date(#beginDate#,'yyyy-mm-dd') and  to_date(#endDate#,'yyyy-mm-dd')+1
+                          union all 
+                          select a.cust_id,to_char(a.create_date,'yyyy-mm-dd') as create_date ,a.user_id,a.cloud_id from crm.crm_tb_display a 
+                          where a.create_date between  to_date(#beginDate#,'yyyy-mm-dd') and  to_date(#endDate#,'yyyy-mm-dd')+1
+                          union all 
+                          select a.cust_id,to_char(a.create_date,'yyyy-mm-dd') as create_date ,a.user_id,a.cloud_id from crm.crm_tb_distribution a 
+                          where a.create_date between  to_date(#beginDate#,'yyyy-mm-dd') and  to_date(#endDate#,'yyyy-mm-dd')+1
+                          union all 
+                          select a.cust_id,to_char(a.IMPLEMENT_DATE,'yyyy-mm-dd') as create_date ,a.user_id ,a.cloud_id from  market.market_tb_mobile_check a  
+                          where a.IMPLEMENT_DATE between to_date(#beginDate#,'yyyy-mm-dd') and  to_date(#endDate#,'yyyy-mm-dd')+1
+                          union all
+                          select a.cust_id,to_char(a.create_date,'yyyy-mm-dd') as create_date,a.operator_id as user_id,a.cloud_id from crm.crm_tb_photo a 
+                          where a.create_date between  to_date(#beginDate#,'yyyy-mm-dd') and  to_date(#endDate#,'yyyy-mm-dd')+1 ) m 
+                  )m
+                  left join crm.crm_tb_customer c on m.cust_id = c.cust_id
+                  left join crm.crm_tb_kunnr k on k.kunnr = c.cust_kunnr
+                  left join basis.basis_vw_user_psw s on s.user_id = m.user_id
+                  left join basis.basis_tb_org g1 on  g1.org_id = s.org_id 
+                  left join crm.crm_tb_zwlqy qy on qy.zwl04 = c.cust_province
+                  where s.org_id not in (select b.org_id from basis.basis_tb_org b 
+				         start with b.org_id = '51237'
+				         connect by prior b.org_id= b.org_parent_id)
+				        and s.isoffice_sign is not null]]>
+		<dynamic>
+		<isNotEmpty property="kunnr" prepend="and">
+			<![CDATA[ c.cust_kunnr = #kunnr#]]>
+		</isNotEmpty>
+		<isNotEmpty property="userName" prepend="and">
+			<![CDATA[ s.user_name like #userName,handler=wildcard# escape '\']]>
+		</isNotEmpty>
+	    </dynamic>
+			<![CDATA[	 group by c.cust_kunnr,k.name1,m.create_date
+                         order by m.create_date,c.cust_kunnr) t on t.kunnr=k.kunnr
+            where (select count(i.emp_id) from basis.basis_tb_kunnremp_info i where i.lifnr=k.kunnr)>1]]>
+        <dynamic>
+	    <isNotEmpty property="orgId" prepend="and">
+			<![CDATA[ k.org_id in (select b.org_id from basis.basis_tb_org b 
+				         start with b.org_id = #orgId#
+				         connect by prior b.org_id= b.org_parent_id)]]>
+		</isNotEmpty>
+		<isNotEmpty property="kunnr" prepend="and">
+			<![CDATA[ k.kunnr = #kunnr#]]>
+		</isNotEmpty>
+		<isNotEmpty property="userName" prepend="and">
+			<![CDATA[ t.custCount>0]]>
+		</isNotEmpty>
+	    </dynamic>
+            <![CDATA[ group by k.kunnr
+                      order by k.kunnr ]]>
+            <include refid="global.paginationEnd" />
+	</select>
+	
+	<select id="getVisitInfoUserCount" parameterClass="visitInfo"
+		resultClass="java.lang.Integer">
+		<![CDATA[
+		select count(*) from (
+	  select 
+      p.user_id as userId,
+      p.user_name as userName,
+      max(s.station_name) as stationName,
+      max(o.org_name) as orgName,
+      sum(decode(substr(t.dayType,9,10),'01',t.custCount,'')) as day1,
+      sum(decode(substr(t.dayType,9,10),'02',t.custCount,'')) as day2,
+      sum(decode(substr(t.dayType,9,10),'03',t.custCount,'')) as day3,
+      sum(decode(substr(t.dayType,9,10),'04',t.custCount,'')) as day4,
+      sum(decode(substr(t.dayType,9,10),'05',t.custCount,'')) as day5,
+      sum(decode(substr(t.dayType,9,10),'06',t.custCount,'')) as day6,
+      sum(decode(substr(t.dayType,9,10),'07',t.custCount,'')) as day7,
+      sum(decode(substr(t.dayType,9,10),'08',t.custCount,'')) as day8,
+      sum(decode(substr(t.dayType,9,10),'09',t.custCount,'')) as day9,
+      sum(decode(substr(t.dayType,9,10),'10',t.custCount,'')) as day10,
+      sum(decode(substr(t.dayType,9,10),'11',t.custCount,'')) as day11,
+      sum(decode(substr(t.dayType,9,10),'12',t.custCount,'')) as day12,
+      sum(decode(substr(t.dayType,9,10),'13',t.custCount,'')) as day13,
+      sum(decode(substr(t.dayType,9,10),'14',t.custCount,'')) as day14,
+      sum(decode(substr(t.dayType,9,10),'15',t.custCount,'')) as day15,
+      sum(decode(substr(t.dayType,9,10),'16',t.custCount,'')) as day16,
+      sum(decode(substr(t.dayType,9,10),'17',t.custCount,'')) as day17,
+      sum(decode(substr(t.dayType,9,10),'18',t.custCount,'')) as day18,
+      sum(decode(substr(t.dayType,9,10),'19',t.custCount,'')) as day19,
+      sum(decode(substr(t.dayType,9,10),'20',t.custCount,'')) as day20,
+      sum(decode(substr(t.dayType,9,10),'21',t.custCount,'')) as day21,
+      sum(decode(substr(t.dayType,9,10),'22',t.custCount,'')) as day22,
+      sum(decode(substr(t.dayType,9,10),'23',t.custCount,'')) as day23,
+      sum(decode(substr(t.dayType,9,10),'24',t.custCount,'')) as day24,
+      sum(decode(substr(t.dayType,9,10),'25',t.custCount,'')) as day25,
+      sum(decode(substr(t.dayType,9,10),'26',t.custCount,'')) as day26,
+      sum(decode(substr(t.dayType,9,10),'27',t.custCount,'')) as day27,
+      sum(decode(substr(t.dayType,9,10),'28',t.custCount,'')) as day28,
+      sum(decode(substr(t.dayType,9,10),'29',t.custCount,'')) as day29,
+      sum(decode(substr(t.dayType,9,10),'30',t.custCount,'')) as day30,
+      sum(decode(substr(t.dayType,9,10),'31',t.custCount,'')) as day31
+      from basis.basis_vw_user_psw p
+      left join (
+		select   count(distinct m.cust_id)   as custCount,
+                       m.create_date as dayType,
+                       s.user_id
+                 from  
+                 (select distinct m.cust_id,m.create_date,m.user_id,m.cloud_id from  
+                         (select a.cust_id,to_char(a.create_date,'yyyy-mm-dd') as create_date ,a.operator_id as user_id,a.cloud_id from crm.crm_tb_abnormalprice a 
+                          where a.create_date between  to_date(#beginDate#,'yyyy-mm-dd') and  to_date(#endDate#,'yyyy-mm-dd')+1
+                          union all 
+                          select a.cust_id,to_char(a.create_date,'yyyy-mm-dd') as create_date ,a.user_id,a.cloud_id from crm.crm_tb_display a 
+                          where a.create_date between  to_date(#beginDate#,'yyyy-mm-dd') and  to_date(#endDate#,'yyyy-mm-dd')+1
+                          union all 
+                          select a.cust_id,to_char(a.create_date,'yyyy-mm-dd') as create_date ,a.user_id,a.cloud_id from crm.crm_tb_distribution a 
+                          where a.create_date between  to_date(#beginDate#,'yyyy-mm-dd') and  to_date(#endDate#,'yyyy-mm-dd')+1
+                          union all 
+                          select a.cust_id,to_char(a.IMPLEMENT_DATE,'yyyy-mm-dd') as create_date ,a.user_id ,a.cloud_id from  market.market_tb_mobile_check a  
+                          where a.IMPLEMENT_DATE between to_date(#beginDate#,'yyyy-mm-dd') and  to_date(#endDate#,'yyyy-mm-dd')+1
+                          union all
+                          select a.cust_id,to_char(a.create_date,'yyyy-mm-dd') as create_date,a.operator_id as user_id,a.cloud_id from crm.crm_tb_photo a 
+                          where a.create_date between  to_date(#beginDate#,'yyyy-mm-dd') and  to_date(#endDate#,'yyyy-mm-dd')+1 ) m 
+                  )m
+                  left join crm.crm_tb_customer c on m.cust_id = c.cust_id
+                  left join crm.crm_tb_kunnr k on k.kunnr = c.cust_kunnr
+                  left join basis.basis_vw_user_psw s on s.user_id = m.user_id
+                  left join basis.basis_tb_org g1 on  g1.org_id = s.org_id 
+                  left join crm.crm_tb_zwlqy qy on qy.zwl04 = c.cust_province
+                  where s.user_state in('Y','S')
+                  group by m.create_date,s.user_id
+                         order by m.create_date,s.user_id) t on p.user_id=t.user_id
+            left join basis.basis_tb_station_user u on u.user_id=p.user_id
+            left join basis.basis_tb_stations s on s.station_id=u.station_id
+            left join basis.basis_tb_org o on o.org_id=p.org_id
+            where u.is_main_station='Y' and p.user_state in('Y','S')]]>
+        <dynamic>
+		<isNotEmpty property="userName" prepend="and">
+			<![CDATA[ p.user_name like #userName,handler=wildcard# escape '\']]>
+		</isNotEmpty>
+		<isNotEmpty property="stationName" prepend="and">
+			<![CDATA[ s.station_name like #stationName,handler=wildcard# escape '\']]>
+		</isNotEmpty>
+		<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[ p.org_id in (select b.org_id from basis.basis_tb_org b 
+				         start with b.org_id = #orgId#
+				         connect by prior b.org_id= b.org_parent_id)]]>
+		</isNotEmpty>
+	    </dynamic>
+            <![CDATA[ group by p.user_id,p.user_name
+                      order by p.user_id )]]>
+	</select>
+	
+	<select id="getVisitInfoUser" parameterClass="visitInfo"
+		resultClass="visitInfo">
+		<include refid="global.paginationStart" />
+		<![CDATA[
+	select 
+      p.user_id as userId,
+      p.user_name as userName,
+      max(s.station_name) as stationName,
+      max(o.org_name) as orgName,
+      max(ot.p_org_name) as orgProvince,
+	  max(ot.rc_org_name) as orgRegion,
+	  sum(t.custCount) as daySum,
+      sum(decode(substr(t.dayType,9,10),'01',t.custCount,'')) as day1,
+      sum(decode(substr(t.dayType,9,10),'02',t.custCount,'')) as day2,
+      sum(decode(substr(t.dayType,9,10),'03',t.custCount,'')) as day3,
+      sum(decode(substr(t.dayType,9,10),'04',t.custCount,'')) as day4,
+      sum(decode(substr(t.dayType,9,10),'05',t.custCount,'')) as day5,
+      sum(decode(substr(t.dayType,9,10),'06',t.custCount,'')) as day6,
+      sum(decode(substr(t.dayType,9,10),'07',t.custCount,'')) as day7,
+      sum(decode(substr(t.dayType,9,10),'08',t.custCount,'')) as day8,
+      sum(decode(substr(t.dayType,9,10),'09',t.custCount,'')) as day9,
+      sum(decode(substr(t.dayType,9,10),'10',t.custCount,'')) as day10,
+      sum(decode(substr(t.dayType,9,10),'11',t.custCount,'')) as day11,
+      sum(decode(substr(t.dayType,9,10),'12',t.custCount,'')) as day12,
+      sum(decode(substr(t.dayType,9,10),'13',t.custCount,'')) as day13,
+      sum(decode(substr(t.dayType,9,10),'14',t.custCount,'')) as day14,
+      sum(decode(substr(t.dayType,9,10),'15',t.custCount,'')) as day15,
+      sum(decode(substr(t.dayType,9,10),'16',t.custCount,'')) as day16,
+      sum(decode(substr(t.dayType,9,10),'17',t.custCount,'')) as day17,
+      sum(decode(substr(t.dayType,9,10),'18',t.custCount,'')) as day18,
+      sum(decode(substr(t.dayType,9,10),'19',t.custCount,'')) as day19,
+      sum(decode(substr(t.dayType,9,10),'20',t.custCount,'')) as day20,
+      sum(decode(substr(t.dayType,9,10),'21',t.custCount,'')) as day21,
+      sum(decode(substr(t.dayType,9,10),'22',t.custCount,'')) as day22,
+      sum(decode(substr(t.dayType,9,10),'23',t.custCount,'')) as day23,
+      sum(decode(substr(t.dayType,9,10),'24',t.custCount,'')) as day24,
+      sum(decode(substr(t.dayType,9,10),'25',t.custCount,'')) as day25,
+      sum(decode(substr(t.dayType,9,10),'26',t.custCount,'')) as day26,
+      sum(decode(substr(t.dayType,9,10),'27',t.custCount,'')) as day27,
+      sum(decode(substr(t.dayType,9,10),'28',t.custCount,'')) as day28,
+      sum(decode(substr(t.dayType,9,10),'29',t.custCount,'')) as day29,
+      sum(decode(substr(t.dayType,9,10),'30',t.custCount,'')) as day30,
+      sum(decode(substr(t.dayType,9,10),'31',t.custCount,'')) as day31
+      from basis.basis_vw_user_psw p
+      left join (
+		select   count(distinct m.cust_id)   as custCount,
+                       m.create_date as dayType,
+                       s.user_id
+                 from  
+                 (select distinct m.cust_id,m.create_date,m.user_id,m.cloud_id from  
+                         (select a.cust_id,to_char(a.create_date,'yyyy-mm-dd') as create_date ,a.operator_id as user_id,a.cloud_id from crm.crm_tb_abnormalprice a 
+                          where a.create_date between  to_date(#beginDate#,'yyyy-mm-dd') and  to_date(#endDate#,'yyyy-mm-dd')+1
+                          union all 
+                          select a.cust_id,to_char(a.create_date,'yyyy-mm-dd') as create_date ,a.user_id,a.cloud_id from crm.crm_tb_display a 
+                          where a.create_date between  to_date(#beginDate#,'yyyy-mm-dd') and  to_date(#endDate#,'yyyy-mm-dd')+1
+                          union all 
+                          select a.cust_id,to_char(a.create_date,'yyyy-mm-dd') as create_date ,a.user_id,a.cloud_id from crm.crm_tb_distribution a 
+                          where a.create_date between  to_date(#beginDate#,'yyyy-mm-dd') and  to_date(#endDate#,'yyyy-mm-dd')+1
+                          union all 
+                          select a.cust_id,to_char(a.IMPLEMENT_DATE,'yyyy-mm-dd') as create_date ,a.user_id ,a.cloud_id from  market.market_tb_mobile_check a  
+                          where a.IMPLEMENT_DATE between to_date(#beginDate#,'yyyy-mm-dd') and  to_date(#endDate#,'yyyy-mm-dd')+1
+                          union all
+                          select a.cust_id,to_char(a.create_date,'yyyy-mm-dd') as create_date,a.operator_id as user_id,a.cloud_id from crm.crm_tb_photo a 
+                          where a.create_date between  to_date(#beginDate#,'yyyy-mm-dd') and  to_date(#endDate#,'yyyy-mm-dd')+1 ) m 
+                  )m
+                  left join crm.crm_tb_customer c on m.cust_id = c.cust_id
+                  left join crm.crm_tb_kunnr k on k.kunnr = c.cust_kunnr
+                  left join basis.basis_vw_user_psw s on s.user_id = m.user_id
+                  left join basis.basis_tb_org g1 on  g1.org_id = s.org_id 
+                  left join crm.crm_tb_zwlqy qy on qy.zwl04 = c.cust_province
+                  where s.user_state in('Y','S')
+                  group by m.create_date,s.user_id
+                         order by m.create_date,s.user_id) t on p.user_id=t.user_id
+            left join basis.basis_tb_station_user u on u.user_id=p.user_id
+            left join basis.basis_tb_stations s on s.station_id=u.station_id
+            left join basis.basis_tb_org o on o.org_id=p.org_id
+            left join basis.basis_tb_org_temp ot on ot.org_id = p.org_id
+            where u.is_main_station='Y' and p.user_state in('Y','S')]]>
+        <dynamic>
+		<isNotEmpty property="userName" prepend="and">
+			<![CDATA[ p.user_name like #userName,handler=wildcard# escape '\']]>
+		</isNotEmpty>
+		<isNotEmpty property="stationName" prepend="and">
+			<![CDATA[ s.station_name like #stationName,handler=wildcard# escape '\']]>
+		</isNotEmpty>
+		<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[ p.org_id in (select b.org_id from basis.basis_tb_org b 
+				         start with b.org_id = #orgId#
+				         connect by prior b.org_id= b.org_parent_id)]]>
+		</isNotEmpty>
+	    </dynamic>
+            <![CDATA[ group by p.user_id,p.user_name
+                      order by p.user_id ]]>
+            <include refid="global.paginationEnd" />
+	</select>
+	
+	<select id="getVisitInfoTotal" parameterClass="visitInfo"
+		resultClass="visitInfo">
+		<include refid="global.paginationStart" />
+		<![CDATA[
+	select 
+      p.user_id as userId,
+      p.user_name as userName,
+      max(i.emp_user_id) as empUserId,
+      max(s.station_name) as stationName,
+      max(o.org_name) as orgName,
+      max(ot.p_org_name) as orgProvince,
+	  max(ot.rc_org_name) as orgRegion,
+	  sum(t.custCount)/count(distinct ph.create_date) as daySum,
+	  max(c.cust_count) as custNum,
+	  count(distinct ph.create_date),
+	  round(count(distinct ph.create_date)/round(to_number(to_date(#endDate#,'yyyy-mm-dd')+1 - to_date(#beginDate#,'yyyy-mm-dd')))*100,2) as usePercent
+      from basis.basis_vw_user_psw p
+      left join (
+		select   count(distinct m.cust_id)   as custCount,
+                       m.create_date as dayType,
+                       s.user_id
+                 from  
+                 (select distinct m.cust_id,m.create_date,m.user_id,m.cloud_id from  
+                         (select a.cust_id,to_char(a.create_date,'yyyy-mm-dd') as create_date ,a.operator_id as user_id,a.cloud_id from crm.crm_tb_abnormalprice a 
+                          where a.create_date between  to_date(#beginDate#,'yyyy-mm-dd') and  to_date(#endDate#,'yyyy-mm-dd')+1
+                          union all 
+                          select a.cust_id,to_char(a.create_date,'yyyy-mm-dd') as create_date ,a.user_id,a.cloud_id from crm.crm_tb_display a 
+                          where a.create_date between  to_date(#beginDate#,'yyyy-mm-dd') and  to_date(#endDate#,'yyyy-mm-dd')+1
+                          union all 
+                          select a.cust_id,to_char(a.create_date,'yyyy-mm-dd') as create_date ,a.user_id,a.cloud_id from crm.crm_tb_distribution a 
+                          where a.create_date between  to_date(#beginDate#,'yyyy-mm-dd') and  to_date(#endDate#,'yyyy-mm-dd')+1
+                          union all 
+                          select a.cust_id,to_char(a.IMPLEMENT_DATE,'yyyy-mm-dd') as create_date ,a.user_id ,a.cloud_id from  market.market_tb_mobile_check a  
+                          where a.IMPLEMENT_DATE between to_date(#beginDate#,'yyyy-mm-dd') and  to_date(#endDate#,'yyyy-mm-dd')+1
+                          union all
+                          select a.cust_id,to_char(a.create_date,'yyyy-mm-dd') as create_date,a.operator_id as user_id,a.cloud_id from crm.crm_tb_photo a 
+                          where a.create_date between  to_date(#beginDate#,'yyyy-mm-dd') and  to_date(#endDate#,'yyyy-mm-dd')+1 ) m 
+                  )m
+                  left join crm.crm_tb_customer c on m.cust_id = c.cust_id
+                  left join crm.crm_tb_kunnr k on k.kunnr = c.cust_kunnr
+                  left join basis.basis_vw_user_psw s on s.user_id = m.user_id
+                  left join basis.basis_tb_org g1 on  g1.org_id = s.org_id 
+                  left join crm.crm_tb_zwlqy qy on qy.zwl04 = c.cust_province
+                  where s.user_state in('Y','S')]]>
+                  <dynamic>
+		          <isNotEmpty property="userName" prepend="and">
+			         <![CDATA[ s.user_name like #userName,handler=wildcard# escape '\']]>
+		          </isNotEmpty>
+		          <isNotEmpty property="orgId" prepend="and">
+			         <![CDATA[ s.org_id in (select b.org_id from basis.basis_tb_org b 
+				                     start with b.org_id = #orgId#
+				                     connect by prior b.org_id= b.org_parent_id)]]>
+		          </isNotEmpty>
+	              </dynamic>
+                <![CDATA[group by m.create_date,s.user_id
+                         order by m.create_date,s.user_id) t on p.user_id=t.user_id
+            left join basis.basis_tb_station_user u on u.user_id=p.user_id
+            left join basis.basis_tb_stations s on s.station_id=u.station_id
+            left join (select count(cc.cust_id) cust_count,cc.station_user_id
+                              from crm.crm_tb_customer cc
+                              where cc.cust_state='1'
+                              group by cc.station_user_id
+                              ) c on c.station_user_id=u.id
+            left join basis.basis_tb_org o on o.org_id=p.org_id
+            left join basis.basis_tb_org_temp ot on ot.org_id = p.org_id
+            left join basis.basis_tb_salesemp_info i on i.emp_id=p.user_id
+            left join (select count(ph.cust_id),ph.operator_id,to_char(ph.create_date,'yyyy-MM-dd') create_date from crm.crm_tb_photo ph
+                                where ph.create_date between to_date(#beginDate#,'yyyy-mm-dd') and  to_date(#endDate#,'yyyy-mm-dd')+1
+                                group by ph.operator_id,to_char(ph.create_date,'yyyy-MM-dd')
+                                order by ph.operator_id,to_char(ph.create_date,'yyyy-MM-dd')
+                          ) ph on ph.operator_id=p.user_id
+            where u.is_main_station='Y' and p.user_state in('Y','S')]]>
+        <dynamic>
+		<isNotEmpty property="userName" prepend="and">
+			<![CDATA[ p.user_name like #userName,handler=wildcard# escape '\']]>
+		</isNotEmpty>
+		<isNotEmpty property="stationName" prepend="and">
+			<![CDATA[ s.station_name like #stationName,handler=wildcard# escape '\']]>
+		</isNotEmpty>
+		<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[ p.org_id in (select b.org_id from basis.basis_tb_org b 
+				         start with b.org_id = #orgId#
+				         connect by prior b.org_id= b.org_parent_id)]]>
+		</isNotEmpty>
+	    </dynamic>
+            <![CDATA[ group by p.user_id,p.user_name
+                      order by p.user_id ]]>
+            <include refid="global.paginationEnd" />
+	</select>
+	
+	<select id="getVisitInfoTotalLineNum" parameterClass="visitInfo" resultClass="java.lang.Integer">
+	    <![CDATA[
+	    select sum(nvl(t.cust_count,0))
+	        from
+	        (select sum(a.cust_count) cust_count from
+	                  (select t.user_id,t.week_day,
+                              decode(t.week_day,1,count(distinct t.cust_id)*#week1#,
+                                                2,count(distinct t.cust_id)*#week2#,
+                                                3,count(distinct t.cust_id)*#week3#,
+                                                4,count(distinct t.cust_id)*#week4#,
+                                                5,count(distinct t.cust_id)*#week5#,
+                                                6,count(distinct t.cust_id)*#week6#,
+                                                7,count(distinct t.cust_id)*#week7#,0) cust_count
+                              from crm.crm_tb_route t
+                              where t.status='U' and t.isweek='1' and t.user_id=#userId#
+                              group by t.user_id,t.week_day) a
+            union all
+            select b.cust_count cust_count from
+                      (select count(t.cust_id)cust_count,t.user_id
+                              from crm.crm_tb_route t
+                              where  t.status='U' and t.isweek='0' and t.user_id=#userId# and t.route_date between  to_date(#beginDate#,'yyyy-mm-dd') and  to_date(#endDate#,'yyyy-mm-dd')+1
+                              group by t.user_id) b
+            ) t
+	    ]]>
+	</select>
+	
+	<select id="getVisitInfoDetail" parameterClass="visitInfo"
+		resultClass="visitInfo">
+		select count(t.emp_id) as empCount,
+               k.org_name as orgName,
+               k.name1 as kunnrName
+               from crm.crm_tb_kunnr k 
+               left join basis.basis_tb_kunnremp_info t on t.lifnr=k.kunnr
+               where k.kunnr=#kunnr#
+               group by k.org_name,k.name1
+	      
+	</select>
+	
+	<select id="getStockCount" parameterClass="stockInfo"
+		resultClass="java.lang.Integer">
+       <![CDATA[ 
+			select count(*)
+			  from crm.crm_tb_stockage st
+			  left join crm.crm_tb_sku sk
+			    on sk.sku_id= st.sku_id
+			  left join crm.crm_tb_customer c
+			    on c.cust_id = st.cust_id
+			  left join  basis.basis_vw_user_psw s
+			    on st.user_id = s.user_id
+			  left join crm.crm_tb_kunnr k
+			    on c.cust_kunnr = k.kunnr
+      			where 1=1
+		]]>
+		<dynamic>		
+		<isNotEmpty property="custId" prepend="and">
+			<![CDATA[ c.cust_id =#custId#]]>
+		</isNotEmpty>
+		 <isNotEmpty property="startDate" prepend="and">
+			<![CDATA[st.create_date >=to_date(#startDate#,'yyyy-mm-dd')]]>
+		</isNotEmpty>
+	      <isNotEmpty property="endDate" prepend="and">
+			<![CDATA[st.create_date <=to_date(#endDate#,'yyyy-mm-dd')+1]]>
+		</isNotEmpty>
+		<isNotEmpty property="custKunnr" prepend="and">
+			<![CDATA[ c.cust_kunnr =#custKunnr#]]>
+		</isNotEmpty>
+		<isNotEmpty property="skuId" prepend="and">
+			<![CDATA[ sk.sku_id =#skuId#]]>
+		</isNotEmpty>
+		<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[ k.org_id in (select b.org_id from basis.basis_tb_org b 
+				         start with b.org_id = #orgId#
+				         connect by prior b.org_id= b.org_parent_id)]]>
+		</isNotEmpty>
+		<isNotEmpty property="month" prepend="and">
+			<![CDATA[ st.month =#month#]]>
+		</isNotEmpty>
+		<isNotEmpty property="year" prepend="and">
+			<![CDATA[ st.year =#year#]]>
+		</isNotEmpty>
+		</dynamic>
+	</select>
+	
+	<select id="getStockList" parameterClass="stockInfo"
+		resultClass="stockInfo">
+		<include refid="global.paginationStart" />
+       <![CDATA[ 
+			select ot.rc_org_name as RCOrgName,
+			       ot.p_org_name  as POrgName,
+			       ot.org_name    as orgName,
+			       k.name1        as kunnrName,
+			       c.cust_name    as custName,
+			       c.cust_id      as custId,
+			       s.org_name     as empOrgName,
+			       s.station_name as stationName,
+			       s.user_name    as empName,
+			       sk.sku_name    as skuName,
+			       st.quantity    as quantity,
+			       st.unit_desc   as unitDesc,
+			       st.year        as year,
+			       st.month       as month,
+			       st.create_date as createDate
+			  from crm.crm_tb_stockage st
+			  left join crm.crm_tb_sku sk on sk.sku_id = st.sku_id
+			  left join crm.crm_tb_customer c on c.cust_id = st.cust_id
+			  left join basis.basis_vw_user_psw s on st.user_id = s.user_id
+			  left join crm.crm_tb_kunnr k on c.cust_kunnr = k.kunnr
+			  left join basis.basis_tb_org_temp ot on k.org_id = ot.org_id
+			 where 1 = 1
+		]]>
+		<dynamic>	
+		<isNotEmpty property="custId" prepend="and">
+			<![CDATA[ c.cust_id =#custId#]]>
+		</isNotEmpty>
+		 <isNotEmpty property="startDate" prepend="and">
+			<![CDATA[st.create_date >=to_date(#startDate#,'yyyy-mm-dd')]]>
+		</isNotEmpty>
+	      <isNotEmpty property="endDate" prepend="and">
+			<![CDATA[st.create_date <=to_date(#endDate#,'yyyy-mm-dd')+1]]>
+		</isNotEmpty>
+		<isNotEmpty property="custKunnr" prepend="and">
+			<![CDATA[ c.cust_kunnr =#custKunnr#]]>
+		</isNotEmpty>
+		<isNotEmpty property="skuId" prepend="and">
+			<![CDATA[ sk.sku_id =#skuId#]]>
+		</isNotEmpty>
+		<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[ k.org_id in (select b.org_id from basis.basis_tb_org b 
+				         start with b.org_id = #orgId#
+				         connect by prior b.org_id= b.org_parent_id)]]>
+		</isNotEmpty>
+		<isNotEmpty property="month" prepend="and">
+			<![CDATA[ st.month =#month#]]>
+		</isNotEmpty>
+		<isNotEmpty property="year" prepend="and">
+			<![CDATA[ st.year =#year#]]>
+		</isNotEmpty>
+		</dynamic>
+		<![CDATA[order by  st.create_date desc]]>
+		<include refid="global.paginationEnd" />
+	</select>
+	
+	<select id="getSkuCount" parameterClass="orderSku" resultClass="java.lang.Integer">
+	<![CDATA[
+		    select count(s.sku_name) from crm.crm_tb_sku s where s.product_type = '4' 
+	]]>
+		<dynamic>
+			<isNotEmpty property="skuName" prepend="and">
+			<![CDATA[ s.sku_name like #skuName,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	
+	<select id="getSkuNameList" parameterClass="orderSku" resultClass="orderSku">
+	<include refid="global.paginationStart" />
+	<![CDATA[
+	      select distinct s.sku_id as skuId,
+	      				  s.sku_name as skuName,
+	      				  s.sku_unit as skuUnit 
+	      from crm.crm_tb_sku s 
+	      where s.product_type = '4'
+	]]>
+		<dynamic>
+			<isNotEmpty property="skuName" prepend="and">
+			<![CDATA[ s.sku_name like #skuName,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>			
+		</dynamic>
+		<![CDATA[order by s.sku_id ]]>
+		<include refid="global.paginationEnd" />
+	</select>
+	
+	<select id="getOrderInfoCount" parameterClass="visitInfo" resultClass="java.lang.Integer">
+    <![CDATA[
+    select count(*) from
+    (
+		select
+		k.kunnr,
+        max(k.name1) as kunnrName,
+        (select count(i.emp_id) from basis.basis_tb_kunnremp_info i where i.lifnr=k.kunnr) as empCount,
+        max(k.org_name) as orgName,
+        sum(decode(substr(t.dayType,9,10),'01',t.custCount,'')) as day1,
+        sum(decode(substr(t.dayType,9,10),'02',t.custCount,'')) as day2,
+        sum(decode(substr(t.dayType,9,10),'03',t.custCount,'')) as day3,
+        sum(decode(substr(t.dayType,9,10),'04',t.custCount,'')) as day4,
+        sum(decode(substr(t.dayType,9,10),'05',t.custCount,'')) as day5,
+        sum(decode(substr(t.dayType,9,10),'06',t.custCount,'')) as day6,
+        sum(decode(substr(t.dayType,9,10),'07',t.custCount,'')) as day7,
+        sum(decode(substr(t.dayType,9,10),'08',t.custCount,'')) as day8,
+        sum(decode(substr(t.dayType,9,10),'09',t.custCount,'')) as day9,
+        sum(decode(substr(t.dayType,9,10),'10',t.custCount,'')) as day10,
+        sum(decode(substr(t.dayType,9,10),'11',t.custCount,'')) as day11,
+        sum(decode(substr(t.dayType,9,10),'12',t.custCount,'')) as day12,
+        sum(decode(substr(t.dayType,9,10),'13',t.custCount,'')) as day13,
+        sum(decode(substr(t.dayType,9,10),'14',t.custCount,'')) as day14,
+        sum(decode(substr(t.dayType,9,10),'15',t.custCount,'')) as day15,
+        sum(decode(substr(t.dayType,9,10),'16',t.custCount,'')) as day16,
+        sum(decode(substr(t.dayType,9,10),'17',t.custCount,'')) as day17,
+        sum(decode(substr(t.dayType,9,10),'18',t.custCount,'')) as day18,
+        sum(decode(substr(t.dayType,9,10),'19',t.custCount,'')) as day19,
+        sum(decode(substr(t.dayType,9,10),'20',t.custCount,'')) as day20,
+        sum(decode(substr(t.dayType,9,10),'21',t.custCount,'')) as day21,
+        sum(decode(substr(t.dayType,9,10),'22',t.custCount,'')) as day22,
+        sum(decode(substr(t.dayType,9,10),'23',t.custCount,'')) as day23,
+        sum(decode(substr(t.dayType,9,10),'24',t.custCount,'')) as day24,
+        sum(decode(substr(t.dayType,9,10),'25',t.custCount,'')) as day25,
+        sum(decode(substr(t.dayType,9,10),'26',t.custCount,'')) as day26,
+        sum(decode(substr(t.dayType,9,10),'27',t.custCount,'')) as day27,
+        sum(decode(substr(t.dayType,9,10),'28',t.custCount,'')) as day28,
+        sum(decode(substr(t.dayType,9,10),'29',t.custCount,'')) as day29,
+        sum(decode(substr(t.dayType,9,10),'30',t.custCount,'')) as day30,
+        sum(decode(substr(t.dayType,9,10),'31',t.custCount,'')) as day31
+        from crm.crm_tb_kunnr k
+		left join (select
+		            count(o.order_id) custCount,
+		            o.cloud_id ,
+		            to_char(o.create_date,'yyyy-MM-dd') dayType
+		            from crm.crm_tb_order_total o
+		            left join basis.basis_tb_salesemp_info i on i.emp_id=o.user_id
+		            where 1=1
+		            ]]>
+		            <dynamic>
+		            <isNotEmpty property="beginDate" prepend="and">
+			        <![CDATA[ to_char(o.create_date,'yyyy-MM') = #beginDate#]]>
+		            </isNotEmpty>
+		            <isNotEmpty property="userName" prepend="and">
+			        <![CDATA[ i.emp_name like #userName,handler=wildcard# escape '\']]>
+		            </isNotEmpty>
+		            </dynamic>
+		<![CDATA[
+		            group by o.cloud_id,to_char(o.create_date,'yyyy-MM-dd')
+		            ) t on k.kunnr=t.cloud_id
+		where (select count(i.emp_id) from basis.basis_tb_kunnremp_info i where i.lifnr=k.kunnr)>1
+		]]>
+		            <dynamic>
+		            <isNotEmpty property="kunnr" prepend="and">
+			        <![CDATA[ k.kunnr = #kunnr#]]>
+		            </isNotEmpty>
+		             <isNotEmpty property="orgId" prepend="and">
+			        <![CDATA[ k.org_id in (select b.org_id from basis.basis_tb_org b 
+				         start with b.org_id = #orgId#
+				         connect by prior b.org_id= b.org_parent_id)]]>
+		            </isNotEmpty>
+		            <isNotEmpty property="userName" prepend="and">
+			        <![CDATA[ t.custCount>0]]>
+		            </isNotEmpty>
+		            </dynamic>
+		<![CDATA[
+		group by k.kunnr
+		order by k.kunnr
+		)
+		]]>
+    </select>
+	
+	<select id="getOrderInfo" parameterClass="visitInfo" resultClass="visitInfo">
+    <include refid="global.paginationStart" />
+    <![CDATA[
+		select
+		k.kunnr,
+        max(k.name1) as kunnrName,
+        (select count(i.emp_id) from basis.basis_tb_kunnremp_info i where i.lifnr=k.kunnr and i.emp_state in ('Y','S')) as empCount,
+        max(k.org_name) as orgName,
+        sum(decode(substr(t.dayType,9,10),'01',t.custCount,'')) as day1,
+        sum(decode(substr(t.dayType,9,10),'02',t.custCount,'')) as day2,
+        sum(decode(substr(t.dayType,9,10),'03',t.custCount,'')) as day3,
+        sum(decode(substr(t.dayType,9,10),'04',t.custCount,'')) as day4,
+        sum(decode(substr(t.dayType,9,10),'05',t.custCount,'')) as day5,
+        sum(decode(substr(t.dayType,9,10),'06',t.custCount,'')) as day6,
+        sum(decode(substr(t.dayType,9,10),'07',t.custCount,'')) as day7,
+        sum(decode(substr(t.dayType,9,10),'08',t.custCount,'')) as day8,
+        sum(decode(substr(t.dayType,9,10),'09',t.custCount,'')) as day9,
+        sum(decode(substr(t.dayType,9,10),'10',t.custCount,'')) as day10,
+        sum(decode(substr(t.dayType,9,10),'11',t.custCount,'')) as day11,
+        sum(decode(substr(t.dayType,9,10),'12',t.custCount,'')) as day12,
+        sum(decode(substr(t.dayType,9,10),'13',t.custCount,'')) as day13,
+        sum(decode(substr(t.dayType,9,10),'14',t.custCount,'')) as day14,
+        sum(decode(substr(t.dayType,9,10),'15',t.custCount,'')) as day15,
+        sum(decode(substr(t.dayType,9,10),'16',t.custCount,'')) as day16,
+        sum(decode(substr(t.dayType,9,10),'17',t.custCount,'')) as day17,
+        sum(decode(substr(t.dayType,9,10),'18',t.custCount,'')) as day18,
+        sum(decode(substr(t.dayType,9,10),'19',t.custCount,'')) as day19,
+        sum(decode(substr(t.dayType,9,10),'20',t.custCount,'')) as day20,
+        sum(decode(substr(t.dayType,9,10),'21',t.custCount,'')) as day21,
+        sum(decode(substr(t.dayType,9,10),'22',t.custCount,'')) as day22,
+        sum(decode(substr(t.dayType,9,10),'23',t.custCount,'')) as day23,
+        sum(decode(substr(t.dayType,9,10),'24',t.custCount,'')) as day24,
+        sum(decode(substr(t.dayType,9,10),'25',t.custCount,'')) as day25,
+        sum(decode(substr(t.dayType,9,10),'26',t.custCount,'')) as day26,
+        sum(decode(substr(t.dayType,9,10),'27',t.custCount,'')) as day27,
+        sum(decode(substr(t.dayType,9,10),'28',t.custCount,'')) as day28,
+        sum(decode(substr(t.dayType,9,10),'29',t.custCount,'')) as day29,
+        sum(decode(substr(t.dayType,9,10),'30',t.custCount,'')) as day30,
+        sum(decode(substr(t.dayType,9,10),'31',t.custCount,'')) as day31
+        from crm.crm_tb_kunnr k
+		left join (select
+		            count(o.order_id) custCount,
+		            o.cloud_id ,
+		            to_char(o.create_date,'yyyy-MM-dd') dayType
+		            from crm.crm_tb_order_total o
+		            left join basis.basis_tb_salesemp_info i on i.emp_id=o.user_id
+		            where 1=1
+		            ]]>
+		            <dynamic>
+		            <isNotEmpty property="beginDate" prepend="and">
+			        <![CDATA[ to_char(o.create_date,'yyyy-MM') = #beginDate#]]>
+		            </isNotEmpty>
+		            <isNotEmpty property="userName" prepend="and">
+			        <![CDATA[ i.emp_name like #userName,handler=wildcard# escape '\']]>
+		            </isNotEmpty>
+		            </dynamic>
+		<![CDATA[
+		            group by o.cloud_id,to_char(o.create_date,'yyyy-MM-dd')
+		            ) t on k.kunnr=t.cloud_id
+		where (select count(i.emp_id) from basis.basis_tb_kunnremp_info i where i.lifnr=k.kunnr)>1
+		]]>
+		            <dynamic>
+		            <isNotEmpty property="kunnr" prepend="and">
+			        <![CDATA[ k.kunnr = #kunnr#]]>
+		            </isNotEmpty>
+		            <isNotEmpty property="orgId" prepend="and">
+			        <![CDATA[ k.org_id in (select b.org_id from basis.basis_tb_org b 
+				         start with b.org_id = #orgId#
+				         connect by prior b.org_id= b.org_parent_id)]]>
+		            </isNotEmpty>
+		            <isNotEmpty property="userName" prepend="and">
+			        <![CDATA[ t.custCount>0]]>
+		            </isNotEmpty>
+		            </dynamic>
+		<![CDATA[
+		group by k.kunnr
+		order by k.kunnr
+		]]>
+	<include refid="global.paginationEnd" />
+    </select>
+	
+</sqlMap>

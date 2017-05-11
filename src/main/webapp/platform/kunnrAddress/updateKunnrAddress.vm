@@ -1,0 +1,103 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui"])
+		#JS_ENV_VAL()
+	</head>
+	<body class="easyui-layout">
+		<form id="form1" method="post" target="hideFrame" >
+			<div region="center" class="easyui-panel" title="送达方信息修改" data-options="iconCls:'icon-edit'">
+			<table width="100%" border="0" cellpadding="0" cellspacing="1">
+				<tr>
+						<table width="100%" border="0" cellspacing="0" cellpadding="0" >
+							<tr>
+                                <td colspan="2" class="home_title_line">
+									<table width="100%" border="0" cellpadding="0" cellspacing="1" class=outer>
+										<tr>
+											<td class="head">
+												所属经销商:
+											</td>
+											<td class="even">
+												<input  class="easyui-validatebox"  id="kunnr" name="kunnrAddress.kunnr" value="$!{kunnrAddress.kunnr}" readonly >	
+											</td>
+										</tr>
+										<tr>
+											<td class="head">
+												送达方SAP代码:
+											</td>
+											<td class="even">
+												<input  class="easyui-validatebox" style="BACKGROUND-COLOR:pink"   id="kunnrSd" name="kunnrAddress.kunnrSd" value="$!{kunnrAddress.kunnrSd}" readonly/>
+											</td>
+                                        </tr>
+                                       <tr>
+                                        <input type="hidden" id="sdProvince" name="kunnrAddress.province" value="$!{kunnrAddress.province}">
+						                <input type="hidden" id="sdCity" name="kunnrAddress.city" value="$!{kunnrAddress.city}">
+						                <input type="hidden" id="sdArea" name="kunnrAddress.area" value="$!{kunnrAddress.area}">
+						                <input type="hidden" id="sdTown" name="kunnrAddress.town" value="$!{kunnrAddress.town}">
+        				                <td class="head">送达方行政区划地址:</td>
+        				                <td><input class="easyui-validatebox" size="40" style="BACKGROUND-COLOR:pink"  data-options="required:false,editable:false" id="street" name="kunnrAddress.xzAddress" value=$!{kunnrAddress.xzAddress}  validType="length[0,50]" readonly>
+        				                <a class="easyui-linkbutton" style="width:44px"  href="javascript:selectAddress()">选择</a>
+        				                </td>
+                                        </tr>
+										<tr>
+											<td class="head">
+												详细地址:
+											</td>
+											<td class="even">
+												<input  class="easyui-validatebox" size="40" id="address" name="kunnrAddress.address"  value="$!{kunnrAddress.address}" validType="length[0,80]" data-options="required:true"/>
+											</td>
+										</tr>
+											<tr>
+											<td class="head">
+												收货人:
+											</td>
+											<td class="even">
+												<input  class="easyui-validatebox" size="24" id="name" name="kunnrAddress.name"  value="$!{kunnrAddress.name}" validType="length[0,6]" data-options="required:true"/>
+											</td>
+										</tr>
+											<tr>
+											<td class="head">
+												送达方电话:
+											</td>
+											<td class="even">
+												<input  class="easyui-validatebox" size="24" id="telephone" name="kunnrAddress.telephone" value="$!{kunnrAddress.telephone}" validType="telephone" data-options="required:false"/>
+											</td>
+										</tr>
+											<tr>
+											<td class="head">
+												送达方手机:
+											</td>
+											<td class="even">
+												<input  class="easyui-validatebox" size="24" id="mobile" name="kunnrAddress.mobile" value="$!{kunnrAddress.mobile}" validType="length[11,11]" invalidMessage="请输入正确的11位手机号"  data-options="required:false"/>
+											</td>
+										</tr>
+									<tr>
+											<td class="head">
+												最大可通行车型:
+											</td>
+											<td class="even">
+        				                     <input class="easyui-combobox" id="maximum" name="kunnrAddress.maximum" value="$!{kunnrAddress.maximum}" validType="length[0,20]" data-options="required:true">
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+			</div>
+			<div region="south" border="false" style="text-align:right;height:30px;line-height:30px;">
+				<a class="easyui-linkbutton" icon="icon-ok" href="javascript:submit()">确定</a>
+				<a class="easyui-linkbutton" icon="icon-cancel" href="javascript:close();">取消</a>
+			</div>
+			<iframe id="hideFrame" name="hideFrame"  style="height: 0; width: 0"></iframe>
+		</form>
+			<div id="maintWindow"/> 
+	</body>
+
+
+<script type="text/javascript" src="$!{env.imgUrl}/js/platform/kunnrAddress/updateKunnrAddressPre.js"></script>
+</html>

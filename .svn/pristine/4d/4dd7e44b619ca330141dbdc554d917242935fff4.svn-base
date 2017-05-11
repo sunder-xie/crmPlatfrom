@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui"])
+		#JS_ENV_VAL()	
+	</head>
+		<body>
+		<form method="post"  target="hideFrame">
+		<input type="hidden" name="detailList" id="detailList"/>
+		<input type="hidden" name="ids" id="ids"/>
+		<div class="easyui-panel" title="维护总单信息" data-options="collapsible:false,iconCls:'icon-add'" style="padding: 2px; background: #fafafa;">
+			<table width="100%" border="0" cellpadding="0" cellspacing="1">
+			<tr>
+				<td class="head" noWrap>交货单:</td>
+				<td><input type="text"  id="instock_total_id" name="instock_total_id" class="easyui-validatebox" data-options="required:true"/></td>
+				<td class="head" noWrap>出货地点:</td>
+				<td><input type="text"  id="instock_send_place" name="instock_send_place"  class="easyui-validatebox"   data-options="required:true"/>
+					</td>
+			</tr>
+			<tr>
+				<td class="head" noWrap>经销商:</td>
+				<td><input id="id" name="id"   class="easyui-combobox"    style="width:147px;"  readonly data-options="required:true" />
+                </td>	
+				<td class="head" noWrap>库存地点:</td>
+				<td><select class="easyui-combobox" id="instock_good_place" name="instock_good_place"  style="width:145px"  readonly data-options="required:true">
+						<option value="1">公用库存</option>
+						<option value="1" selected></option>
+                </select>
+				</td>
+       	     </tr>
+		    </table>
+			</div>
+			<table id="datagrid">  
+			</table> 
+			<div region="south" border="false" style="text-align:right;height:30px;line-height:30px;">
+				<a class="easyui-linkbutton" icon="icon-ok" href="javascript:save()">Submit</a>
+				<a class="easyui-linkbutton" icon="icon-cancel" href="javascript:close()">Cancel</a>
+			</div>
+	  <!--  <div id="toolbar1" class="datagrid-toolbar" >
+	 <input id="ss" class="easyui-searchbox" searcher="searcher1" prompt="请填写物料号或物料名" customer="#mm" style="width:300px"></input>		
+		       </div>	-->	
+	  	<div id="toolbar2" class="datagrid-toolbar" >
+		        <input id="ss" class="easyui-searchbox" searcher="searcher" prompt="请填写客户代码或客户名称" customer="#mm" style="width:300px"></input>		
+		     </div>
+			</form>					
+	 <iframe id="hideFrame" name="hideFrame"  style="height: 0; width: 0"></iframe>
+	 <div id="DtPlan"/>
+	 <!--维护菜单DIV-->
+	</body>
+	<div id="OpenGoal"/> 
+<script type="text/javascript" src="$!{env.imgUrl}/js/platform/instock/searchStock.js"></script>
+</html>

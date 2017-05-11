@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<bean id="complaintReportAction" class="com.kintiger.platform.complaintReport.action.ComplaintReportAction"
+		scope="request" parent="baseAction">
+		<property name="complaintReportService" ref="complaintReportService" />
+	</bean>
+	<bean id="complaintReportService"
+		class="com.kintiger.platform.complaintReport.service.impl.ComplaintReportServiceImpl">
+		<property name="complaintReportDao" ref="complaintReportDao" />
+		<property name="sapConnection" ref="sapConnection" />
+	</bean>
+	<bean id="complaintReportDao" class="com.kintiger.platform.complaintReport.dao.impl.ComplaintReportDaoImpl" parent="baseDao">
+	</bean>
+	
+</beans>

@@ -1,0 +1,976 @@
+<?xml version="1.0" encoding="GB2312"?>
+<!DOCTYPE sqlMap
+	PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="kunnrBusiness">
+	<typeAlias alias="kunnr" type="com.kintiger.platform.kunnr.pojo.Kunnr" />
+	<typeAlias alias="kunnrBusiness"
+		type="com.kintiger.platform.kunnr.pojo.KunnrBusiness" />
+	<typeAlias alias="dealerAdjustment"
+		type="com.kintiger.platform.kunnrBusinessContact.pojo.DealerAdjustment" />
+	<typeAlias alias="dealerAdujstDetail"
+		type="com.kintiger.platform.kunnrBusinessContact.pojo.DealerAdujstDetail" />
+		
+	<!-- 获取经销商的目标量明细 -->
+	<select id="getKunnrForCrmTarget" parameterClass="dealerAdujstDetail"
+		resultClass="dealerAdujstDetail">
+		<![CDATA[
+			select distinct s.the_year        as applyYear,
+			                s.the_month       as applyMonth,
+			                k.kunnr           as kunnrId,
+			                k.name1           as kunnrName,
+			                s.matter          as matter,
+			                m.bezei           as matterName,
+			                t.org_id          as orgId,
+			                t.org_name        as orgName,
+			                s.mark            as mark,
+			                round(s.box , 2)  nowTarget,
+                      		tt.box            as nowDealerTarget,
+			                s.kunnr_goal_type as kunnrGoalType
+			  from crm.CRM_TB_TARGET s
+			  left join crm.CRM_TB_TARGET tt on tt.cust_id = s.cust_id
+			                                and tt.the_year = s.the_year
+			                                and tt.the_month = s.the_month
+			                                and tt.matter = s.matter
+			                                and s.kunnr_goal_type <> tt.kunnr_goal_type                                
+			  left join crm.crm_tb_kunnr k on k.kunnr = s.cust_id
+			  left join exp.sap_tb_tvm1t m on m.mvgr1 = s.matter
+			                              and m.bezei is not null
+			  left join basis.basis_tb_org t on s.org_id = t.org_id
+			 where 1 = 1
+			   and s.mark = 'Y'
+			   and k.kunnr = #kunnrId#
+			   and s.kunnr_goal_type = 'B'
+			   and to_char(sysdate,'yyyy')=to_char(s.create_date,'yyyy')
+			   order by s.the_year,s.the_month
+		]]>
+	</select>
+	<!-- 修改目标量报表 -->
+	<update id="updateCrmTbTarget" parameterClass="dealerAdujstDetail">
+		<![CDATA[
+		    update crm.CRM_TB_TARGET s
+		    set s.box = #adjustTarget#
+		    where s.the_year = #applyYear#
+		    	and s.the_month = #applyMonth#
+		    	and s.matter = #matter#
+		    	and s.cust_id = #kunnrId#
+		    	and s.kunnr_goal_type  = 'C'
+		]]>
+	</update>		
+	<!-- 经销商调整总单事务提交之修改 -->
+	<update id="updateDealerAdjustmentById" parameterClass="dealerAdjustment">
+		<![CDATA[
+		    update CRM.CRM_TB_TARGET_ADJUST c
+		]]>
+		<dynamic prepend="set">
+			<isNotEmpty property="eventStatus" prepend=",">
+				<![CDATA[ c.EVENT_STATUS = #eventStatus# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="eventId" prepend=",">
+				<![CDATA[ c.event_id = #eventId# ]]>
+			</isNotEmpty>
+		</dynamic>
+		<dynamic prepend="where">
+			<isNotEmpty property="id" prepend="and">
+				<![CDATA[ c.adjust_id = #id# ]]>
+			</isNotEmpty>
+		</dynamic>
+	</update>		
+	<!-- 经销商调整总单事务提交之修改 -->
+	<update id="updateDealerAdjustment" parameterClass="dealerAdjustment">
+	<![CDATA[
+	    update CRM.CRM_TB_TARGET_ADJUST c
+	]]>
+	<dynamic prepend="set">
+		<isNotEmpty property="eventStatus" prepend=",">
+			<![CDATA[ c.EVENT_STATUS = #eventStatus# ]]>
+		</isNotEmpty>
+	</dynamic>
+	<dynamic prepend="where">
+		<isNotEmpty property="eventId" prepend="and">
+			<![CDATA[ c.event_id = #eventId# ]]>
+		</isNotEmpty>
+	</dynamic>
+	</update>	
+	<!-- 经销商调整总单之保存 -->
+	<insert id="createDealerAdjustMent" parameterClass="DealerAdjustment">
+		<selectKey resultClass="java.lang.String" keyProperty="adjustId">
+			<![CDATA[
+				select CRM.CRM_TB_TARGET_ADJUST_SEQ .nextval  as adjustId from dual 
+			]]>
+		</selectKey>
+		<![CDATA[
+			insert into  CRM.CRM_TB_TARGET_ADJUST
+			(
+		      ADJUST_ID,
+			  EVENT_ID,
+			  APPLY_USER,
+			  APPLY_YEAR,
+			  EVENT_STATUS,
+			  EVENT_TITLE,
+			  EVENT_TYPE,
+			  APPLY_MONTH,
+			  USER_ID
+			)
+			values(
+				#adjustId#,
+				#eventId#,
+				#applyUser#,
+				#applyYear#,
+				#eventStatus#,
+				#eventTitle#,
+				#eventType#,
+				#applyMonth#,
+				#userId#
+			)
+		]]>
+	</insert>	
+	<!-- 经销商调整明细之保存 -->
+	<insert id="createDealerAdjustDetail" parameterClass="DealerAdujstDetail">
+		<selectKey resultClass="java.lang.String" keyProperty="detalId">
+			<![CDATA[
+				select CRM.CRM_TB_TARGET_DETAIL_SEQ.nextval  as detalId from dual
+			]]>
+		</selectKey>
+		<![CDATA[
+			insert into  CRM.CRM_TB_TARGET_DETAIL
+			(
+			      ADJUST_DETAL_ID,
+				  ADJUST_ID,
+				  ORG_ID,
+				  ORG_NAME,
+				  KUNNR_NEME,
+				  ADJUST_YEAR,
+				  MATTER,
+				  NOW_TARGET,
+				  NOW_DEALER_TARGET,
+				  ADJUST_TARGET,
+				  MATTER_NAME,
+				  ADJUST_MONTH,
+				  KUNNR
+			)
+			values(
+				#detalId#,
+				#adjustId#,
+				#orgId#,
+				#orgName#,
+				#kunnrName#,
+				#applyYear#,
+				#matter#,
+				#nowTarget#,
+				#nowDealerTarget#,
+				#adjustTarget#,
+				#matterName#,
+				#applyMonth#,
+				#kunnrId#
+			)
+		]]>
+	</insert>
+	<!-- 根据品相编号获取品牌 -->
+	<select id="getMatnrAndMaktx" parameterClass="dealerAdujstDetail" 
+	    resultClass="dealerAdujstDetail">
+	    <![CDATA[
+			select t.matnr01 matnr01, t.maktx01 maktx01
+			  from basis.basis_tb_materiel t
+			 where 1=1
+		]]>
+		<dynamic>
+			<isNotEmpty property="matter" prepend="and">
+				<![CDATA[
+					t.matnr = #matter#
+				]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>	
+	<!-- 根据导入的经销商、品项、年月份带出相应的“经销商目标量” -->
+	<select id="getDealerAdjustmentDetailKunnr" parameterClass="dealerAdujstDetail"
+		resultClass="dealerAdujstDetail">
+		<![CDATA[
+			select distinct s.the_year        as applyYear,
+			                s.the_month       as applyMonth,
+			                k.kunnr           as kunnrId,
+			                k.name1           as kunnrName,
+			                s.matter          as matter,
+			                m.bezei           as matterName,
+			                t.org_id          as orgId,
+			                t.org_name        as orgName,
+			                s.mark            as mark,
+			                round(s.box, 2)   as nowTarget,
+			                tt.box             as nowDealerTarget,
+			                s.kunnr_goal_type as kunnrGoalType
+			  from crm.CRM_TB_TARGET s
+			  left join crm.CRM_TB_TARGET tt on tt.cust_id = s.cust_id
+			                                and tt.the_year = s.the_year
+			                                and tt.the_month = s.the_month
+			                                and tt.matter = s.matter
+			                                and s.kunnr_goal_type <> tt.kunnr_goal_type    
+			  left join crm.crm_tb_kunnr k on k.kunnr = s.cust_id
+			  left join exp.sap_tb_tvm1t m on m.mvgr1 = s.matter
+			                              and m.bezei is not null
+			  left join basis.basis_tb_org t on s.org_id = t.org_id
+			 where 1 = 1
+			   and s.mark = 'Y'
+			   and s.kunnr_goal_type = 'B'
+			   and s.ct_state = '0'
+			   and k.kunnr = #kunnrId# 
+		]]>
+		<dynamic>
+			<isNotEmpty property="matter" prepend="and">
+				<![CDATA[
+					s.matter = #matter#
+				]]>
+			</isNotEmpty>
+			<isNotEmpty property="applyYear" prepend="and">
+				<![CDATA[
+					s.the_year = #applyYear#
+				]]>
+			</isNotEmpty>
+			<isNotEmpty property="applyMonth" prepend="and">
+				<![CDATA[
+					s.the_month = #applyMonth#
+				]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>	
+	<!-- 品项判断 -->	
+	<select id="getMattercount" parameterClass="dealerAdujstDetail"
+		resultClass="java.lang.Integer">
+	   <![CDATA[
+		    select count(distinct s.mvgr1)
+			  from exp.sap_tb_tvm1t s
+			 where s.mvgr1 is not null
+			   and s.bezei is not null
+		]]>
+		<dynamic>
+			<isNotEmpty property="matter" prepend="and">
+			<![CDATA[ s.mvgr1 like  #matter,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>	
+	<!--验证经销商名称+代码+组织是否保持一致-->
+	<select id="getDealerAdjustmentDetailCount" parameterClass="dealerAdujstDetail"
+		resultClass="java.lang.Integer">
+		<![CDATA[
+			select count(1) from crm.crm_tb_kunnr t
+			where t.status = 1 and t.kunnr = #kunnrId# and t.org_id = #orgId#
+		]]>
+		<dynamic>
+			<isNotEmpty property="orgName" prepend="and">
+				<![CDATA[
+					t.org_name like #orgName,handler=wildcard# escape '\'
+				]]>
+			</isNotEmpty>
+			<isNotEmpty property="kunnrName" prepend="and">
+				<![CDATA[
+					t.name1 like #kunnrName,handler=wildcard# escape '\'
+				]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>		
+	<!-- 统计数据 -->
+	<select id="getDealerAdjustmentCount" parameterClass="dealerAdjustment"
+		resultClass="java.lang.Integer">
+		<![CDATA[
+			select distinct count(1)
+			  from crm.crm_tb_target_adjust t
+			  left join basis.basis_tb_salesemp_info p on p.emp_id = t.user_id
+			  left join basis.basis_tb_org o on o.org_id=p.org_id and o.state = 'Y'
+			  where 1=1
+		]]>
+		<dynamic>
+			<isNotEmpty property="eventId" prepend="and">
+				<![CDATA[ 
+					t.event_id like '%'||#eventId#||'%'
+				]]>
+			</isNotEmpty>
+			<isNotEmpty property="applyUser" prepend="and">
+				<![CDATA[
+					p.emp_name like #applyUser,handler=wildcard# escape '\'
+				]]>
+			</isNotEmpty>
+			<isNotEmpty property="startDate" prepend="and">
+				<![CDATA[  to_char(to_date(t.apply_year||t.apply_month,'yyyy-MM'),'yyyy-MM')>=#startDate#]]>
+			</isNotEmpty>
+			<isNotEmpty property="endDate" prepend="and">
+				<![CDATA[ to_char(to_date(t.apply_year||t.apply_month,'yyyy-MM'),'yyyy-MM')<=#endDate#]]>
+			</isNotEmpty>
+			<isNotEmpty property="eventStatus" prepend="and">
+				<![CDATA[ t.event_status like #eventStatus,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="eventTitle" prepend="and">
+				<![CDATA[ 
+					t.event_title like #eventTitle,handler=wildcard# escape '\'
+				]]>
+			</isNotEmpty>
+			<isNotEmpty property="eventType" prepend="and">
+				<![CDATA[
+					t.event_type like #eventType,handler=wildcard# escape '\'
+				]]>
+			</isNotEmpty>
+			<isNotEmpty property="userId" prepend="and">
+				<![CDATA[
+					o.org_id in (select o.org_id orgId
+						          from basis.basis_tb_org o
+						         where o.state = 'Y'
+						         start with o.org_id in
+						                    (select distinct s.org_id
+						                       from basis.basis_tb_station_user s
+						                       left join basis.basis_tb_org o on o.org_id = s.org_id
+						                      where s.user_id = #userId#)
+						        connect by nocycle prior o.org_id = o.org_parent_id)
+				]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	<select id="getDealerAdjustmentById" parameterClass="java.lang.String"
+		resultClass="dealerAdjustment">
+		<![CDATA[
+			select distinct t.adjust_id    id,
+			                t.event_id     eventId,
+			                p.emp_name        applyUser,
+			                t.apply_year   applyYear,
+                            t.apply_month  applyMonth,
+			                t.event_status eventStatus,
+			                t.event_title  eventTitle,
+			                t.event_type   eventType,
+			                d.org_id       orgId,
+			                d.org_name     orgName
+			  from crm.crm_tb_target_adjust t
+			  left join crm.crm_tb_target_detail d on t.adjust_id = d.adjust_id
+			  left join office.office_tb_payee_info p on p.userid = t.user_id
+			  left join basis.basis_tb_salesemp_info p on p.emp_id = t.user_id
+			 where d.adjust_id = #id#
+		]]>
+	</select>
+	<select id="getDealerAdjustment" parameterClass="dealerAdjustment"
+		resultClass="dealerAdjustment">
+		<![CDATA[
+			select distinct t.adjust_id         id,
+			                t.event_id          eventId,
+			                p.emp_name        applyUser,
+			                t.apply_year        applyYear,
+			                t.apply_month       applyMonth,
+			                t.event_status      eventStatus,
+			                t.event_title       eventTitle,
+			                t.event_type        eventType,
+			                k.org_id            orgId,
+			                k.org_name          orgName
+			  from crm.crm_tb_target_adjust t
+			  left join crm.crm_tb_target_detail d on t.adjust_id=d.adjust_id
+			  left join crm.crm_tb_kunnr k on d.kunnr = k.kunnr
+			  left join basis.basis_tb_salesemp_info p on p.emp_id = t.user_id
+			 where t.event_id = #eventId#
+		]]>
+	</select>
+	<!-- 获取提报调整事务列表 -->
+	<select id="getDealerAdjustmentList" parameterClass="dealerAdjustment"
+		resultClass="dealerAdjustment">
+		<include refid="global.paginationStart" />
+		<![CDATA[
+			select distinct t.adjust_id    id,
+			                t.event_id     eventId,
+			                p.emp_name     applyUser,
+			                t.apply_year   applyYear,
+			                t.apply_month  applyMonth,
+			                t.event_status eventStatus,
+			                t.event_title  eventTitle,
+			                t.event_type   eventType,
+			                o.org_id       orgId,
+			                o.org_name     orgName,
+			                t.user_id      userId
+			  from crm.crm_tb_target_adjust t
+			  left join basis.basis_tb_salesemp_info p on p.emp_id = t.user_id
+			  left join basis.basis_tb_org o on o.org_id=p.org_id and o.state = 'Y'
+			 where 1 = 1
+		]]>
+		<dynamic>
+			<isNotEmpty property="eventId" prepend="and">
+				<![CDATA[ 
+					t.event_id like '%'||#eventId#||'%'
+				]]>
+			</isNotEmpty>
+			<isNotEmpty property="applyUser" prepend="and">
+				<![CDATA[
+					p.emp_name like #applyUser,handler=wildcard# escape '\'
+				]]>
+			</isNotEmpty>
+			<isNotEmpty property="startDate" prepend="and">
+				<![CDATA[  to_char(to_date(t.apply_year||t.apply_month,'yyyy-MM'),'yyyy-MM')>=#startDate#]]>
+			</isNotEmpty>
+			<isNotEmpty property="endDate" prepend="and">
+				<![CDATA[ to_char(to_date(t.apply_year||t.apply_month,'yyyy-MM'),'yyyy-MM')<=#endDate#]]>
+			</isNotEmpty>
+			<isNotEmpty property="eventStatus" prepend="and">
+				<![CDATA[ t.event_status like #eventStatus,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="eventTitle" prepend="and">
+				<![CDATA[ 
+					t.event_title like #eventTitle,handler=wildcard# escape '\'
+				]]>
+			</isNotEmpty>
+			<isNotEmpty property="eventType" prepend="and">
+				<![CDATA[
+					t.event_type like #eventType,handler=wildcard# escape '\'
+				]]>
+			</isNotEmpty>
+			<isNotEmpty property="userId" prepend="and">
+				<![CDATA[
+					o.org_id in (select o.org_id orgId
+						          from basis.basis_tb_org o
+						         where o.state = 'Y'
+						         start with o.org_id in
+						                    (select distinct s.org_id
+						                       from basis.basis_tb_station_user s
+						                       left join basis.basis_tb_org o on o.org_id = s.org_id
+						                      where s.user_id = #userId#)
+						        connect by nocycle prior o.org_id = o.org_parent_id)
+				]]>
+			</isNotEmpty>
+		</dynamic>
+		<![CDATA[ order by t.adjust_id desc ]]>
+		<include refid="global.paginationEnd" />
+	</select>
+	<!-- 导出经销商目标量调整表 -->
+	<select id="getDealerAdjustmentListForXls" parameterClass="dealerAdjustment"
+		resultClass="dealerAdjustment">
+		<![CDATA[
+			select distinct t.adjust_id         id,
+			               t.event_id          eventId,
+			               t.apply_user        applyUser,
+			               t.apply_year        applyYear,
+			               t.apply_month       applyMonth,
+			               t.event_status      eventStatus,
+			               t.event_title       eventTitle,
+			               t.event_type        eventType,
+			               d.org_id            orgId,
+			               k.org_name          orgName,
+			               d.adjust_detal_id   detalId,
+			               d.adjust_id         adjustId,
+			               d.kunnr             kunnrId,
+			               k.name1        kunnrName,
+			               d.adjust_year       theYear,
+			               d.adjust_month      theMonth,
+			               m.matnr01 			matnr01, 
+                		   m.maktx01 			maktx01,
+			               d.matter            matter,
+			               s.bezei             matterName,
+			               round(d.now_target, 2)  nowTarget,
+			               d.now_dealer_target nowDealerTarget,
+			               d.adjust_target     adjustTarget
+			 from crm.crm_tb_target_adjust t
+			 left join basis.basis_tb_salesemp_info p on p.emp_id = t.user_id
+			 left join crm.crm_tb_target_detail d on t.adjust_id = d.adjust_id
+			 left join crm.crm_tb_kunnr k on d.kunnr = k.kunnr
+			 left join exp.sap_tb_tvm1t s on s.mvgr1 = d.matter
+			 left join basis.basis_tb_materiel m on m.matnr=d.matter
+			where 1 = 1
+		]]>
+		<dynamic>
+		    <isNotEmpty property="eventId" prepend="and">
+				<![CDATA[ 
+					t.event_id=#eventId#
+				]]>
+			</isNotEmpty>
+			<isNotEmpty property="applyUser" prepend="and">
+				<![CDATA[
+					p.emp_name like #applyUser,handler=wildcard# escape '\'
+				]]>
+			</isNotEmpty>
+			<isNotEmpty property="startDate" prepend="and">
+				<![CDATA[  to_char(to_date(t.apply_year||t.apply_month,'yyyy-MM'),'yyyy-MM')>=#startDate#]]>
+			</isNotEmpty>
+			<isNotEmpty property="endDate" prepend="and">
+				<![CDATA[ to_char(to_date(t.apply_year||t.apply_month,'yyyy-MM'),'yyyy-MM')<=#endDate#]]>
+			</isNotEmpty>
+			<isNotEmpty property="eventStatus" prepend="and">
+				<![CDATA[ 
+					t.event_status like #eventStatus,handler=wildcard# escape '\'
+				]]>
+			</isNotEmpty>
+			<isNotEmpty property="eventType" prepend="and">
+				<![CDATA[
+					t.event_type like #eventType,handler=wildcard# escape '\'
+				]]>
+			</isNotEmpty>
+			<isNotEmpty property="userId" prepend="and">
+				<![CDATA[
+					d.org_id in (select o.org_id orgId
+						          from basis.basis_tb_org o
+						         where o.state = 'Y'
+						         start with o.org_id in
+						                    (select distinct s.org_id
+						                       from basis.basis_tb_station_user s
+						                       left join basis.basis_tb_org o on o.org_id = s.org_id
+						                      where s.user_id = #userId#)
+						        connect by nocycle prior o.org_id = o.org_parent_id)
+				]]>
+			</isNotEmpty>
+		</dynamic>
+		<![CDATA[ order by t.adjust_id,d.adjust_year,d.adjust_month ]]>
+	</select>
+	<!-- 获取提报调整事务列表 -->
+	<select id="getDealerAdjustDetailList" parameterClass="dealerAdujstDetail"
+		resultClass="dealerAdujstDetail">
+		<![CDATA[
+			select distinct t.adjust_id         id,
+			                t.event_id          eventId,
+			                t.apply_user        applyUser,
+			                t.event_status      eventStatus,
+			                t.event_title       eventTitle,
+			                t.event_type        eventType,
+			                t.user_id           userId,
+			                d.org_id            orgId,
+			                k.org_name          orgName,
+			                d.adjust_detal_id   detalId,
+			                d.adjust_id         adjustId,
+			                d.kunnr             kunnrId,
+			                k.name1             kunnrName,
+			                d.adjust_year       applyYear,
+			                d.adjust_month      applyMonth,
+			                m.maktx01 			maktx01,
+                			m.matnr01 			matnr01,
+			                d.matter            matter,
+			                s.bezei             matterName,
+			                round(d.now_target, 2)  nowTarget,
+			                d.now_dealer_target nowDealerTarget,
+			                d.adjust_target     adjustTarget
+			  from crm.crm_tb_target_adjust t
+			  left join crm.crm_tb_target_detail d on t.adjust_id = d.adjust_id
+			  left join crm.crm_tb_kunnr k on d.kunnr = k.kunnr
+			  left join exp.sap_tb_tvm1t s on s.mvgr1 = d.matter
+			  left join basis.basis_tb_materiel m on m.matnr=d.matter
+			 where 1=1
+			   and d.adjust_id = #adjustId#
+			   order by d.adjust_year,d.adjust_month
+		]]>
+	</select>
+	
+    <select id="getKunnrBusiness" parameterClass="kunnr"
+		resultClass="kunnrBusiness">
+		<![CDATA[
+		select  b.kunnr,
+				k.name1 kunnrName,
+			    b.business_manager businessManager,
+			    b.manager_mobile managerMobile,
+			    b.business_competent businessCompetent,
+			    b.competent_mobile competentMobile,
+			    b.kunnr_leader as kunnrLeader,
+			    b.kunnr_phone as kunnrPhone,
+			    b.business_manager_id as businessManagerId,
+			    b.business_competent_id as businessCompetentId
+		    from crm.crm_tb_kunnrbusiness b
+		    left join crm.crm_tb_kunnr k on k.kunnr = b.kunnr
+			where b.kunnr = #kunnr#
+		]]>
+	</select>
+		<select id="getKunnrBusinessManagerList" parameterClass="kunnrBusiness"
+		resultClass="kunnrBusiness">
+		<![CDATA[
+		  select  k.kunnr,
+                  k.business_id as businessManagerId,
+                  k.business_name as businessManager,
+                  k.business_mobile as managerMobile
+                  from crm.crm_tb_kunnrbusiness_emp k
+		          where business_type = '0'
+		]]>
+		<dynamic>
+		  <isNotEmpty property="kunnr" prepend="and">
+			<![CDATA[k.kunnr = #kunnr# ]]>
+		  </isNotEmpty>
+		  <isNotEmpty property="businessHead" prepend="and">
+			<![CDATA[k.business_name like #businessHead,handler=wildcard# escape '\']]>
+		  </isNotEmpty>
+		  <isNotEmpty property="businessEndDate" prepend="and">
+			<![CDATA[(k.business_end_date > #businessEndDate# or k.business_end_date is null)]]>
+		  </isNotEmpty>
+		</dynamic>
+	</select>
+	<select id="getKunnrBusinessHeadList" parameterClass="kunnrBusiness"
+		resultClass="kunnrBusiness">
+		<![CDATA[
+		  select  k.kunnr,
+                  k.business_id as businessHeadId,
+                  k.business_name as businessHead,
+                  s.bus_mobilephone as headMobile
+                  from crm.crm_tb_kunnrbusiness_emp k
+                  left join basis.basis_tb_salesemp_info s on s.emp_id=k.business_id
+		          where business_type = '1'
+		]]>
+		<dynamic>
+		  <isNotEmpty property="kunnr" prepend="and">
+			<![CDATA[k.kunnr = #kunnr# ]]>
+		  </isNotEmpty>
+		  <isNotEmpty property="businessHead" prepend="and">
+			<![CDATA[k.business_name like #businessHead,handler=wildcard# escape '\']]>
+		  </isNotEmpty>
+		  <isNotEmpty property="businessEndDate" prepend="and">
+			<![CDATA[(k.business_end_date > #businessEndDate# or k.business_end_date is null)]]>
+		  </isNotEmpty>
+		</dynamic>
+	</select>
+	
+	<select id="getKunnrBusinessAgentList" parameterClass="kunnrBusiness"
+		resultClass="kunnrBusiness">
+		<![CDATA[
+		  select  k.kunnr,
+                  k.business_id as businessAgentId,
+                  k.business_name as businessAgent,
+                  s.bus_mobilephone as agentMobile
+                  from crm.crm_tb_kunnrbusiness_emp k
+                  left join basis.basis_tb_salesemp_info s on s.emp_id=k.business_id
+		          where business_type = '2'
+		]]>
+		<dynamic>
+		  <isNotEmpty property="kunnr" prepend="and">
+			<![CDATA[k.kunnr = #kunnr# ]]>
+		  </isNotEmpty>
+		  <isNotEmpty property="businessAgent" prepend="and">
+			<![CDATA[k.business_name like #businessAgent,handler=wildcard# escape '\']]>
+		  </isNotEmpty>
+			<isNotEmpty property="businessEndDate" prepend="and">
+		  <![CDATA[(k.business_end_date > #businessEndDate# or k.business_end_date is null)]]>
+		  </isNotEmpty>
+		</dynamic>
+	</select>
+	
+	<update id="updateHead" parameterClass="kunnrBusiness">
+	    delete crm.crm_tb_kunnrbusiness_emp b
+               where b.kunnr = #kunnr# and b.business_type = '1'
+	</update>
+	
+	<update id="updateAgent" parameterClass="kunnrBusiness">
+	    delete crm.crm_tb_kunnrbusiness_emp b
+	           where b.kunnr = #kunnr# and b.business_type = '2'
+	</update>
+	<update id="updateBusinessManager" parameterClass="kunnrBusiness">
+	    delete crm.crm_tb_kunnrbusiness_emp b
+	           where b.kunnr = #kunnr# and b.business_type = '0'
+	</update>
+		<insert id="createBusinessManager" parameterClass="kunnrBusiness">
+	   <![CDATA[ insert into crm.crm_tb_kunnrbusiness_emp(
+	                    kunnr,
+	                    business_id,
+	                    business_name,
+	                    business_mobile,
+	                    business_type)
+	                    values(
+	                    #kunnr#,
+	                    #businessManagerId#,
+                        #businessManager#,
+                        #managerMobile#,
+                        '0'
+                        )
+               ]]>
+	</insert>
+	
+	<insert id="createHead" parameterClass="kunnrBusiness">
+	   <![CDATA[ insert into crm.crm_tb_kunnrbusiness_emp(
+	                    kunnr,
+	                    business_id,
+	                    business_name,
+	                    business_mobile,
+	                    business_type)
+	                    values(
+	                    #kunnr#,
+	                    #businessHeadId#,
+                        #businessHead#,
+                        #headMobile#,
+                        '1'
+                        )
+               ]]>
+	</insert>
+	
+	<insert id="createAgent" parameterClass="kunnrBusiness">
+	    <![CDATA[insert into crm.crm_tb_kunnrbusiness_emp(
+	                    kunnr,
+	                    business_id,
+	                    business_name,
+	                    business_mobile,
+	                    business_type)
+	                    values(
+	                    #kunnr#,
+	                    #businessAgentId#,
+                        #businessAgent#,
+                        #agentMobile#,
+                        '2'
+                        )
+       ]]>
+	</insert>
+	
+	<update id="updateKunnrBusiness" parameterClass="kunnrBusiness">
+		<![CDATA[
+		update
+    crm.CRM_TB_KUNNRBUSINESS b
+    set b.business_competent = #businessCompetent#,
+        b.business_competent_id=#businessCompetentId#,
+        b.competent_mobile = #competentMobile#,
+        b.business_manager = #businessManager#,
+        b.manager_mobile = #managerMobile#,
+        b.business_manager_id = #businessManagerId#
+    where b.kunnr = #kunnr#
+		]]>
+	</update>
+	
+	<select id="getKunnrIdByHeadOrAgent" parameterClass="java.lang.String"
+		resultClass="java.lang.String">
+		<![CDATA[
+		  select  k.kunnr
+                  from crm.crm_tb_kunnrbusiness_emp e
+                  left join crm.crm_tb_kunnr k on k.kunnr=e.kunnr
+		          where k.status='1' and
+		          e.business_id=#userId#
+		]]>
+	</select>
+	
+	<select id="getKunnrIdByCompetent" parameterClass="java.lang.String"
+		resultClass="java.lang.String">
+		<![CDATA[
+		  select  k.kunnr
+                  from crm.crm_tb_kunnrbusiness e
+                  left join crm.crm_tb_kunnr k on k.kunnr=e.kunnr
+		          where k.status='1' and
+		          e.business_manager_id in
+		          (select to_char(u.id) from basis.basis_tb_station_user u where u.user_id=#userId#)
+		]]>
+	</select>
+	
+	<select id="getKunnrIdByKunnrBusiness" parameterClass="java.lang.String"
+		resultClass="java.lang.String">
+		<![CDATA[
+		  select distinct t.kunnr from (
+                 select distinct e.kunnr
+                               from crm.crm_tb_kunnrbusiness_emp e
+                               left join crm.crm_tb_kunnr k on k.kunnr=e.kunnr
+                               where k.status='1' and e.business_id=#userId#             
+                               
+                  union all select distinct b.kunnr
+                                    from crm.crm_tb_kunnrbusiness b
+                                    left join basis.basis_tb_station_user u on u.id=b.business_manager_id
+                                    left join crm.crm_tb_kunnr k on k.kunnr=b.kunnr
+                                    where k.status='1' and u.user_id=#userId#
+                                    ) t
+                 where t.kunnr is not null
+		]]>
+	</select>
+	
+	<select id="getKunnrIdByKunnrBusinessByKunag" parameterClass="java.lang.String"
+		resultClass="java.lang.String">
+		<![CDATA[
+		  select distinct t.kunnr from (
+                 select distinct e.kunnr
+                               from crm.crm_tb_kunnrbusiness_emp e
+                               left join crm.crm_tb_kunnr k on k.kunnr=e.kunnr
+                               where k.status='1' and e.business_id=#userId#
+                               
+                  union all select distinct kkk.kunnr
+                               from crm.crm_tb_kunnrbusiness_emp e
+                               left join crm.crm_tb_kunnr_kunag kk on kk.kunnr=e.kunnr
+                               left join crm.crm_tb_kunnr_kunag kkk on kkk.kunag=kk.kunag
+                               left join crm.crm_tb_kunnr k on k.kunnr=kkk.kunnr
+                               where k.status='1' and e.business_id=#userId#             
+                               
+                  union all select distinct b.kunnr
+                                    from crm.crm_tb_kunnrbusiness b
+                                    left join basis.basis_tb_station_user u on u.id=b.business_manager_id
+                                    left join crm.crm_tb_kunnr k on k.kunnr=b.kunnr
+                                    where k.status='1' and u.user_id=#userId#
+                                    
+                  union all select distinct kkk.kunnr
+                                    from crm.crm_tb_kunnrbusiness b
+                                    left join basis.basis_tb_station_user u on u.id=b.business_manager_id
+                                    left join crm.crm_tb_kunnr_kunag kk on kk.kunnr=b.kunnr
+                                    left join crm.crm_tb_kunnr_kunag kkk on kkk.kunag=kk.kunag
+                                    left join crm.crm_tb_kunnr k on k.kunnr=kkk.kunnr
+                                    where k.status='1' and u.user_id=#userId#
+                                    ) t
+                 where t.kunnr is not null
+		]]>
+	</select>
+	
+	<select id="exportForExcel" parameterClass="kunnr"
+		resultClass="kunnrBusiness">
+		<![CDATA[
+		  select o.rc_org_name as vkgrp,
+		         o.p_org_name as bzirk,
+		         o.org_name as vkbur,
+		         k.kunnr as kunnr,
+		         k.name1 as kunnrName,
+		         b.business_manager as  businessManager,
+		         e.business_name as businessHead,
+		         ee.business_name as businessAgent
+		         from crm.crm_tb_kunnr k
+		         left join crm.crm_tb_kunnrbusiness b on k.kunnr = b.kunnr
+		         left join basis.basis_tb_org_temp o on k.org_id = o.org_id
+		         left join (select ee.kunnr,ee.business_name 
+		                    from crm.crm_tb_kunnrbusiness_emp ee where ee.business_type = '2') ee 
+		                    on ee.kunnr = b.kunnr
+		         left join (select e.kunnr,e.business_name 
+		                    from crm.crm_tb_kunnrbusiness_emp e where e.business_type = '1') e 
+		                    on e.kunnr = b.kunnr
+		         where k.org_id is not null
+		]]>
+		<dynamic>
+		  <isNotEmpty property="kunnr" prepend="and">
+			<![CDATA[k.kunnr = #kunnr# ]]>
+		  </isNotEmpty>
+		  <isNotEmpty property="name1" prepend="and">
+			<![CDATA[k.name1 = #name1# ]]>
+		  </isNotEmpty>
+		  <isNotEmpty property="channelId" prepend="and">
+			<![CDATA[k.channel_id = #channelId# ]]>
+		  </isNotEmpty>
+		  <isNotEmpty property="status" prepend="and">
+			<![CDATA[k.status = #status# ]]>
+		  </isNotEmpty>
+		  <isNotEmpty property="orgId" prepend="and">
+		    <isEmpty property="bhxjFlag">
+			<![CDATA[k.org_id =#orgId#]]>
+			</isEmpty>
+			<isNotEmpty property="bhxjFlag">
+			<![CDATA[k.org_id in(select o.org_id
+                   from basis.basis_tb_org o
+                    where o.state = 'Y'
+                    start with o.org_id = #orgId#
+                    connect by nocycle prior o.org_id = o.org_parent_id
+			)]]>
+			</isNotEmpty>
+			</isNotEmpty>
+		 </dynamic>
+	</select>
+	
+	<select id="searchKunnrBusinessManagerListCount" parameterClass="kunnrBusiness"
+		resultClass="java.lang.Integer">
+	<![CDATA[
+	   select    count(*)
+		         from crm.crm_tb_kunnr k
+		         left join crm.crm_tb_kunnrbusiness b on k.kunnr = b.kunnr
+		         left join basis.basis_tb_org_temp o on k.org_id = o.org_id
+		         where k.org_id is not null
+	]]>
+	      <dynamic>
+		  <isNotEmpty property="kunnr" prepend="and">
+			<![CDATA[k.kunnr = #kunnr# ]]>
+		  </isNotEmpty>
+		  <isNotEmpty property="orgId" prepend="and">
+			<![CDATA[k.org_id in(select o.org_id
+                   from basis.basis_tb_org o
+                    where o.state = 'Y'
+                    start with o.org_id = #orgId#
+                    connect by nocycle prior o.org_id = o.org_parent_id
+			)]]>
+			</isNotEmpty>
+		 </dynamic>
+	</select>
+	
+	<select id="searchKunnrBusinessManagerList" parameterClass="kunnrBusiness"
+		resultClass="kunnrBusiness">
+    <include refid="global.paginationStart" />
+	<![CDATA[
+	   select    o.rc_org_name as vkgrp,
+		         o.p_org_name as bzirk,
+		         o.org_name as vkbur,
+		         k.kunnr as kunnr,
+		         k.name1 as kunnrName,
+		         b.business_manager as  businessManager
+		         from crm.crm_tb_kunnr k
+		         left join crm.crm_tb_kunnrbusiness b on k.kunnr = b.kunnr
+		         left join basis.basis_tb_org_temp o on k.org_id = o.org_id
+		         where k.org_id is not null
+	]]>
+	      <dynamic>
+		  <isNotEmpty property="kunnr" prepend="and">
+			<![CDATA[k.kunnr = #kunnr# ]]>
+		  </isNotEmpty>
+		  <isNotEmpty property="orgId" prepend="and">
+			<![CDATA[k.org_id in(select o.org_id
+                   from basis.basis_tb_org o
+                    where o.state = 'Y'
+                    start with o.org_id = #orgId#
+                    connect by nocycle prior o.org_id = o.org_parent_id
+			)]]>
+			</isNotEmpty>
+			order by o.rc_org_name,o.p_org_name,o.org_name
+		 </dynamic>
+    <include refid="global.paginationEnd" />
+	</select>
+	
+	<select id="searchKunnrBusinessEmpListCount" parameterClass="kunnrBusiness"
+		resultClass="java.lang.Integer">
+	<![CDATA[
+	   select    
+		         count(*)
+		         from crm.crm_tb_kunnrbusiness_emp b
+		         left join crm.crm_tb_kunnr k on k.kunnr = b.kunnr
+		         where 1=1
+	]]>
+	      <dynamic>
+		  <isNotEmpty property="kunnr" prepend="and">
+			<![CDATA[k.kunnr = #kunnr# ]]>
+		  </isNotEmpty>
+		  <isNotEmpty property="businessName" prepend="and">
+			<![CDATA[b.business_name like #businessName,handler=wildcard# escape '\' ]]>
+		  </isNotEmpty>
+		  <isNotEmpty property="orgId" prepend="and">
+			<![CDATA[k.org_id in(select o.org_id
+                   from basis.basis_tb_org o
+                    where o.state = 'Y'
+                    start with o.org_id = #orgId#
+                    connect by nocycle prior o.org_id = o.org_parent_id
+			)]]>
+			</isNotEmpty>
+		 </dynamic>
+	</select>
+	
+	<select id="searchKunnrBusinessEmpList" parameterClass="kunnrBusiness"
+		resultClass="kunnrBusiness">
+    <include refid="global.paginationStart" />
+	<![CDATA[
+	   select    
+		         k.kunnr as kunnr,
+		         k.name1 as kunnrName,
+		         b.business_id as  businessId,
+		         b.business_name as businessName,
+		         b.business_type as businessType,
+		         b.business_end_date businessEndDate
+		         from crm.crm_tb_kunnrbusiness_emp b
+		         left join crm.crm_tb_kunnr k on k.kunnr = b.kunnr
+		         where 1=1
+	]]>
+	      <dynamic>
+		  <isNotEmpty property="kunnr" prepend="and">
+			<![CDATA[k.kunnr = #kunnr# ]]>
+		  </isNotEmpty>
+		  <isNotEmpty property="businessName" prepend="and">
+			<![CDATA[b.business_name like #businessName,handler=wildcard# escape '\' ]]>
+		  </isNotEmpty>
+		  <isNotEmpty property="orgId" prepend="and">
+			<![CDATA[k.org_id in(select o.org_id
+                   from basis.basis_tb_org o
+                    where o.state = 'Y'
+                    start with o.org_id = #orgId#
+                    connect by nocycle prior o.org_id = o.org_parent_id
+			)]]>
+			</isNotEmpty>
+			order by b.business_id
+		 </dynamic>
+    <include refid="global.paginationEnd" />
+	</select>
+	
+	<update id="updateKunnrBusinessEmp" parameterClass="kunnrBusiness">
+	<![CDATA[
+	    update crm.crm_tb_kunnrbusiness_emp t set ]]>
+	   <dynamic prepend=" ">
+		  <isNotEmpty property="kunnr" prepend=",">
+			<![CDATA[t.kunnr = #kunnr# ]]>
+		  </isNotEmpty>
+		  <isNotEmpty property="businessEndDate" prepend=",">
+			<![CDATA[t.business_end_date = #businessEndDate# ]]>
+		  </isNotEmpty>
+		  <isNotEmpty property="businessName" prepend=",">
+			<![CDATA[t.business_name= #businessName# ]]>
+		  </isNotEmpty>
+		  <![CDATA[ where t.business_id = #businessId# ]]>
+	   </dynamic>
+	</update>
+	
+</sqlMap>

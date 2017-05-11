@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui", "print"])
+		<style media="print">  
+			.noPrint { display : none; }  
+        </style> 
+		#JS_ENV_VAL()
+	</head>
+		<body>
+		<input type="hidden" id="yearFlag" name="yearFlag"  value='$!{yearFlag}' readonly >
+		<input type="hidden" id="custId" name="custId"  value='$!{custId}' readonly >
+		<input type="hidden" id="pcgInfoJson" name="pcgInfoJson"  value='$!{pcgInfoJson}' readonly >
+		<input type="hidden" id="pcgInfoJson2" name="pcgInfoJson2"  value='$!{pcgInfoJson2}' readonly >
+    	<div class="noPrint">
+		    <input type="button" onClick="Print()" value="打印1" name="button_print"> 
+		    <input type="button" onClick="Preview()" value="打印预览 " name="button_show"> 
+	    </div>
+	    <div id = "event">
+    	<form id="ff" method="post" enctype="multipart/form-data" target="hideFrame">
+    		<div>
+			<div id="toolBar"></div>
+			<div border="false" style="height:15px;"></div>
+		</form>		
+	</div>
+	</body>
+	<script type="text/javascript" src="$!{env.imgUrl}/js/platform/goal/printContractGoalView.js?version=20170321"></script>
+	<script type="text/javascript">
+		var strHtml1="<br><font color='#FF00FF'>打印控件未安装!点击这里<a href='" + imgUrl + "/js/print/install_lodop.exe'>执行安装</a>,安装后请刷新页面或重新进入。</font>";
+    	var strHtml2="<br><font color='#FF00FF'>打印控件需要升级!点击这里<a href='" + imgUrl + "/js/print/install_lodop.exe'>执行升级</a>,升级后请重新进入。</font>";
+    	var strHtml3="<br><br><font color='#FF00FF'>(注：如曾安装过Lodop旧版附件npActiveXPLugin,请在【工具】->【附加组件】->【扩展】中先卸载它)</font>";
+    </script>
+</html>

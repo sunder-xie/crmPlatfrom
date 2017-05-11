@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui"])
+		#JS_ENV_VAL()	
+	</head>
+	<body class="easyui-layout">
+		<form method="post" enctype="multipart/form-data" target="hideFrame" name="FileupzdqForm">
+			<input type='hidden' id='mprModelId' name="mprModelId"  value='$!{mprModelId}'/>
+			<input type='hidden' id='excelFileName' name="excelFileName"  value='$!{excelFileName}'/>
+			<div region="center" class="easyui-panel" title="费用编号批量导入" data-options="iconCls:'icon-excel'">
+			<table width="100%" border="0" cellpadding="0" cellspacing="1">
+				<br/>
+				<br/>
+					<tr>
+						<td class="head" noWrap>
+							请点击下载导入模板:
+                        </td>
+						<td class="even" noWrap>
+							<a class="easyui-linkbutton"  href="javascript:downloadExcel()">模板下载</a>
+                        </td>
+                    </tr>
+					<tr>
+						<td class="head" noWrap>
+							请选择导入的Excel文件:
+                        </td>
+						<td class="even" noWrap>
+							<input type="file" id="fileContent" name="fileContent"/>
+                        </td>
+                    </tr>
+					
+		    </table>
+		    </div>
+			<div region="south" border="false" style="text-align:right;height:30px;line-height:30px;">
+				<a class="easyui-linkbutton" icon="icon-ok" href="javascript:submit()">确定</a>
+				<a class="easyui-linkbutton" icon="icon-cancel" href="javascript:close()">取消</a>
+			</div>
+		</form>
+		<iframe id="hideFrame" name="hideFrame"  style="height: 0; width: 0"></iframe>
+		<div id="maintStaff"/>
+	</body>
+<script type="text/javascript" src="$!{env.imgUrl}/js/platform/goal/importMvgBo.js"></script>
+</html>

@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="GB2312"?>
+<!DOCTYPE sqlMap
+	PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="distributionGoal">
+	<typeAlias alias="distributionGoal"
+		type="com.kintiger.platform.distributionGoal.pojo.DistributionGoal" />
+
+	<select id="getDistributionGoalCount" parameterClass="distributionGoal"
+		resultClass="java.lang.Integer">
+	   <![CDATA[
+		     select count(count(distinct dg.kunnr_name))
+           from crm.crm_tb_distribution_goal dg 
+               left join basis.basis_tb_org o on o.org_id = dg.org_id  
+               left join crm.crm_tb_cg cg on cg.sap_groups_code = dg.matter
+               left join basis.basis_tb_salesemp_info s on dg.user_id = s.emp_id
+             where  1=1
+		]]>
+		<dynamic>
+			<isNotEmpty property="kunnrId" prepend="and">
+				<![CDATA[ dg.kunnr_id = #kunnrId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="kunnrName" prepend="and">
+					<![CDATA[ dg.kunnrName  like #kunnrName,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="startDate" prepend="and">
+				<![CDATA[  to_date(dg.input_date,'yyyy-MM')>=to_date(#startDate#,'yyyy-MM')]]>
+			</isNotEmpty>
+			<isNotEmpty property="endDate" prepend="and">
+				<![CDATA[  to_date(dg.input_date,'yyyy-MM')<=to_date(#endDate#,'yyyy-MM')]]>
+			</isNotEmpty>
+			<isNotEmpty property="trFlag" prepend="and">				
+				<![CDATA[ dg.state= #trFlag# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[ o.org_id in 
+				(select oo.org_id
+                       from basis.basis_tb_org oo
+                       where oo.state = 'Y'
+                      start with oo.org_id=#orgId#
+                       connect by nocycle prior oo.org_id = oo.org_parent_id)]]>
+			</isNotEmpty>
+			<isNotEmpty property="orgName" prepend="and">
+			<![CDATA[ o.org_id in 
+				(select oo.org_id
+                       from basis.basis_tb_org oo
+                       where oo.state = 'Y'
+                      start with oo.org_name like #orgName,handler=wildcard# escape '\' 
+                       connect by nocycle prior oo.org_id = oo.org_parent_id)]]>
+			</isNotEmpty>
+
+		</dynamic>
+		<![CDATA[group by dg.org_id,dg.kunnr_Id,dg.input_Date,dg.first_user]]>
+	</select>
+
+	<select id="getDistributionGoalSize" parameterClass="distributionGoal"
+		resultClass="java.lang.Integer">
+	   <![CDATA[
+		     select count(distinct dg.kunnr_name)
+           from crm.crm_tb_distribution_goal dg            
+             where dg.kunnr_name = #kunnrName#
+               and to_date(dg.input_date,'yyyy-MM') = to_date(#inputDate#,'yyyy-MM')
+               and dg.org_city = #orgCity#
+               and dg.first_user = #firstUser#
+		]]>
+	</select>
+	
+	<select id="getOrgIdByOrgName" parameterClass="java.lang.String"
+		resultClass="distributionGoal">
+	   <![CDATA[
+		     select o.org_id orgId,o.org_name orgName from basis.basis_tb_org o where o.org_name = #org_city#
+		]]>
+	</select>
+
+	<select id="getDistributionGoalList" parameterClass="distributionGoal"
+		resultClass="distributionGoal">
+		<include refid="global.paginationStart" />
+	   <![CDATA[
+			select min(dg.dg_id) as dgId,
+			       dg.kunnr_id as kunnrId,
+			       max(dg.kunnr_name) as kunnrName,
+			       dg.input_date as inputDate,
+			       max(s.emp_name) as inputName,
+			       max(o.org_name) as orgCity,
+			       max(op.org_name) as orgProvince,
+			       max(ore.org_name) as orgRegion,
+			       max(dg.first_user) as firstUser,
+			       max(dg.second_user) as secondUser,
+			       max(dg.third_user) as thirdUser,
+			       max(dg.check_name) as checkName,
+			       max(dg.state) as trFlag,
+			       max(to_char(dg.last_modify,'yyyy-MM-dd')) as lastDate,
+			       max(to_char(dg.create_date,'yyyy-MM-dd')) as createDate,
+			       max(to_char(sysdate,'yyyy-MM-dd')) as thisSysdate,
+			       sum(decode(dg.matter ,'A1',dg.box_num,0)) as aOne,
+			       sum(decode(dg.matter ,'A2',dg.box_num,0)) as aTwo,
+			       sum(decode(dg.matter ,'A3',dg.box_num,0)) as aThree,
+			       sum(decode(dg.matter ,'A4',dg.box_num,0)) as aFour,
+			       sum(decode(dg.matter ,'A5',dg.box_num,0)) as aFive,
+			       sum(decode(dg.matter ,'A6',dg.box_num,0)) as aSix,
+			       sum(decode(dg.matter ,'A7',dg.box_num,0)) as aSeven,
+			       sum(decode(dg.matter ,'A8',dg.box_num,0)) as aEight,
+			       sum(decode(dg.matter ,'B1',dg.box_num,0)) as bOne,
+			       sum(decode(dg.matter ,'B6',dg.box_num,0)) as bSix,
+			       sum(decode(dg.matter ,'B8',dg.box_num,0)) as bEight,
+			       sum(decode(dg.matter ,'C1',dg.box_num,0)) as cOne,
+			       sum(decode(dg.matter ,'C6',dg.box_num,0)) as cSix,
+			       sum(decode(dg.matter ,'C7',dg.box_num,0)) as cSeven,
+			       sum(decode(dg.matter ,'C8',dg.box_num,0)) as cEight,
+			       sum(decode(dg.matter ,'D9',dg.box_num,0)) as dNine,
+			       sum(decode(dg.matter ,'D10',dg.box_num,0)) as dTen,
+			       sum(decode(dg.matter ,'E1',dg.box_num,0)) as eOne,
+			       sum(decode(dg.matter ,'H7',dg.box_num,0)) as hSeven      
+			   from crm.crm_tb_distribution_goal dg   
+		         left join basis.basis_tb_org o on o.org_id = dg.org_id
+		              join basis.basis_tb_org op on op.org_id = o.org_parent_id
+		              join basis.basis_tb_org ore on ore.org_id = op.org_parent_id
+		         left join crm.crm_tb_cg cg on cg.sap_groups_code = dg.matter
+		         left join basis.basis_tb_salesemp_info s on dg.user_id = s.emp_id
+		         where 1=1
+	   ]]>
+		<dynamic>
+			<isNotEmpty property="kunnrId" prepend="and">
+				<![CDATA[ dg.kunnr_Id = #kunnrId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="kunnrName" prepend="and">
+					<![CDATA[ dg.kunnrName like #kunnrName,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="startDate" prepend="and">
+				<![CDATA[  to_date(dg.input_date,'yyyy-MM')>=to_date(#startDate#,'yyyy-MM')]]>
+			</isNotEmpty>
+			<isNotEmpty property="endDate" prepend="and">
+				<![CDATA[  to_date(dg.input_date,'yyyy-MM')<=to_date(#endDate#,'yyyy-MM')]]>
+			</isNotEmpty>
+			<isNotEmpty property="trFlag" prepend="and">				
+				<![CDATA[ dg.state= #trFlag# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[ o.org_id in 
+				(select oo.org_id
+                       from basis.basis_tb_org oo
+                       where oo.state = 'Y'
+                      start with oo.org_id=#orgId#
+                       connect by nocycle prior oo.org_id = oo.org_parent_id)]]>
+			</isNotEmpty>
+			<isNotEmpty property="orgName" prepend="and">
+			<![CDATA[ o.org_id in 
+				(select oo.org_id
+                       from basis.basis_tb_org oo
+                       where oo.state = 'Y'
+                      start with oo.org_name like #orgName,handler=wildcard# escape '\' 
+                       connect by nocycle prior oo.org_id = oo.org_parent_id)]]>
+			</isNotEmpty>
+
+		</dynamic>
+		<![CDATA[group by dg.org_id,dg.kunnr_Id,dg.input_Date,dg.first_user]]>
+		<![CDATA[order by dg.input_Date desc,dg.org_id,dg.kunnr_Id,dg.first_user]]>
+		<include refid="global.paginationEnd" />
+	</select>
+
+
+	<insert id="insertDistributionGoal" parameterClass="distributionGoal">
+		<selectKey resultClass="java.lang.Long" keyProperty="dgId">
+			<![CDATA[
+		select crm.CRM_SEQ_DISTRIBUTION_GOAL.NEXTVAL as dgId from dual
+			]]>
+		</selectKey>
+		<![CDATA[
+			insert into crm.CRM_TB_DISTRIBUTION_GOAL (
+			   DG_ID,
+			   KUNNR_ID,
+			   KUNNR_NAME,
+			   INPUT_DATE,
+			   MATTER,
+			   ORG_ID,
+			   ORG_CITY,
+			   BOX_NUM,
+			   STATE,
+			   USER_ID,
+			   FIRST_USER,
+			   SECOND_USER,
+			   THIRD_USER,
+			   LAST_MODIFY,
+			   CREATE_DATE			   
+				)
+			values (
+				#dgId#,
+				#kunnrId#,
+				#kunnrName#,
+				#inputDate#,
+				#matter#,
+				#orgId#,
+				#orgCity#,
+				#boxNum#,
+				#trFlag#,
+				#userId#,
+				#firstUser#,
+				#secondUser#,
+				#thirdUser#,
+				sysdate,
+				sysdate
+				)
+		]]>
+	</insert>
+
+	<delete id="deleteDistributionGoal" parameterClass="distributionGoal">
+		<![CDATA[delete from crm.crm_tb_distribution_goal dg 
+		where (dg.org_id||dg.kunnr_id||dg.input_date||dg.first_user) in (select d.org_id||d.kunnr_id||d.input_date||d.first_user 
+		from crm.crm_tb_distribution_goal d where d.dg_id in  ]]>
+		<iterate property="ids" open="(" close=")" conjunction=",">#ids[]#
+		</iterate>
+		<![CDATA[ )  ]]>
+	</delete>
+
+	<update id="checkDistributionGoal" parameterClass="distributionGoal">
+		<![CDATA[update crm.crm_tb_distribution_goal dg 
+		set dg.state = #state#,
+		    dg.check_name = #checkName#
+		where (dg.org_id||dg.kunnr_id||dg.input_date||dg.first_user) in (select d.org_id||d.kunnr_id||d.input_date||d.first_user
+		from crm.crm_tb_distribution_goal d where d.dg_id = #dgId# )]]>		
+	</update>
+	
+	<update id="updateDistributionGoal" parameterClass="distributionGoal">
+		<![CDATA[update crm.crm_tb_distribution_goal dg 
+		set dg.state = #state#,
+		    dg.box_num = #boxNum#,
+		    dg.last_modify = sysdate
+		where dg.org_id||dg.kunnr_id||dg.input_date||dg.first_user in (select d.org_id||d.kunnr_id||d.input_date||d.first_user
+		from crm.crm_tb_distribution_goal d where d.dg_id = #dgId# )
+	    and dg.matter = #matter#]]>		
+	</update>
+	
+</sqlMap>

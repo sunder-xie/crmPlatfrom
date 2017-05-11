@@ -1,0 +1,161 @@
+package com.kintiger.platform.visitInfo.pojo;
+
+import com.kintiger.platform.base.pojo.SearchInfo;
+
+public class Stock extends SearchInfo{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5432670937660745180L;
+	
+	private String orgId;
+	private String custId;
+	private String custName;
+	private String empName;
+	private String quantity;
+	private String unitDesc;
+	private String skuId;
+	private String skuName;
+	private String year;
+	private String month;
+	private String createDate;
+	private String isOffice;
+	private String custKunnr;
+	private String startDate;
+	private String endDate;
+	private String RCOrgName;//省区
+	private String POrgName;//省份
+	private String orgName;//城市
+	private String kunnrName;//经销商名称
+	private String empOrgName;//操作人组织
+	private String stationName;//操作人岗位
+	public String getCustId() {
+		return custId;
+	}
+	public void setCustId(String custId) {
+		this.custId = custId;
+	}
+	public String getCustName() {
+		return custName;
+	}
+	public void setCustName(String custName) {
+		this.custName = custName;
+	}
+	public String getEmpName() {
+		return empName;
+	}
+	public void setEmpName(String empName) {
+		this.empName = empName;
+	}
+	public String getQuantity() {
+		return quantity;
+	}
+	public void setQuantity(String quantity) {
+		this.quantity = quantity;
+	}
+	public String getUnitDesc() {
+		return unitDesc;
+	}
+	public void setUnitDesc(String unitDesc) {
+		this.unitDesc = unitDesc;
+	}
+	public String getYear() {
+		return year;
+	}
+	public void setYear(String year) {
+		this.year = year;
+	}
+	public String getMonth() {
+		return month;
+	}
+	public void setMonth(String month) {
+		this.month = month;
+	}
+	public String getCreateDate() {
+		return createDate;
+	}
+	public void setCreateDate(String createDate) {
+		this.createDate = createDate;
+	}
+	public String getSkuName() {
+		return skuName;
+	}
+	public void setSkuName(String skuName) {
+		this.skuName = skuName;
+	}
+	public String getIsOffice() {
+		return isOffice;
+	}
+	public void setIsOffice(String isOffice) {
+		this.isOffice = isOffice;
+	}
+	public String getCustKunnr() {
+		return custKunnr;
+	}
+	public void setCustKunnr(String custKunnr) {
+		this.custKunnr = custKunnr;
+	}
+	public String getSkuId() {
+		return skuId;
+	}
+	public void setSkuId(String skuId) {
+		this.skuId = skuId;
+	}
+	public String getStartDate() {
+		return startDate;
+	}
+	public void setStartDate(String startDate) {
+		this.startDate = startDate;
+	}
+	public String getEndDate() {
+		return endDate;
+	}
+	public void setEndDate(String endDate) {
+		this.endDate = endDate;
+	}
+	public String getOrgId() {
+		return orgId;
+	}
+	public void setOrgId(String orgId) {
+		this.orgId = orgId;
+	}
+	public String getRCOrgName() {
+		return RCOrgName;
+	}
+	public void setRCOrgName(String rCOrgName) {
+		RCOrgName = rCOrgName;
+	}
+	public String getPOrgName() {
+		return POrgName;
+	}
+	public void setPOrgName(String pOrgName) {
+		POrgName = pOrgName;
+	}
+	public String getOrgName() {
+		return orgName;
+	}
+	public void setOrgName(String orgName) {
+		this.orgName = orgName;
+	}
+	public String getEmpOrgName() {
+		return empOrgName;
+	}
+	public void setEmpOrgName(String empOrgName) {
+		this.empOrgName = empOrgName;
+	}
+	public String getStationName() {
+		return stationName;
+	}
+	public void setStationName(String stationName) {
+		this.stationName = stationName;
+	}
+	public String getKunnrName() {
+		return kunnrName;
+	}
+	public void setKunnrName(String kunnrName) {
+		this.kunnrName = kunnrName;
+	}
+
+
+}

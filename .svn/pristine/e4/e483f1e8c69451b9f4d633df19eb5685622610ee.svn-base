@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui"])
+		#JS_ENV_VAL()
+	</head>
+	<body>
+		<form method="post">
+			<input type="hidden" id="dealerAdujstDetailList" name="dealerAdujstDetailList"/> 
+            <input type="hidden" id="nextUserId" name="nextUserId">
+            <input type="hidden" id="id" name="id" value="$!{dealerAdjustment.id}">
+            <input type="hidden" id="eventStatus" name="eventStatus" value="$!{dealerAdjustment.eventStatus}">
+			<input type="hidden" id="userList" name="userList" />
+			<input type="hidden" id="token" name="token" value="$!{token}"/>
+			<input type="hidden" id="orgId" value="$!{orgId}"/>
+			<input type="hidden" id="eventId" name="eventId" />
+			<div class="easyui-panel" title="申请条件" data-options="collapsible:true,iconCls:'icon-search'" style="padding:5px">
+				<table width="100%" border="0" cellpadding="0" cellspacing="1">
+					<tr>
+						<td class="head" noWrap>
+							事务标题:
+						</td>
+						<td>
+							<input type="text" id="eventTitle" name="eventTitle" value="$!{dealerAdjustment.eventTitle}" readonly/>
+						</td>
+						<td class="head" noWrap>申请年:</td>
+						<td padding-top:10px;padding-bottom:10px;padding-left:15px;width:20%>
+							<input class="easyui-validatebox" id='applyYear' name='applyYear' value="$!{dealerAdjustment.applyYear}" readonly />
+						</td>
+						<td class="head" noWrap>申请月:</td>
+						<td padding-top:10px;padding-bottom:10px;padding-left:15px;width:20%>
+							<input class="easyui-validatebox" id='applyMonth' name='applyMonth' value="$!{dealerAdjustment.applyMonth}" readonly />
+						</td>
+					</tr>
+					<tr>
+						<td class="head" noWrap>
+							申请人:
+						</td>
+						<td>
+							<input class="easyui-validatebox" id="applyUser" name='applyUser' value="$!{dealerAdjustment.applyUser}" readonly />
+						</td>
+						<td class="head" noWrap>
+							事务类型:
+							#if($!{dealerAdjustment.eventType}=="A")
+							<td width="2%">
+								<input id="eventType" type="eventType" value="协议目标量提报" readonly/>
+							</td>
+							#end
+							#if($!{dealerAdjustment.eventType}=="B")
+							<td width="2%">
+								<input id="eventType" type="eventType" value="协议目标量调整" readonly/>
+							</td>
+							#end
+						</td>
+					</tr>
+				</table>
+			</div>
+			<table id="datagrid"></table> 
+			<div class="easyui-panel" border="false" style="text-align:center">
+				<a id="submitBtn" class="easyui-linkbutton" icon="icon-ok" href="javascript:saveToSubmit()">提交</a>
+			</div>
+			</div>
+		</form>
+        <iframe id="hideFrame" name="hideFrame" style="height:0; width:0"></iframe>
+		<div id="maintWindow"/>
+	</body>
+	<script type="text/javascript" src="$!{env.imgUrl}/js/platform/dealerAdjustment/dealerAdjustView.js?version=20170106"></script>
+</html>

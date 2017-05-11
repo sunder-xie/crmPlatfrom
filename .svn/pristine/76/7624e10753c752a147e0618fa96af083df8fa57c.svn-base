@@ -1,0 +1,59 @@
+#macro(JS_ENV_VAL)
+	<script type="text/javascript">
+		var appUrl = '$!{env.appUrl}';
+		var imgUrl = '$!{env.imgUrl}';
+		var wfeUrl = '$!{env.wfeUrl}';
+		var height = 400;
+	</script>
+#end
+
+#macro(JSM $libs)
+	#foreach ($key in $libs)
+		#if($key == 'jquery')
+			<script type="text/javascript" src="$!{env.imgUrl}/js/jquery/jquery-1.8.0.min.js"></script>
+			<script type="text/javascript" src="$!{env.imgUrl}/js/jquery/jquery.json-2.4.min.js"></script>
+			<script type="text/javascript" src="$!{env.imgUrl}/js/jquery/common.js"></script>
+			<script type="text/javascript" src="$!{env.imgUrl}/js/jquery/backspace.js"></script>
+		#elseif($key == 'easyui')
+			<script type="text/javascript" src="$!{env.imgUrl}/js/easyui/jquery.easyui.min.js"></script>
+			<script type="text/javascript" src="$!{env.imgUrl}/js/easyui/easyui-lang-zh_CN.js"></script>
+			<script type="text/javascript" src="$!{env.imgUrl}/js/easyui/datetimebox.js"></script>
+			<script type="text/javascript" src="$!{env.imgUrl}/js/easyui/combogrid.js"></script>
+			<script type="text/javascript" src="$!{env.imgUrl}/js/easyui/datagrid-detailview.js"></script>
+		#elseif($key == 'easyui.ext')
+			<script type="text/javascript" src="$!{env.imgUrl}/js/easyui/jquery.tips.js"></script>
+		#elseif($key == 'jquery.tools')
+			<script type="text/javascript" src="$!{env.imgUrl}/js/jquery/jquery.blockUI.js"></script>
+		#elseif($key == 'jquery.ui')
+			<script type="text/javascript" src="$!{env.imgUrl}/js/jquery/jquery.ui.core.js"></script> 
+			<script type="text/javascript" src="$!{env.imgUrl}/js/jquery/jquery.ui.widget.js"></script> 
+			<script type="text/javascript" src="$!{env.imgUrl}/js/jquery/jquery.ui.mouse.js"></script>
+			<script type="text/javascript" src="$!{env.imgUrl}/js/jquery/jquery.ui.draggable.js"></script> 
+			<script type="text/javascript" src="$!{env.imgUrl}/js/jquery/jquery.ui.droppable.js"></script>
+			<script type="text/javascript" src="$!{env.imgUrl}/js/jquery/jquery.ui.effect.js"></script>
+			<script type="text/javascript" src="$!{env.imgUrl}/js/jquery/jquery.ui.effect-highlight.js"></script>
+		#elseif($key == 'ckeditor')
+			<script type="text/javascript" src="$!{env.imgUrl}/js/ckeditor/ckeditor.js"></script>
+		#elseif($key == 'upload')
+			<script type="text/javascript" src="$!{env.imgUrl}/js/platform/upload.js"></script>
+		#elseif($key == 'pikachoose')
+			<script type="text/javascript" src="$!{env.imgUrl}/js/jquery/pikachoose/jquery.jcarousel.min.js"></script>
+			<script type="text/javascript" src="$!{env.imgUrl}/js/jquery/pikachoose/jquery.pikachoose.min.js"></script>
+		#elseif($key == 'print')
+			<script type="text/javascript" src="$!{env.imgUrl}/js/print/LodopFuncs.js"></script>
+		#end
+	#end
+#end
+
+#macro(CSSM $libs)
+	#foreach ($key in $libs)
+		#if($key == 'easyui')
+			<link id="easyuiTheme" href="$!{env.imgUrl}/css/easyui/themes/sunny/easyui.css" type="text/css" rel="stylesheet" />
+			<link href="$!{env.imgUrl}/css/easyui/themes/icon.css" type="text/css" rel="stylesheet" />
+		#elseif($key == 'style')
+			<link href="$!{env.imgUrl}/css/style.css" type="text/css" rel="stylesheet" />
+		#elseif($key == 'pikachoose')
+			<link href="$!{env.imgUrl}/css/pikachoose/bottom.css" type="text/css" rel="stylesheet" />
+		#end
+	#end
+#end

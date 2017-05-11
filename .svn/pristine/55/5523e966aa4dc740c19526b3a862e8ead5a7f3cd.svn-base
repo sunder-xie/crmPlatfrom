@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui"])
+		#JS_ENV_VAL()
+	</head>
+	<body>
+	         <form action="" method="post">
+			<div id="p_search" class="easyui-panel" title="查询条件"
+				style="padding: 2px; background: #fafafa;" data-options="collapsible:true,iconCls:'icon-search'">
+				    <table width="100%" border="0" cellpadding="0" cellspacing="1">
+				 <tr> 
+					<td class="head" noWrap><label for="con3">组织</label></td>
+					<td>
+					    <input id="orgName" name="orgName" type='text' value="$!{orgName}" class="easyui-validatebox" readonly="true" />
+						<!--&nbsp;<a id="orgTreeBut" class="easyui-linkbutton" href="javascript:selectOrgTree();">组织</a>-->
+					    <input id="orgId" name="orgId" type='hidden' value='$!{orgId}' /> 
+		                <input type="hidden" name="isOffice" id="isOffice" value="$!{isOffice}"/>
+		                <input type="hidden" id="loginId" name="loginId" value="$!{loginId}"/>
+		                <input type="hidden" id="kunnrs" name="kunnrs" value="$!{kunnrs}"/>
+					</td>
+				    <td class="head" nowrap>品项：</td>
+		                <td>
+			            <input id="skuId" name="skuId" data-options="editable:false">
+			            </td>
+			            <div id="toolbarSku" class="datagrid-toolbar" >
+			            <input class="easyui-searchbox" searcher="searcherSku" prompt="请填写物料名"  style="width:300px" />
+			            </div>
+			        <td class="head" nowrap>创建日期：</td>
+			        <td><input class="easyui-datebox" id="startTime" name="startTime" data-options="editable:false">至
+			        <input class="easyui-datebox" id="endTime" name="endTime" data-options="editable:false"></td> 
+			    </tr>
+			    <tr>   
+                    <td class="head" noWrap>所属经分销商：</td>
+                        <td><input id="custKunnr" name="kunnr" data-options="editable:false"></td>
+					    <div id="toolbarKonzs" class="datagrid-toolbar">
+					    <input class="easyui-searchbox" searcher="searcherKonzs" prompt="请输入经销商名称查询" style="width:300px"></input>		
+				        </div>
+				    <td colspan="3"></td>
+					<td class="head" noWrap><label for="con4">点击查询</label></td>
+					<td>
+						<a id="con_search" href="javascript:search()" class="easyui-linkbutton" data-options="iconCls:'icon-search'" >查询</a>
+									<a href="javascript:clearValue()" class="easyui-linkbutton" iconCls="icon-clear">重置</a> 	
+					</td>
+				</tr>
+             </table>
+			</div>
+			<table id="orderInfo_list"></table>
+	</form>
+		<iframe id="hideFrame" name="hideFrame"  style="height: 0; width: 0"></iframe>
+			 <div id="maintWindow"/> 
+	</body>
+<script type="text/javascript" src="$!{env.imgUrl}/js/platform/order/order_new/searchOrderNewInfo.js"></script>
+</html>

@@ -1,0 +1,18 @@
+<table  width="100%" border="0" cellpadding="0" cellspacing="1">
+    <tr>
+        <td colspan="4" align="center"><font color="red">*注：申请提交之前，纳税类型为一般纳税人时，开票资料（加盖公章）含客户名称、税号、银行、账户、开票地址、开票电话、发票邮寄收件人、发票邮寄地址、发票邮寄联系电话，并须客户加盖公章!</font></td>
+    </tr>
+    <tr>
+        <td colspan="4" align="center"><font color="red">*注：申请提交之前,纳税类型为小规模纳税人时,发票邮寄地址（加盖公章）含发票邮寄地址、发票邮寄收件人、发票邮寄联系电话，并需客户加盖公章!</font></td>
+    </tr>
+	#foreach($item in $dictList)
+		#set($velocityCount=$velocityCount+1)
+	<tr id="license_velocityCount">
+		<td class="head" noWrap>$!{item.itemName}:<font color='red'>*</font></td>
+        <input type="hidden" name="licenseName" value="$!{item.itemName}"></input>
+    	<td><input type="file" name="license">
+		<td class="head" noWrap>证照有效期:</td>
+		<td><input class="easyui-datebox" name="licenseValid" value="$!dateUtil.datetime($!{kunnrLicense.licenseValid},'yyyy-MM-dd')" data-options="editable:false"/></td>
+	</tr>
+	#end
+</table> 

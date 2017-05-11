@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+		<style media="print">  
+			.noprint { display : none; }
+        </style> 
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui", "print"])
+		#JS_ENV_VAL()
+		<object  id="LODOP" classid="clsid:2105C259-1E0C-4534-8141-A753534CB4CA" width=0 height=0> 
+			<embed id="LODOP_EM" type="application/x-print-lodop" width=0 height=0></embed>
+		</object>
+	</head>
+	<body>
+		<div class="noPrint">
+			<input type="button" value="打印预览" name="B3"  onclick="Preview()">
+			<input type="button" value="打印" name="B3"  onclick="Print()">
+		</div>
+		<input type="hidden" id="activeSize" value="$!{activeDetailList.size()}" />
+		
+		<div id="contentForm">
+		   <center><b><font size="2">经销商支付打印</font></b></center>
+		   </br>
+		   
+		   <table width="100%" cellpadding="0" cellspacing="0" style="border:#f39801 solid 1px;">
+				<tr height="25px">
+					<td style="padding-left:5px;font-size:13px;font-weight:bold;color:#0e2d5f;border-bottom:#f39801 1px solid;">
+						支付明细&nbsp;&gt;&gt;
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<table width="100%" border="0" cellpadding="0" cellspacing="0" style="border-collapse:collapse;word-break:break-all;word-wrap:break-word;">
+							<tr>
+								<td style="padding:5px;color:#000000;font-size:12px;font-weight:bold;text-align:center;border:#f39801 1px solid;">
+									支付号
+								</td>
+								<td style="padding:5px;color:#000000;font-size:12px;font-weight:bold;text-align:center;border:#f39801 1px solid;">
+									客户编号
+								</td>
+								<td style="padding:5px;color:#000000;font-size:12px;font-weight:bold;text-align:center;border:#f39801 1px solid;">
+									客户名称
+								</td>
+								<td style="padding:5px;color:#000000;font-size:12px;font-weight:bold;text-align:center;border:#f39801 1px solid;">
+									金额
+								</td>
+								<td style="padding:5px;color:#000000;font-size:12px;font-weight:bold;text-align:center;border:#f39801 1px solid;">
+									支付类型
+								</td>
+								<td style="padding:5px;color:#000000;font-size:12px;font-weight:bold;text-align:center;border:#f39801 1px solid;">
+									支付时间
+								</td>
+								
+							</tr>
+		   #foreach($account in $accountList)		   
+							<tr>
+								<td style="padding:5px;color:#000000;font-size:12px;text-align:center;border:#f39801 1px solid;">
+									$!{account.accountId}
+								</td>
+								<td style="padding:5px;color:#000000;font-size:12px;text-align:center;border:#f39801 1px solid;">
+									$!{account.kunnr}
+								</td>
+								<td style="padding:5px;color:#000000;font-size:12px;text-align:center;border:#f39801 1px solid;">
+									$!{account.kunnrName}
+								</td>
+								<td style="padding:5px;color:#000000;font-size:12px;text-align:center;border:#f39801 1px solid;">
+									$!{account.price}
+								</td>
+								<td style="padding:5px;color:#000000;font-size:12px;text-align:center;border:#f39801 1px solid;">
+									#if($!{account.payType}=='A')
+									    B2C
+									#else
+									    B2B
+									#end
+								</td>
+								<td style="padding:5px;color:#000000;font-size:12px;text-align:center;border:#f39801 1px solid;">
+									$!{account.createDate}
+								</td>
+							</tr>
+		   #end
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td><font size="1px"></br>
+                        收款方户名：香飘飘食品股份有限公司</br>
+                        收款方账号：19105101040227050</br>
+                        收款方开户行：湖州经济开发区支行营业部</font>
+                    </td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                </tr>
+           </table>
+		   
+        </div>
+	</body>
+	<script type="text/javascript" src="$!{env.imgUrl}/js/platform/order/printAccount.js"></script>
+	<script type="text/javascript">
+		var strHtml1="<br><font color='#FF00FF'>打印控件未安装!点击这里<a href='" + imgUrl + "/js/print/install_lodop.exe'>执行安装</a>,安装后请刷新页面或重新进入。</font>";
+    	var strHtml2="<br><font color='#FF00FF'>打印控件需要升级!点击这里<a href='" + imgUrl + "/js/print/install_lodop.exe'>执行升级</a>,升级后请重新进入。</font>";
+    	var strHtml3="<br><br><font color='#FF00FF'>(注：如曾安装过Lodop旧版附件npActiveXPLugin,请在【工具】->【附加组件】->【扩展】中先卸载它)</font>";
+    </script>
+</html>

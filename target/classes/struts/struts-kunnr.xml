@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+	"http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="kunnr" extends="kintiger-default">
+		<action name="kunnrAction" class="kunnrAction">
+			<!--申请-->
+			<result>/platform/kunnr/kunnrApply.vm</result>
+			<result name="editapply">/platform/kunnr/kunnrUpdateApply.vm</result>
+			<result name="freezeOrClose">/platform/kunnr/kunnrFreezeOrCloseApply.vm</result>
+			<result name="licensepre">/platform/kunnr/kunnrLicense.vm</result>
+			<!--查看-->
+			<result name="viewopen">/platform/kunnr/kunnrViewOpen.vm</result>
+			<result name="applySapMeg">/platform/kunnr/kunnrApplySapMeg.vm</result>
+		    <result name="applySales">/platform/kunnr/kunnrApplySales.vm</result>
+			<result name="viewUpdate">/platform/kunnr/kunnrViewUpdate.vm</result>
+			<result name="updateSapMeg">/platform/kunnr/kunnrUpdateSapMeg.vm</result>
+			<result name="viewfreeze">/platform/kunnr/kunnrViewFreeze.vm</result>
+			<result name="viewclose">/platform/kunnr/kunnrViewClose.vm</result>
+			<result name="viewlicense">/platform/kunnr/kunnrViewLicense.vm</result>
+			<!--查询-->
+			<result name="search">/platform/kunnr/kunnrSearch.vm</result>
+			<result name="viewinfo">/platform/kunnr/kunnrViewInfo.vm</result>
+			<result name="toKunnrApplySaveSearch">/platform/kunnr/searchKunnrApplys.vm</result>
+			<!-- 打印 -->
+			<result name="toKunnrPrintPre">/platform/kunnr/toKunnrPrintPre.vm</result>
+			<!-- 对应主数据 -->
+			<result name="toSearchAddress">/platform/kunnr/searchZwlqy.vm</result>
+			<!-- 物流区域批量修改 -->
+			<result name="toKunnrLogisticsArea">/platform/kunnr/kunnrLogisticsAreaUpdate.vm</result>
+			<!-- 流程发起人修改 -->
+			<result name="applyUpdateByStart">/platform/kunnr/kunnrApplyUpdateByStart.vm</result>
+			<!-- <result name="toKunnrLogisticsArea">/platform/kunnr/kunnrLogisticsAreaUpdate.vm</result> -->
+		</action>
+		<action name="salesMsgAction" class="salesMsgAction">
+			<result name="toSearchTvkbz">/platform/kunnr/searchTvkbz.vm</result>
+		</action>
+	</package>
+</struts>

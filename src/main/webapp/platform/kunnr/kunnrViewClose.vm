@@ -1,0 +1,164 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui"])
+		#JS_ENV_VAL()
+	</head>
+	<body>
+			<form id="ff">
+			<div class="easyui-panel" title="关户提报信息" data-options="collapsible:false,iconCls:'icon-tip'" style="padding: 2px; background: #fafafa;">
+			<table width="100%" border="0" cellpadding="0" cellspacing="1">
+			<tr>
+				<td class="head" noWrap>申请人:</td>
+				<td>
+					<input class="easyui-validatebox" id="createUser" name="kunnr.createUser"  value='$!{kunnr.createUser}' readonly   >
+					<input type="hidden" id="createUserId" name="kunnr.createUserId"  value='$!{kunnr.createUserId}' readonly  >
+				</td>
+				<td class="head" noWrap>申请日期:</td>
+				<td><input class="easyui-validatebox" id="createDate" name="kunnr.createDate"  value='$!{kunnr.createDate}' readonly  ></td>
+			</tr>
+		    </table>
+			</div>
+			</br>
+			<div class="easyui-panel" title="基本资料" data-options="collapsible:true,iconCls:'icon-list'" style="padding: 2px; background: #fafafa;">
+			<table width="100%" border="0" cellpadding="1" cellspacing="1">
+			<tr>
+				<td class="head" noWrap>客户注册名称:</td>
+				<td><input class="easyui-validatebox" id="name1" name="kunnr.name1" value='$!{kunnr.name1}' data-options="required:true"></td>
+				<!--td class="head" noWrap>客户简称:</td>
+				<td><input class="easyui-validatebox"id="name2" name="kunnr.name2" value='$!{kunnr.name2}'></td-->
+				<td class="head" noWrap>法人代表:</td>
+				<td>
+					<input class="easyui-validatebox"  data-options="required:true,missingMessage:'姓名'" id="name3" name="kunnr.name3" value='$!{kunnr.name3}'>
+				</td>
+				<td class="head" noWrap>性别年龄:</td>
+				<td>
+				<input class="easyui-combobox" data-options="required:false,missingMessage:'性别'" style="width:75px;" id="sex" name="kunnr.sex" value='$!{kunnr.sex}'></input>  	
+				<input class="easyui-numberbox" data-options="min:0,required:true,missingMessage:'年龄'"  style="width:70px" id="age" name="kunnr.age" value='$!{kunnr.age}'>
+				</td>
+				<td class="head" noWrap>联系电话:</td>
+				<td><input class="easyui-numberbox" id="mobNumber" name="kunnr.mobNumber" value='$!{kunnr.mobNumber}' data-options="required:true" ></td>
+			</tr>
+			<tr>
+				<td class="head" noWrap>客户SAP代码:</td>
+				<td><input class="easyui-validatebox" style="BACKGROUND-COLOR:pink" id="kunnr" name="kunnr.kunnr" value='$!{kunnr.kunnr}'></td>
+				<td class="head" noWrap>打码号:</td>
+				<td><input class="easyui-validatebox" style="BACKGROUND-COLOR:pink" id="locco" name="kunnr.locco" value='$!{kunnr.locco}' readonly ></td>
+				<td class="head" noWrap>公司代码:</td>
+				<td><input class="easyui-combogrid" id="bukrs" name="kunnr.bukrs" value='$!{kunnr.bukrs}' data-options="required:true"></td>
+				<td class="head" noWrap>销售范围:</td>
+				<td>
+				<input class="easyui-combogrid" id="vkorg" name="kunnr.vkorg" value='$!{kunnr.vkorg}' data-options="required:true"  style="width:60px;"> - <input type="text" id="spart" name="kunnr.spart" value='$!{kunnr.spart}'  style="width:30px"></input> - <input type="text" id="vtweg" name="kunnr.vtweg" value='$!{kunnr.vtweg}'  style="width:30px"></input>
+				</td>
+			</tr>
+			<tr>
+				<td class="head" noWrap>客户分类:</td>
+				<td><input class="easyui-validatebox" id="kukla" name="kunnr.kukla" value='$!{kunnr.kukla}' data-options="required:true"></td>
+				<td class="head" noWrap>客户科目组:</td>
+				<td><input class="easyui-validatebox" id="ktokd" name="kunnr.ktokd" value='$!{kunnr.ktokd}' data-options="required:true"></td>	
+				<td class="head" noWrap>客户渠道:</td>
+				<td><input class="easyui-validatebox" id="channelId" name="kunnr.channelId" value='$!{kunnr.channelId}'></td>
+				<td class="head" noWrap>上级经销商:</td>
+				<td><input class="easyui-validatebox" id="konzs" name="kunnr.konzs" value='$!{kunnr.konzs}' data-options="required:true"></td>
+			</tr>
+			<tr>
+				<td class="head" noWrap>开户银行:</td>
+				<td><input class="easyui-validatebox" id="bank" name="kunnr.bank" value='$!{kunnr.bank}'></td>
+				<td class="head" noWrap>银行账户:</td>
+				<td><input class="easyui-validatebox" id="bankAccount" name="kunnr.bankAccount" value='$!{kunnr.bankAccount}'></td>
+				<td class="head" noWrap>食品流通许可证号:</td>
+				<td><input class="easyui-validatebox" id="healthNumber" name="kunnr.healthNumber" value='$!{kunnr.healthNumber}'></td>
+				<td class="head" noWrap>税务登记证号:</td>
+				<td><input class="easyui-validatebox" id="stceg" name="kunnr.stceg" value='$!{kunnr.stceg}'></td>
+				
+			</tr>
+			<tr>
+				<td class="head" noWrap>营业执照注册号:</td>
+				<td><input class="easyui-validatebox" id="businessLicense" name="kunnr.businessLicense" value='$!{kunnr.businessLicense}'></td>
+				<td class="head" noWrap>纳税人类型:</td>
+				<td><input class="easyui-validatebox" id="kverm" name="kunnr.kverm" value='$!{kunnr.kverm}'></td>
+				<td class="head" noWrap>上次年审日期:</td>
+				<td><input class="easyui-datebox" id="lastAnnual" name="kunnr.lastAnnual" value='$!dateUtil.datetime($!{kunnr.lastAnnual},'yyyy-MM-dd')'></td>
+				<td class="head" noWrap>公司联系电话:</td>
+				<td><input class="easyui-validatebox" id="telNumber" name="kunnr.telNumber" value='$!{kunnr.telNumber}'></td>
+			</tr>
+			<tr>
+				<td class="head" noWrap>公司地址</td>
+				<td colspan="3"><input class="easyui-validatebox" id="street1" name="kunnr.street1"  value='$!{kunnr.street1}' style="width:96%"></td>
+				<td class="head" noWrap>传真:</td>
+				<td><input class="easyui-validatebox" id="faxNumber" name="kunnr.faxNumber" value="$!{kunnr.faxNumber}"></td>
+				<td class="head" noWrap>邮编:</td>
+				<td><input class="easyui-validatebox" id="zip" name="kunnr.zip" value="$!{kunnr.zip}"></td>
+				
+			</tr>
+            <tr>
+				<td class="head" noWrap>经营年限:</td>
+				<td><input class="easyui-numberbox" id="businessLife" name="kunnr.businessLife" value="$!{kunnr.businessLife}"></td>
+				<td class="head" noWrap>开始合作时间:</td>
+				<td><input class="easyui-datebox" id="cooperationStart" name="kunnr.cooperationStart" value="$!dateUtil.datetime($!{kunnr.cooperationStart},'yyyy-MM-dd')"></td>
+				<td class="head" noWrap>大概关户时间:</td>
+				<td><input class="easyui-datebox" id="cooperationEnd" name="kunnr.cooperationEnd" value="$!dateUtil.datetime($!{kunnr.cooperationEnd},'yyyy-MM-dd')"></td>
+				<td class="head" noWrap></td>
+				<td></td>
+				</tr>
+			<tr>
+				<td class="head" noWrap>关户原因:</td>
+				<td colspan="3">
+				<textarea class="easyui-validatebox" id="createReason" name="kunnr.createReason" style="width:96%;height:40px;" data-options="required:true">$!{kunnr.createReason}</textarea>
+				</td>
+				<td class="head" noWrap></td>
+				<td colspan="3"></td>
+			</tr>
+		    </table>
+            </div>
+            <div title="整改通知书附件" style="overflow:auto;padding:5px;">  
+					<table  width="100%" border="0" cellpadding="0" cellspacing="1">
+						<tr style="height:10px">
+						</tr>
+						#if($!{kunnr.noticeFile1}||$!{kunnr.noticeFile2}||$!{kunnr.noticeFile3}||$!{kunnr.noticeFile4})
+						<tr>
+        				<td class="head" noWrap>附件1:</td>
+        				<td>
+						<a href="$!{appUrl}/kunnrAction!downLoadAttachments.jspa?attachmentsPath=$!{kunnr.noticeFilePath1}&attachmentsName=$!{kunnr.noticeFile1}">$!{kunnr.noticeFile1}</a>
+						</td>
+						<td style="width:50%"></td>
+        				<td></td>
+						</tr>
+						<tr style="height:10px">
+						</tr>
+						<tr>
+        				<td class="head" noWrap>附件2:</td>
+        				<td>
+						<a href="$!{appUrl}/kunnrAction!downLoadAttachments.jspa?attachmentsPath=$!{kunnr.noticeFilePath2}&attachmentsName=$!{kunnr.noticeFile2}">$!{kunnr.noticeFile2}</a>
+						</td>
+						<td></td>
+						</tr>
+						<tr>
+        				<td class="head" noWrap>附件3:</td>
+        				<td>
+						<a href="$!{appUrl}/kunnrAction!downLoadAttachments.jspa?attachmentsPath=$!{kunnr.noticeFilePath3}&attachmentsName=$!{kunnr.noticeFile3}">$!{kunnr.noticeFile3}</a>
+						</td>
+						<td></td>
+						</tr>
+						<tr style="height:10px">
+						</tr>
+						<tr>
+        				<td class="head" noWrap>附件4:</td>
+        				<td>
+						<a href="$!{appUrl}/kunnrAction!downLoadAttachments.jspa?attachmentsPath=$!{kunnr.noticeFilePath4}&attachmentsName=$!{kunnr.noticeFile4}">$!{kunnr.noticeFile4}</a>
+						</td>
+						<td></td>
+						</tr>
+						#else
+                        <a class="head" noWrap><font color='green'>未上传整改通知书附件!</font></a>
+						#end
+		    		</table> 
+				</div>
+			</br>
+			</br>
+		</form>
+	</body>
+			<script type="text/javascript" src="$!{env.imgUrl}/js/platform/kunnr/kunnrViewClose.js"></script>
+</html>

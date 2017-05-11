@@ -1,0 +1,1094 @@
+<?xml version="1.0" encoding="GB2312"?>
+<!DOCTYPE sqlMap
+	PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="master">
+
+	<typeAlias alias="materiel" type="com.kintiger.platform.master.pojo.Materiel" />
+	<typeAlias alias="tbSku" type="com.kintiger.platform.master.pojo.CrmTbSku" />
+	<typeAlias alias="skuCg" type="com.kintiger.platform.master.pojo.CrmTbCg" />
+	<typeAlias alias="supervisorCheckItem"
+		type="com.kintiger.platform.master.pojo.SupervisorCheckItem" />
+	<typeAlias alias="supervisorLineCheckItem"
+		type="com.kintiger.platform.master.pojo.SupervisorLineCheckItem" />
+	<typeAlias alias="cust"
+		type="com.kintiger.platform.customer.pojo.Customer" />
+	<typeAlias alias="kunnr" type="com.kintiger.platform.kunnr.pojo.Kunnr" />
+
+
+
+
+	<insert id="createMateriel" parameterClass="materiel">
+   		<![CDATA[
+   		  insert into basis.basis_tb_materiel(
+               MATNR,
+               MAKTX,
+               MEINS,
+               MVGR1,
+               BEZEI,
+               MATNR03,
+               MAKTX03,
+               MATNR02,
+               MAKTX02,
+               MATNR01,
+               MAKTX01
+               )
+            values( 
+               #matnr#,
+               #maktx#,
+               #meins#,
+               #mvgr1#,
+               #bezei#,
+               #matnr03#,
+               #maktx03#,
+               #matnr02#,
+               #maktx02#,
+               #matnr01#,
+               #maktx01#
+               )
+		]]>
+	</insert>
+
+	<delete id="deleteMateriel">
+		<![CDATA[
+			delete from  basis.basis_tb_materiel 
+		]]>
+	</delete>
+
+	<delete id="clearItems">
+		<![CDATA[
+			delete from market.market_tb_supervisorcheckitem
+		]]>
+	</delete>
+	
+	<delete id="delSupervisorCheckItemByCustId" parameterClass="java.lang.String">
+		<![CDATA[
+			delete from market.market_tb_supervisorcheckitem t where t.cust_id = #custId#
+		]]>
+	</delete>
+
+	<select id="getSupervisorItemsCount" parameterClass="supervisorLineCheckItem"
+		resultClass="java.lang.Integer">
+     <![CDATA[
+ select count(1)
+  from market.market_tb_supervisorcheckitem t
+                 
+                  left join  crm.crm_tb_customer b on t.cust_id = b.cust_id
+                  left join crm.crm_tb_channel c on b.channel_id =
+                                                    c.channel_id
+                  left join basis.basis_tb_station_user tt on tt.id =
+                                                             b.station_user_id
+                  left join basis.basis_tb_stations s on s.station_id =
+                                                         tt.station_id
+                  left join basis.basis_tb_salesemp_info emp on emp.emp_id =
+                                                                tt.user_id
+                  left join basis.basis_tb_org o on o.org_id = b.org_id
+                 where 1 = 1
+                  
+                     ]]>
+		<dynamic>
+			<isNotEmpty property="custNumber" prepend="and">
+			<![CDATA[ b.cust_number =#custNumber#]]>
+			</isNotEmpty>
+			<isNotEmpty property="custName" prepend="and">
+			<![CDATA[ b.cust_name like #custName,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="channelId" prepend="and">
+			<![CDATA[ c.channel_id =#channelId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[   b.org_id in(select distinct o.org_id
+                 from basis.basis_tb_org o
+                   where o.state <> 'N'
+                 start with o.org_id = #orgId#
+               connect by nocycle prior o.org_id = o.org_parent_id
+               ) ]]>
+			</isNotEmpty>
+			<isNotEmpty property="contactName" prepend="and">
+			<![CDATA[ b.contact_name like #contactName,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="custState" prepend="and">
+			<![CDATA[ b.cust_state =#custState# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="stationUserId" prepend="and">
+			<![CDATA[ b.station_user_id =#stationUserId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="custKunnr" prepend="and">
+			<![CDATA[ b.cust_kunnr like #custKunnr,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="custParent" prepend="and">
+			<![CDATA[ b.cust_parent like #custParent,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="custType" prepend="and">
+			<![CDATA[ b.cust_type =#custType# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="createOrgId" prepend="and">
+			<![CDATA[   b.create_orgid in(select distinct o.org_id
+                 from basis.basis_tb_org o
+                   where o.state <> 'N'
+                 start with o.org_id = #createOrgId#
+               connect by nocycle prior o.org_id = o.org_parent_id
+               ) ]]>
+			</isNotEmpty>
+			<isNotEmpty property="createDateStart" prepend="and">
+			<![CDATA[ to_char(b.create_date,'yyyy-MM-dd')>#createDateStart# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="createDateEnd" prepend="and">
+			<![CDATA[ to_char(b.create_date,'yyyy-MM-dd')<#createDateEnd# ]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	
+	
+	
+	
+	<select id="getSupervisorItemsColsCount" parameterClass="supervisorLineCheckItem"
+		resultClass="java.lang.Integer">
+     <![CDATA[
+ select count(distinct(t.cust_id))
+  from market.market_tb_supervisorcheckitem t
+                 
+                  left join  crm.crm_tb_customer b on t.cust_id = b.cust_id
+                  left join crm.crm_tb_channel c on b.channel_id =
+                                                    c.channel_id
+                  left join basis.basis_tb_station_user tt on tt.id =
+                                                             b.station_user_id
+                  left join basis.basis_tb_stations s on s.station_id =
+                                                         tt.station_id
+                  left join basis.basis_tb_salesemp_info emp on emp.emp_id =
+                                                                tt.user_id
+                  left join basis.basis_tb_org o on o.org_id = b.org_id
+                 where 1 = 1
+                  
+                     ]]>
+		<dynamic>
+			<isNotEmpty property="custNumber" prepend="and">
+			<![CDATA[ b.cust_number =#custNumber#]]>
+			</isNotEmpty>
+			<isNotEmpty property="custName" prepend="and">
+			<![CDATA[ b.cust_name like #custName,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="allChannelName" prepend="and">
+			<![CDATA[ c.all_channel_name =#allChannelName# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="channelId" prepend="and">
+			<![CDATA[ c.channel_id =#channelId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[   b.org_id in(select distinct o.org_id
+                 from basis.basis_tb_org o
+                   where o.state <> 'N'
+                 start with o.org_id = #orgId#
+               connect by nocycle prior o.org_id = o.org_parent_id
+               ) ]]>
+			</isNotEmpty>
+			<isNotEmpty property="contactName" prepend="and">
+			<![CDATA[ b.contact_name like #contactName,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="custState" prepend="and">
+			<![CDATA[ b.cust_state =#custState# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="stationUserId" prepend="and">
+			<![CDATA[ b.station_user_id =#stationUserId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="custKunnr" prepend="and">
+			<![CDATA[ b.cust_kunnr like #custKunnr,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="custParent" prepend="and">
+			<![CDATA[ b.cust_parent like #custParent,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="custType" prepend="and">
+			<![CDATA[ b.cust_type =#custType# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="createOrgId" prepend="and">
+			<![CDATA[   b.create_orgid in(select distinct o.org_id
+                 from basis.basis_tb_org o
+                   where o.state <> 'N'
+                 start with o.org_id = #createOrgId#
+               connect by nocycle prior o.org_id = o.org_parent_id
+               ) ]]>
+			</isNotEmpty>
+			<isNotEmpty property="createDateStart" prepend="and">
+			<![CDATA[ to_char(b.create_date,'yyyy-MM-dd')>#createDateStart# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="createDateEnd" prepend="and">
+			<![CDATA[ to_char(b.create_date,'yyyy-MM-dd')<#createDateEnd# ]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<select id="validateCustId" parameterClass="java.lang.String"
+		resultClass="cust">
+		<![CDATA[
+		 select t1.cust_id as custId,
+       t1.cust_name as custName,
+       t1.org_id as orgId,
+       t2.org_name as orgName ,
+       t3.channel_id as channelId,
+       t3.channel_name as channelName
+  from crm.crm_tb_customer t1
+  left join basis.basis_tb_org t2 on t1.org_id = t2.org_id
+  left join crm.crm_tb_channel t3 on t3.channel_id = t1.channel_id
+
+ where 1 = 1 and t1.cust_id = #custId# 
+		
+		]]>
+	
+	</select>
+	
+	
+
+	<select id="kunnrSearchCount" parameterClass="kunnr"
+		resultClass="java.lang.Integer">
+		<![CDATA[
+		select 
+		count(t.kunnr)
+		from crm.crm_tb_kunnr t left join crm.crm_tb_kunnrbusiness b  on t.kunnr=b.kunnr 
+		where 1=1
+
+		]]>
+		<dynamic>
+			<isNotEmpty property="kunnr" prepend="and">
+			<![CDATA[t.kunnr=#kunnr#]]>
+			</isNotEmpty>
+			<isNotEmpty property="name1" prepend="and">
+			<![CDATA[t.name1 like #name1,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="channelId" prepend="and">
+			<![CDATA[t.channel_Id =#channelId#]]>
+			</isNotEmpty>
+			<isNotEmpty property="status" prepend="and">
+			<![CDATA[t.status =#status#]]>
+			</isNotEmpty>
+			<isNotEmpty property="businessManager" prepend="and">
+			<![CDATA[b.business_Manager like #businessManager,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="businessCompetent" prepend="and">
+			<![CDATA[b.business_Competent like #businessCompetent,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="orgId" prepend="and">
+				<isEmpty property="bhxjFlag">
+			<![CDATA[t.org_id =#orgId#]]>
+				</isEmpty>
+				<isNotEmpty property="bhxjFlag">
+			<![CDATA[t.org_id in(select o.org_id
+                   from basis.basis_tb_org o
+                    where o.state = 'Y'
+                    start with o.org_id = #orgId#
+                    connect by nocycle prior o.org_id = o.org_parent_id
+			)]]>
+				</isNotEmpty>
+			</isNotEmpty>
+			<isNotEmpty property="kunnrs" prepend="and">
+			<![CDATA[ t.kunnr in]]>
+				<iterate property="kunnrs" open="(" close=")" conjunction=",">#kunnrs[]#
+				</iterate>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+
+
+	<select id="kunnrSearchFromMaster" parameterClass="kunnr"
+		resultClass="kunnr">
+		<include refid="global.paginationStart" />
+		<![CDATA[
+		select t.kunnr,
+		t.name1,
+		t.name3,
+		t.bukrs,
+		t.vkorg,
+        t.org_name as orgName
+		from crm.crm_tb_kunnr t left join crm.crm_tb_kunnrbusiness b  on t.kunnr=b.kunnr 
+		where 1=1
+		]]>
+		<dynamic>
+			<isNotEmpty property="kunnr" prepend="and">
+			<![CDATA[t.kunnr=#kunnr#]]>
+			</isNotEmpty>
+			<isNotEmpty property="name1" prepend="and">
+			<![CDATA[t.name1 like #name1,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="channelId" prepend="and">
+			<![CDATA[t.channel_Id =#channelId#]]>
+			</isNotEmpty>
+			<isNotEmpty property="status" prepend="and">
+			<![CDATA[t.status =#status#]]>
+			</isNotEmpty>
+			<isNotEmpty property="businessManager" prepend="and">
+			<![CDATA[b.business_Manager like #businessManager,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="businessCompetent" prepend="and">
+			<![CDATA[b.business_Competent like #businessCompetent,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="orgId" prepend="and">
+				<isEmpty property="bhxjFlag">
+			<![CDATA[t.org_id =#orgId#]]>
+				</isEmpty>
+				<isNotEmpty property="bhxjFlag">
+			<![CDATA[t.org_id in(select o.org_id
+                   from basis.basis_tb_org o
+                    where o.state = 'Y'
+                    start with o.org_id = #orgId#
+                    connect by nocycle prior o.org_id = o.org_parent_id
+			)]]>
+				</isNotEmpty>
+			</isNotEmpty>
+			<isNotEmpty property="kunnrs" prepend="and">
+			<![CDATA[ t.kunnr in]]>
+				<iterate property="kunnrs" open="(" close=")" conjunction=",">#kunnrs[]#
+				</iterate>
+			</isNotEmpty>
+		</dynamic>
+		<!-- <![CDATA[order by t.status, t.create_date desc]]> -->
+		<include refid="global.orderBy" />
+		<include refid="global.paginationEnd" />
+	</select>
+	
+	<select id="getCustomerListCols" parameterClass="supervisorLineCheckItem" resultClass="cust">
+	<include refid="global.paginationStart" />
+	<![CDATA[
+select distinct (t.cust_id) as custId, b.cust_name as custName
+  from market.market_tb_supervisorcheckitem t
+  left join crm.crm_tb_customer b on t.cust_id = b.cust_id
+  left join crm.crm_tb_channel c on b.channel_id = c.channel_id
+  left join basis.basis_tb_station_user tt on tt.id = b.station_user_id
+  left join basis.basis_tb_stations s on s.station_id = tt.station_id
+  left join basis.basis_tb_salesemp_info emp on emp.emp_id = tt.user_id
+  left join basis.basis_tb_org o on o.org_id = b.org_id
+ where 1 = 1
+   ]]>
+		<dynamic>
+			<isNotEmpty property="custNumber" prepend="and">
+			<![CDATA[ b.cust_number =#custNumber#]]>
+			</isNotEmpty>
+		   <isNotEmpty property="custId" prepend="and">
+			<![CDATA[ b.cust_id like #custId,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="custName" prepend="and">
+			<![CDATA[ b.cust_name like #custName,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="channelId" prepend="and">
+			<![CDATA[ c.channel_id =#channelId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="allChannelName" prepend="and">
+			<![CDATA[ c.all_channel_name =#allChannelName# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[   b.org_id in(select distinct o.org_id
+                 from basis.basis_tb_org o
+                   where o.state <> 'N'
+                 start with o.org_id = #orgId#
+               connect by nocycle prior o.org_id = o.org_parent_id
+               ) ]]>
+			</isNotEmpty>
+			<isNotEmpty property="contactName" prepend="and">
+			<![CDATA[ b.contact_name like #contactName,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="custState" prepend="and">
+			<![CDATA[ b.cust_state =#custState# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="stationUserId" prepend="and">
+			<![CDATA[ b.station_user_id =#stationUserId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="custKunnr" prepend="and">
+			<![CDATA[ b.cust_kunnr like #custKunnr,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="custParent" prepend="and">
+			<![CDATA[ b.cust_parent like #custParent,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="custType" prepend="and">
+			<![CDATA[ b.cust_type =#custType# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="createOrgId" prepend="and">
+			<![CDATA[   b.create_orgid in(select distinct o.org_id
+                 from basis.basis_tb_org o
+                   where o.state <> 'N'
+                 start with o.org_id = #createOrgId#
+               connect by nocycle prior o.org_id = o.org_parent_id
+               ) ]]>
+			</isNotEmpty>
+			<isNotEmpty property="createDateStart" prepend="and">
+			<![CDATA[ to_char(b.create_date,'yyyy-MM-dd')>#createDateStart# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="createDateEnd" prepend="and">
+			<![CDATA[ to_char(b.create_date,'yyyy-MM-dd')<#createDateEnd# ]]>
+			</isNotEmpty>
+		</dynamic>
+      <![CDATA[ order by t.cust_id asc ]]>
+		<include refid="global.orderBy" />
+		<include refid="global.paginationEnd" />
+	</select>
+	
+	
+<select id="getSupervisorItemsByCustId" parameterClass="java.lang.String" resultClass="supervisorCheckItem">
+
+	<![CDATA[
+select t.check_id     checkId,
+       t.cust_id      custId,
+       t2.org_name  orgName,
+       t1.cust_name    custName,
+       t.channel_id   channelId,
+       t3.channel_name channelName,
+       t.create_name  createName,
+       t.catete_time  createTime,
+       t.mat_name     matName,
+       t.check_value  checkValue,
+       t.min_price    minPrice,
+       t.max_price    maxPrice
+  from market.market_tb_supervisorcheckitem t
+  left join crm.crm_tb_customer t1 on t1.cust_id = t.cust_id
+  left join crm.crm_tb_channel t3 on t3.channel_id  = t1.channel_id
+  left join basis.basis_tb_org t2 on t2.org_id=t1.org_id
+  where t.cust_id= #custId#
+	]]>
+		
+	</select>
+
+	<select id="getSupervisorItems" parameterClass="supervisorLineCheckItem"
+		resultClass="supervisorCheckItem">
+		<include refid="global.paginationStart" />
+   <![CDATA[
+ select t.check_id as checkId,
+       t.cust_name as custName,
+       b.cust_id      as custId,
+       o.org_name     as orgName,
+       t.channel_name as channelName,
+       t.catete_time as createTime,
+        t.create_name as createName,
+       t.mat_id as matId,
+       t.mat_name as matName,
+       t.check_value as CheckValue,
+       t.min_price as minPrice,
+       t.max_price as maxPrice,
+       t.mat_type as matType
+  from market.market_tb_supervisorcheckitem t
+                 
+                  left join  crm.crm_tb_customer b on t.cust_id = b.cust_id
+                  left join crm.crm_tb_channel c on b.channel_id =
+                                                    c.channel_id
+                  left join basis.basis_tb_station_user tt on tt.id =
+                                                             b.station_user_id
+                  left join basis.basis_tb_stations s on s.station_id =
+                                                         tt.station_id
+                  left join basis.basis_tb_salesemp_info emp on emp.emp_id =
+                                                                tt.user_id
+                  left join basis.basis_tb_org o on o.org_id = b.org_id
+                 where 1 = 1
+                
+   ]]>
+		<dynamic>
+			<isNotEmpty property="custNumber" prepend="and">
+			<![CDATA[ b.cust_number =#custNumber#]]>
+			</isNotEmpty>
+		   <isNotEmpty property="custId" prepend="and">
+			<![CDATA[ b.cust_id like #custId,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="custName" prepend="and">
+			<![CDATA[ b.cust_name like #custName,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="channelId" prepend="and">
+			<![CDATA[ c.channel_id =#channelId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[   b.org_id in(select distinct o.org_id
+                 from basis.basis_tb_org o
+                   where o.state <> 'N'
+                 start with o.org_id = #orgId#
+               connect by nocycle prior o.org_id = o.org_parent_id
+               ) ]]>
+			</isNotEmpty>
+			<isNotEmpty property="contactName" prepend="and">
+			<![CDATA[ b.contact_name like #contactName,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="custState" prepend="and">
+			<![CDATA[ b.cust_state =#custState# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="stationUserId" prepend="and">
+			<![CDATA[ b.station_user_id =#stationUserId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="custKunnr" prepend="and">
+			<![CDATA[ b.cust_kunnr like #custKunnr,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="custParent" prepend="and">
+			<![CDATA[ b.cust_parent like #custParent,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="custType" prepend="and">
+			<![CDATA[ b.cust_type =#custType# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="createOrgId" prepend="and">
+			<![CDATA[   b.create_orgid in(select distinct o.org_id
+                 from basis.basis_tb_org o
+                   where o.state <> 'N'
+                 start with o.org_id = #createOrgId#
+               connect by nocycle prior o.org_id = o.org_parent_id
+               ) ]]>
+			</isNotEmpty>
+			<isNotEmpty property="createDateStart" prepend="and">
+			<![CDATA[ to_char(b.create_date,'yyyy-MM-dd')>#createDateStart# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="createDateEnd" prepend="and">
+			<![CDATA[ to_char(b.create_date,'yyyy-MM-dd')<#createDateEnd# ]]>
+			</isNotEmpty>
+		</dynamic>
+      <![CDATA[ order by t.check_id desc ]]>
+		<include refid="global.orderBy" />
+		<include refid="global.paginationEnd" />
+	</select>
+	
+	
+	<select id="getExportMouldCsvCustWithCons" parameterClass="supervisorLineCheckItem"
+		resultClass="cust">
+		<include refid="global.paginationStart" />
+   <![CDATA[
+ select b.cust_id as custId,
+       b.cust_name as custName,
+       t.zwl01t||t.zwl02t||t.zwl03t||t.zwl04t||b.cust_town||b.cust_street||b.cust_house_number as custProvince,
+       o.org_name as orgName, 
+       c.channel_name as channelName
+  from crm.crm_tb_customer b
+  left join crm.crm_tb_channel c on b.channel_id = c.channel_id
+  left join basis.basis_tb_station_user tt on tt.id = b.station_user_id
+  left join basis.basis_tb_stations s on s.station_id = tt.station_id
+  left join basis.basis_tb_salesemp_info emp on emp.emp_id = tt.user_id
+  left join basis.basis_tb_org o on o.org_id = b.org_id
+  left join crm.crm_tb_zwlqy t on t.zwl04 = b.cust_province
+
+ where 1 = 1
+                
+   ]]>
+		<dynamic>
+			<isNotEmpty property="custNumber" prepend="and">
+			<![CDATA[ b.cust_number =#custNumber#]]>
+			</isNotEmpty>
+		   <isNotEmpty property="custId" prepend="and">
+			<![CDATA[ b.cust_id like #custId,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="custName" prepend="and">
+			<![CDATA[ b.cust_name like #custName,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="channelId" prepend="and">
+			<![CDATA[ c.channel_id =#channelId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[   b.org_id in(select distinct o.org_id
+                 from basis.basis_tb_org o
+                   where o.state <> 'N'
+                 start with o.org_id = #orgId#
+               connect by nocycle prior o.org_id = o.org_parent_id
+               ) ]]>
+			</isNotEmpty>
+			<isNotEmpty property="contactName" prepend="and">
+			<![CDATA[ b.contact_name like #contactName,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="custState" prepend="and">
+			<![CDATA[ b.cust_state =#custState# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="stationUserId" prepend="and">
+			<![CDATA[ b.station_user_id =#stationUserId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="custKunnr" prepend="and">
+			<![CDATA[ b.cust_kunnr like #custKunnr,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="custParent" prepend="and">
+			<![CDATA[ b.cust_parent like #custParent,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="custType" prepend="and">
+			<![CDATA[ b.cust_type =#custType# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="createOrgId" prepend="and">
+			<![CDATA[   b.create_orgid in(select distinct o.org_id
+                 from basis.basis_tb_org o
+                   where o.state <> 'N'
+                 start with o.org_id = #createOrgId#
+               connect by nocycle prior o.org_id = o.org_parent_id
+               ) ]]>
+			</isNotEmpty>
+			<isNotEmpty property="createDateStart" prepend="and">
+			<![CDATA[ to_char(b.create_date,'yyyy-MM-dd')>#createDateStart# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="createDateEnd" prepend="and">
+			<![CDATA[ to_char(b.create_date,'yyyy-MM-dd')<#createDateEnd# ]]>
+			</isNotEmpty>
+		</dynamic>
+		<include refid="global.orderBy" />
+		<include refid="global.paginationEnd" />
+	</select>
+
+	<select id="getMaterielCount" parameterClass="materiel"
+		resultClass="java.lang.Integer">
+	<![CDATA[
+		 select count( distinct t.matnr) from basis.basis_tb_materiel  t where 1 = 1 
+	]]>
+		<dynamic>
+			<isNotEmpty property="matnr" prepend="and">
+			<![CDATA[t.matnr like #matnr,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="maktx" prepend="and">
+			<![CDATA[t.maktx like #maktx,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	
+	<select id="validateCustIdExist" parameterClass="java.lang.String"
+		resultClass="java.lang.Integer">
+	<![CDATA[
+		select count(1) from market.market_tb_supervisorcheckitem t
+  where t.cust_id= #custId#
+	]]>
+	</select>
+
+	<select id="getMaterielList" parameterClass="materiel"
+		resultClass="materiel">
+		<include refid="global.paginationStart" />
+	<![CDATA[
+		 select distinct
+			t.matnr,  
+			t.matkl, 
+			t.maktx,
+			t.meins,
+			t.wgbez,
+			t.matnr03,
+			t.maktx03,
+			t.matnr02,
+			t.maktx02,
+			t.matnr01,
+			t.maktx01
+		  from basis.basis_tb_materiel  t where 1 = 1
+	]]>
+		<dynamic>
+			<isNotEmpty property="matnr" prepend="and">
+			<![CDATA[t.matnr like #matnr,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="maktx" prepend="and">
+			<![CDATA[t.maktx like #maktx,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+		</dynamic>
+		<![CDATA[ order by t.matnr desc ]]>
+		<include refid="global.orderBy" />
+		<include refid="global.paginationEnd" />
+	</select>
+	
+	
+	<select id="getMasterCols" parameterClass="materiel"
+		resultClass="materiel">
+	
+	<![CDATA[
+		 select distinct(t1.matg) as bezei40,t1.bezei40 as matg
+from basis.basis_tb_materiel t1 where 1=1 and t1.matg is not null order by t1.matg
+	]]>
+		
+	</select>
+
+	<select id="getSkuCategoryIdByName" parameterClass="skuCg"
+		resultClass="skuCg">
+	<![CDATA[
+		 select c.sku_category_id as categoryId,
+                c.category_name   as categoryName,
+                c.company_id      as companyId,
+                c.cloudid         as cloudid
+         from crm.crm_tb_cg c
+              where c.company_id = '1'
+                    and c.status = 'U'
+                    
+	]]>
+		<dynamic>
+			<isNotEmpty property="sapCode" prepend="and">
+			<![CDATA[c.sap_groups_code =#sapCode#]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<insert id="createCrmTbCg" parameterClass="skuCg">
+		<selectKey resultClass="java.lang.Long" keyProperty="categoryId">
+			SELECT
+			crm.crm_seq_company.NEXTVAL AS categoryId FROM DUAL
+		</selectKey>
+	<![CDATA[
+		 insert into crm.CRM_TB_CG
+		  (sku_category_id,
+		   CATEGORY_NAME,
+		   COMPANY_ID,
+		   CREATE_DATE,
+		   create_user,
+		   STATUS,
+		   CLOUDID)
+		values
+		  (#categoryId#,
+		   #categoryName#,
+		   #companyId#,
+		   sysdate,
+		   #createUser#,
+		   'U',
+		   #cloudid#)
+	]]>
+	</insert>
+
+	<update id="saveChagCheckItem" parameterClass="supervisorCheckItem">
+<![CDATA[	
+update market.market_tb_supervisorcheckitem t set t.min_price = #minPrice#, t.max_price = #maxPrice#, t.check_value=#checkValue# where t.check_id=#checkId#   
+]]>
+	</update>
+
+
+	<update id="updateCrmTbcg" parameterClass="skuCg">
+	<![CDATA[
+		update  crm.CRM_TB_CG 
+ 		 set 
+			   modify_date= sysdate,     
+ 		       CATEGORY_NAME=#categoryName#
+  	 	where sku_category_id=#categoryId#  
+	]]>
+	</update>
+
+	<select id="getSkuIdByNameAndCompany" parameterClass="tbSku"
+		resultClass="tbSku">
+		<![CDATA[
+		   select 
+			     c.sku_id as skuId,
+			     c.sku_name as skuName,
+			     c.sku_type as skuType,
+			     c.sku_taste as skuTaste,
+			     c.sku_wrap as skuWrap,
+			     c.sku_capacity as skuCapacity,
+			     c.sku_unit as skuUnit,
+			     c.sku_percentage as skuPercentage,
+			     c.sku_code as skuCode,
+			     c.sku_company ,
+			     c.sku_category_id as skuCategoryId,
+			     c.sku_sap_code as skuSapCode  ,
+			     c.sku_order as skuOrder  ,
+			     c.sku_company as skuCompany,
+			     b.company_name as skuCompanyName,
+				 c.product_type as productType,
+			     c.cloudid
+           from crm.crm_tb_sku c
+           left join crm.crm_tb_cg g on g.sku_category_id=c.sku_category_id
+     left join crm.crm_tb_company b on g.company_id = b.company_id
+      where g.company_id='1'
+            and c.status= 'U' 
+		]]>
+		<dynamic>
+			<isNotEmpty property="skuName" prepend="and">
+				c.sku_name=#skuName#
+			</isNotEmpty>
+			<isNotEmpty property="skuCategoryId" prepend="and">
+				c.sku_category_id =#skuCategoryId#
+			</isNotEmpty>
+			<isNotEmpty property="skuSapCode" prepend="and">
+				(c.sku_code=#skuSapCode#
+				or c.sku_sap_code=#skuSapCode#)
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	
+	
+	<select id="getExportMouldCsvCust" parameterClass="cust"
+		resultClass="cust">
+		<![CDATA[
+	 select 
+  b.cust_id as custId , b.cust_name as custName
+          from crm.crm_tb_customer b
+          left join basis.basis_tb_org o
+          on o.org_id = b.org_id
+                 where o.state <> 'N'and b.cust_state = 1
+		]]>
+	</select>
+
+
+
+	<select id="validateChanelAndCust" parameterClass="cust"
+		resultClass="cust">
+		<![CDATA[
+		  select b.cust_id as custId,b.cust_name as custName,b.channel_id as channelId ,c.channel_name as channelName
+		  from crm.crm_tb_customer b
+		  left join crm.crm_tb_channel c on b.channel_id = c.channel_id
+		 where 1 = 1
+		]]>
+		<dynamic>
+			<isNotEmpty property="custName" prepend="and">
+				b.cust_name=#custName#
+			</isNotEmpty>
+			<isNotEmpty property="channelName" prepend="and">
+				c.channel_name
+				=#channelName#
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<insert id="saveSupervisorCheckItem" parameterClass="supervisorCheckItem">
+		<selectKey resultClass="java.lang.Long" keyProperty="checkId">
+			SELECT
+			market.market_seq_supervisorcheckitem.NEXTVAL AS checkId FROM DUAL
+		</selectKey>
+	<![CDATA[
+		insert into market.market_tb_supervisorcheckitem (
+			check_id,create_user_id, create_name ,catete_time,cust_id,cust_name,channel_id,channel_name,mat_name,check_value,min_price,max_price,mat_type
+		)values 
+		  ( #checkId#,
+		    #createUserId#,
+		    #createName#,
+		    #createTime#,
+		    #custId#,
+		    #custName#,
+		    #channelId#,
+		    #channelName#,
+		    #matName#,
+		    #checkValue#,
+		    #minPrice#,
+		    #maxPrice#,
+		    #matType#
+		  )
+	]]>
+	</insert>
+
+	<select id="getCustomerListCount" parameterClass="cust"
+		resultClass="java.lang.Integer">
+		select
+		count(b.cust_id)
+		from crm.crm_tb_customer b
+		left join
+		crm.crm_tb_channel c on b.channel_id = c.channel_id
+		left join
+		basis.basis_tb_station_user t on t.id= b.station_user_id
+		left join
+		basis.basis_tb_stations s on s.station_id = t.station_id
+		left join
+		basis.basis_tb_salesemp_info emp on emp.emp_id=t.user_id
+		left join
+		crm.crm_tb_dict d5 on d5.item_id = b.cust_system
+		where 1=1
+		<dynamic>
+			<isNotEmpty property="custNumber" prepend="and">
+			<![CDATA[ b.cust_number =#custNumber#]]>
+			</isNotEmpty>
+			<isNotEmpty property="custName" prepend="and">
+			<![CDATA[ b.cust_name like #custName,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="channelId" prepend="and">
+			<![CDATA[ c.channel_id =#channelId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[
+			  b.org_id in(select distinct o.org_id
+                 from basis.basis_tb_org o
+                   where o.state <> 'N'
+                 start with o.org_id = #orgId#
+               connect by nocycle prior o.org_id = o.org_parent_id
+               ) ]]>
+			</isNotEmpty>
+			<isNotEmpty property="contactName" prepend="and">
+			<![CDATA[ b.contact_name like #contactName,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="custState" prepend="and">
+			<![CDATA[ b.cust_state =#custState# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="stationUserId" prepend="and">
+			<![CDATA[ b.station_user_id =#stationUserId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="custKunnr" prepend="and">
+			<![CDATA[ b.cust_kunnr like #custKunnr,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="custParent" prepend="and">
+			<![CDATA[ b.cust_parent like #custParent,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="custType" prepend="and">
+			<![CDATA[ b.cust_type =#custType# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="createOrgId" prepend="and">
+			<![CDATA[   b.create_orgid in (select distinct o.org_id
+                 from basis.basis_tb_org o
+                   where o.state <> 'N'
+                 start with o.org_id = #createOrgId#
+               connect by nocycle prior o.org_id = o.org_parent_id
+               ) ]]>
+			</isNotEmpty>
+			<isNotEmpty property="createDateStart" prepend="and">
+			<![CDATA[ to_char(b.create_date,'yyyy-MM-dd')>#createDateStart# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="createDateEnd" prepend="and">
+			<![CDATA[ to_char(b.create_date,'yyyy-MM-dd')<#createDateEnd# ]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<select id="getCustomerList" parameterClass="cust" resultClass="cust">
+		<include refid="global.paginationStart" />
+		select b.cust_id as custId,
+		b.cust_number as custNumber,
+		b.cust_name as
+		custName,
+		c.channel_name as channelName,
+		b.corporate_deputy as
+		corporateDeputy,
+		b.contact_name as contactName,
+		b.contact_mobile as
+		contactMobile,
+		b.cust_province as custProvince,
+		b.cust_town as custTown,
+		b.cust_house_number as custHouserNumber,
+		b.cust_street as custStreet,
+		b.cust_address as custAddress,
+		b.station_user_id as stationUserId,
+		s.station_name as stationName,
+		b.visit_days as visitDays,
+		b.visit_freq
+		as visitFreq,
+		b.cust_kunnr as custKunnr,
+		b.cust_state as custState,
+		b.cust_receive as custReceive,
+		b.create_date as createDate,
+		b.last_modify as lastModify,
+		b.last_modify_user as modifyUser,
+		emp.emp_name as empName,
+		b.remark as remark,
+		d5.item_name as custSystem,
+		b.contact_phone as contactPhone,
+		b.cust_phone as custPhone,
+		b.kunnr_user as kunnrUser,
+		o.org_name as orgName,
+		b.cust_parent as
+		custParent,
+		b.cust_type as custType,
+		b.longitude,
+		b.latitude
+		from
+		crm.crm_tb_customer b
+		left join
+		crm.crm_tb_channel c on b.channel_id =
+		c.channel_id
+		left join
+		basis.basis_tb_station_user t on t.id =
+		b.station_user_id
+		left join
+		basis.basis_tb_stations s on s.station_id =
+		t.station_id
+		left join
+		basis.basis_tb_salesemp_info emp on emp.emp_id =
+		t.user_id
+		left join
+		crm.crm_tb_dict d5 on d5.item_id = b.cust_system
+		left join
+		basis.basis_tb_org o on o.org_id = b.org_id
+		where 1=1
+		<dynamic>
+			<isNotEmpty property="custNumber" prepend="and">
+			<![CDATA[ b.cust_number =#custNumber#]]>
+			</isNotEmpty>
+			<isNotEmpty property="custName" prepend="and">
+			<![CDATA[ b.cust_name like #custName,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="channelId" prepend="and">
+			<![CDATA[ c.channel_id =#channelId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[   b.org_id in(select distinct o.org_id
+                 from basis.basis_tb_org o
+                   where o.state <> 'N'
+                 start with o.org_id = #orgId#
+               connect by nocycle prior o.org_id = o.org_parent_id
+               ) ]]>
+			</isNotEmpty>
+			<isNotEmpty property="contactName" prepend="and">
+			<![CDATA[ b.contact_name like #contactName,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="custState" prepend="and">
+			<![CDATA[ b.cust_state =#custState# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="stationUserId" prepend="and">
+			<![CDATA[ b.station_user_id =#stationUserId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="custKunnr" prepend="and">
+			<![CDATA[ b.cust_kunnr like #custKunnr,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="custParent" prepend="and">
+			<![CDATA[ b.cust_parent like #custParent,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="custType" prepend="and">
+			<![CDATA[ b.cust_type =#custType# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="createOrgId" prepend="and">
+			<![CDATA[   b.create_orgid in(select distinct o.org_id
+                 from basis.basis_tb_org o
+                   where o.state <> 'N'
+                 start with o.org_id = #createOrgId#
+               connect by nocycle prior o.org_id = o.org_parent_id
+               ) ]]>
+			</isNotEmpty>
+			<isNotEmpty property="createDateStart" prepend="and">
+			<![CDATA[ to_char(b.create_date,'yyyy-MM-dd')>#createDateStart# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="createDateEnd" prepend="and">
+			<![CDATA[ to_char(b.create_date,'yyyy-MM-dd')<#createDateEnd# ]]>
+			</isNotEmpty>
+		</dynamic>
+		<!-- <![CDATA[ order by b.last_modify desc]]> -->
+		<include refid="global.orderBy" />
+		<include refid="global.paginationEnd" />
+	</select>
+
+
+	<insert id="createCrmTbSku" parameterClass="tbSku">
+		<selectKey resultClass="java.lang.Long" keyProperty="skuId">
+			SELECT
+			crm.crm_seq_sku.NEXTVAL AS skuId FROM DUAL
+		</selectKey>
+	<![CDATA[
+		 insert into crm.crm_tb_sku
+	  (sku_id,
+	   sku_name,
+	   sku_type,
+	   sku_taste,
+	   sku_wrap,
+	   sku_capacity,
+	   sku_unit,
+	   sku_unit_id,
+	   sku_percentage,
+	   sku_code,
+	   sku_category_id,
+	   sku_sap_code,
+	   create_date,
+	   modify_date,
+	   crete_user,
+	   status,
+	   sku_order,
+	   sku_company,
+	   product_type,
+	   cloudid)
+	values
+	  (#skuId#,
+	   #skuName#,
+	   #skuType#,
+	   #skuTaste#,
+	   #skuWrap#,
+	   #skuCapacity#,
+	   #skuUnit#,
+	   #skuUnitId#,
+	   #skuPercentage#,
+	   #skuCode#,
+	   #skuCategoryId#,
+	   #skuSapCode#,
+	   sysdate,
+	   sysdate,
+	   #createUser#,
+	   'U',
+	   #skuOrder#,
+	   #skuCompany#,
+	   '1',
+	   #cloudid#)
+	]]>
+	</insert>
+
+	<update id="updateCrmTbSku" parameterClass="tbSku">
+	<![CDATA[
+		update  crm.crm_tb_sku 
+            set 
+             sku_name=#skuName#, 
+             sku_unit=#skuUnit#, 
+             sku_unit_id=#skuUnitId#,
+             modify_date=sysdate,
+             crete_user=#createUser#
+       where sku_id=#skuId#  
+	]]>
+	</update>
+</sqlMap>

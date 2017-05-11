@@ -1,0 +1,546 @@
+<?xml version="1.0" encoding="GB2312"?>
+<!DOCTYPE sqlMap
+	PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="sms">
+	<typeAlias alias="sms" type="com.kintiger.platform.sms.pojo.Sms" />
+	<typeAlias alias="station" type="com.kintiger.platform.sms.pojo.Station" />
+	<typeAlias alias="paymentNoticeInfo" type="com.kintiger.platform.sms.pojo.PaymentNoticeInfo" />	
+
+
+
+	<select id="getEmpInfoCount" parameterClass="sms" resultClass="java.lang.Integer">
+	<![CDATA[
+		 select count(*) from  
+		 	(select  
+		 		  '' as kunnr,
+		 	 	  t.user_id userId,
+		          t.user_name userName,
+		          t.bus_mobilephone bus_mobilephone,
+		          t.mobile pri_mobilephone,
+		          nvl(t.bus_mobilephone,t.mobile) mobile,
+		          to_char(t.org_id) orgId,
+		          t.org_name orgName,
+		          t.station_name stationName,
+		          t1.station_id stationId,
+		          '员工' as isOffice
+		    from basis.basis_vw_user_psw t
+		    left join basis.basis_tb_station_user t1
+		    on t.user_id = t1.user_id
+		    and t1.is_main_station = 'Y'
+		    where t.user_state in ('Y','S')
+		    and t.isoffice_sign is null
+		 
+		 union ALL
+		 
+		      select 
+		         t3.kunnr kunnr,
+		         null as userId,
+		         t3.name1 userName,
+		         '' as bus_mobilephone,
+		         '' as pri_mobilephone,
+		         t3.mob_number mobile,
+		         t3.org_id orgId,
+		         t3.org_name orgName,
+		         '' as statioName,
+		         '' as stationId,
+		         '经销商' as isOffice
+		      
+		      from crm.crm_tb_kunnr t3
+		      where t3.status != 2
+		      ) t4
+		      where t4.mobile is not null
+		      
+	]]>
+		<dynamic>
+			<isNotEmpty property="stationId" prepend="and">
+			<![CDATA[ t4.stationId like #stationId,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="userName" prepend="and">
+			<![CDATA[ t4.userName like #userName,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>			
+			 <isNotEmpty property="orgId" prepend="and">
+		    <isEmpty property="bhxjFlag">
+			<![CDATA[t4.orgId =#orgId#]]>
+			</isEmpty>
+			<isNotEmpty property="bhxjFlag">
+			<![CDATA[t4.orgId in(select o.org_id orgId
+                   from basis.basis_tb_org o
+                    where o.state = 'Y'
+                    start with o.org_id = #orgId#
+                    connect by nocycle prior o.org_id = o.org_parent_id)
+			]]>
+			</isNotEmpty>
+			</isNotEmpty>
+		    <isEmpty property="isOffice" prepend="and">
+			<![CDATA[t4.isOffice ='员工']]>
+			</isEmpty>			
+			<isNotEmpty property="isOffice" prepend="and">
+			<![CDATA[t4.isOffice = '经销商']]>
+			</isNotEmpty>
+		</dynamic>			
+	</select>
+
+
+	<select id="getEmpInfoList" parameterClass="sms" resultClass="sms">
+			<include refid="global.paginationStart" />
+	<![CDATA[
+		 select * from  
+		 	(select  
+		 		  '' as kunnr,
+		 	 	  t.user_id userId,
+		          t.user_name userName,
+		          t.bus_mobilephone bus_mobilephone,
+		          t.mobile pri_mobilephone,
+		          nvl(t.bus_mobilephone,t.mobile) mobile,
+		          to_char(t.org_id) orgId,
+		          t.org_name orgName,
+		          t.station_name stationName,
+		          t1.station_id stationId,
+		          '员工' as isOffice
+		    from basis.basis_vw_user_psw t
+		    left join basis.basis_tb_station_user t1
+		    on t.user_id = t1.user_id
+		    and t1.is_main_station = 'Y'
+		    where t.user_state in ('Y','S')
+		    and t.isoffice_sign is null
+		 
+		 union ALL
+		 
+		      select 
+		         t3.kunnr kunnr,
+		         null as userId,
+		         t3.name1 userName,
+		         '' as bus_mobilephone,
+		         '' as pri_mobilephone,
+		         t3.mob_number mobile,
+		         t3.org_id orgId,
+		         t3.org_name orgName,
+		         '' as statioName,
+		         '' as stationId,
+		         '经销商' as isOffice
+		      
+		      from crm.crm_tb_kunnr t3
+		      where t3.status != 2
+		      ) t4
+		      where t4.mobile is not null
+		      
+	]]>
+		<dynamic>
+			<isNotEmpty property="stationId" prepend="and">
+			<![CDATA[ t4.stationId like #stationId,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="userName" prepend="and">
+			<![CDATA[ t4.userName like #userName,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>			
+			 <isNotEmpty property="orgId" prepend="and">
+		    <isEmpty property="bhxjFlag">
+			<![CDATA[t4.orgId =#orgId#]]>
+			</isEmpty>
+			<isNotEmpty property="bhxjFlag">
+			<![CDATA[t4.orgId in(select o.org_id orgId
+                   from basis.basis_tb_org o
+                    where o.state = 'Y'
+                    start with o.org_id = #orgId#
+                    connect by nocycle prior o.org_id = o.org_parent_id)
+			]]>
+			</isNotEmpty>
+			</isNotEmpty>
+		    <isEmpty property="isOffice" prepend="and">
+			<![CDATA[t4.isOffice ='员工']]>
+			</isEmpty>			
+			<isNotEmpty property="isOffice" prepend="and">
+			<![CDATA[t4.isOffice = '经销商']]>
+			</isNotEmpty>
+		</dynamic>	
+		<include refid="global.orderBy" />
+		<include refid="global.paginationEnd" />
+	</select>
+
+
+	<select id="getStationJsonListCountForSelect" parameterClass="station"
+		resultClass="java.lang.Integer">
+	<![CDATA[
+		    select 
+		    	count(distinct t1.station_id)
+    		from basis.basis_tb_salesemp_info t
+    		left join basis.basis_tb_station_user t1
+    		on t.emp_id = t1.user_id
+   			left join basis.basis_tb_stations t2
+    		on t1.station_id = t2.station_id
+    		where t1.station_id is not null 
+	]]>
+		<dynamic>
+			<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[t.org_id in(select o.org_id
+                   from basis.basis_tb_org o
+                    where o.state = 'Y'
+                    start with o.org_id = #orgId#
+                    connect by nocycle prior o.org_id = o.org_parent_id)]]>
+			</isNotEmpty>
+			<isNotEmpty property="stationId" prepend="and">
+			<![CDATA[ (t1.station_id like #stationId,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="stationName" prepend="or">
+			<![CDATA[ t2.station_name like #stationName,handler=wildcard# escape '\' ) ]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<select id="getStationJsonListForSelect" parameterClass="station"
+		resultClass="station">
+		<include refid="global.paginationStart" />
+	<![CDATA[
+		    select 
+		    	distinct t1.station_id stationId,
+		    	t2.station_name stationName
+    		from basis.basis_tb_salesemp_info t
+    		left join basis.basis_tb_station_user t1
+    		on t.emp_id = t1.user_id
+   			left join basis.basis_tb_stations t2
+    		on t1.station_id = t2.station_id
+    		where t1.station_id is not null 
+	]]>
+		<dynamic>
+			<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[t.org_id in(select o.org_id
+                   from basis.basis_tb_org o
+                    where o.state = 'Y'
+                    start with o.org_id = #orgId#
+                    connect by nocycle prior o.org_id = o.org_parent_id)]]>
+			</isNotEmpty>
+			<isNotEmpty property="stationId" prepend="and">
+			<![CDATA[ (t1.station_id like #stationId,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="stationName" prepend="or">
+			<![CDATA[ t2.station_name like #stationName,handler=wildcard# escape '\' ) ]]>
+			</isNotEmpty>
+		</dynamic>
+		<include refid="global.orderBy" />
+		<include refid="global.paginationEnd" />
+	</select>
+	
+	
+	<select id="getPaymentNoticeInfoCount" parameterClass="paymentNoticeInfo" resultClass="java.lang.Integer">
+		<![CDATA[
+		select count(p.id)
+		from  crm.crm_tb_payment p
+		left join crm.crm_tb_kunnr t on t.kunnr = p.kunnr
+		left join crm.crm_tb_kunnrbusiness b  on t.kunnr=b.kunnr 
+		where t.status = 1
+		]]>
+		<dynamic>
+			<isNotEmpty property="orgId" prepend="and">
+		    <isEmpty property="bhxjFlag">
+			<![CDATA[t.org_id =#orgId#]]>
+			</isEmpty>
+			<isNotEmpty property="bhxjFlag">
+			<![CDATA[t.org_id in(select o.org_id
+                   from basis.basis_tb_org o
+                    where o.state = 'Y'
+                    start with o.org_id = #orgId#
+                    connect by nocycle prior o.org_id = o.org_parent_id)
+			]]>
+			</isNotEmpty>
+			</isNotEmpty>
+			<isNotEmpty property="startDate" prepend="and">
+			<![CDATA[ 
+				p.bank_etydat >= #startDate#
+			]]>
+			</isNotEmpty>
+			<isNotEmpty property="endDate" prepend="and">
+			<![CDATA[ 
+				p.bank_etydat < #endDate# + 1
+			]]>	
+			</isNotEmpty>	
+		    <isEmpty property="status" prepend="and">
+			<![CDATA[p.send_date is null]]>
+			</isEmpty>
+			<isNotEmpty property="status" prepend="and">
+			<![CDATA[p.send_date is not null
+			]]>	
+			</isNotEmpty>	
+			<isNotEmpty property="kunnr" prepend="and">
+			<![CDATA[p.kunnr=#kunnr#]]>
+			</isNotEmpty>
+			<isNotEmpty property="name1" prepend="and">
+			<![CDATA[t.name1 like #name1,handler=wildcard# escape '\']]>
+			</isNotEmpty>						
+		</dynamic>	
+	</select>	
+	
+	<select id="getPaymentNoticeInfoList" parameterClass="paymentNoticeInfo" resultClass="paymentNoticeInfo">
+			<include refid="global.paginationStart" />
+		<![CDATA[
+		select t.kunnr,
+		t.name1,
+		t.name3,
+		t.mob_number mobNumber,
+		t.bukrs,
+		b.business_Manager businessManager,
+		b.MANAGER_MOBILE managerMobile,
+		b.business_Competent businessCompetent,
+		b.COMPETENT_MOBILE competentMobile,
+        t.org_id as orgId,
+        t.org_name as orgName,
+    	b.business_manager salesman,
+    	nvl(i.bus_mobilephone,i.emp_mobile_phone) salesmanMoblie,
+    	p.bank_etydat,
+    	p.bank_trsamtd,
+    	p.bank_belnr,
+    	p.send_date,
+    	p.id paymentId
+		from crm.crm_tb_payment p
+		left join crm.crm_tb_kunnr t on t.kunnr = p.kunnr
+		left join crm.crm_tb_kunnrbusiness b  on t.kunnr=b.kunnr
+		left join basis.basis_tb_station_user s on b.business_manager_id = s.id
+		left join basis.basis_tb_salesemp_info i on i.emp_id = s.user_id
+		where t.status = 1
+		]]>
+		<dynamic>
+			<isNotEmpty property="orgId" prepend="and">
+		    <isEmpty property="bhxjFlag">
+			<![CDATA[t.org_id =#orgId#]]>
+			</isEmpty>
+			<isNotEmpty property="bhxjFlag">
+			<![CDATA[t.org_id in(select o.org_id
+                   from basis.basis_tb_org o
+                    where o.state = 'Y'
+                    start with o.org_id = #orgId#
+                    connect by nocycle prior o.org_id = o.org_parent_id)
+			]]>
+			</isNotEmpty>
+			</isNotEmpty>
+			<isNotEmpty property="startDate" prepend="and">
+			<![CDATA[ 
+				p.bank_etydat >= #startDate#
+			]]>
+			</isNotEmpty>
+			<isNotEmpty property="endDate" prepend="and">
+			<![CDATA[ 
+				p.bank_etydat < #endDate# + 1
+			]]>	
+			</isNotEmpty>	
+		    <isEmpty property="status" prepend="and">
+			<![CDATA[p.send_date is null]]>
+			</isEmpty>
+			<isNotEmpty property="status" prepend="and">
+			<![CDATA[p.send_date is not null
+			]]>	
+			</isNotEmpty>	
+			<isNotEmpty property="kunnr" prepend="and">
+			<![CDATA[p.kunnr=#kunnr#]]>
+			</isNotEmpty>
+			<isNotEmpty property="name1" prepend="and">
+			<![CDATA[t.name1 like #name1,handler=wildcard# escape '\']]>
+			</isNotEmpty>						
+		</dynamic>
+			<!-- <![CDATA[order by t.status, t.create_date desc]]> -->
+		<include refid="global.orderBy" />
+		<include refid="global.paginationEnd" />
+	</select>	
+	
+	
+	<update id="updatePaymentSendDate" parameterClass="paymentNoticeInfo" >
+	<![CDATA[
+		update crm.crm_tb_payment p
+		set p.send_date = to_char(sysdate,'yyyymmdd') where p.id = #paymentId#
+	]]>	
+	</update>
+	
+	<select id="getMaxBelnrByPayment" parameterClass="paymentNoticeInfo" resultClass="paymentNoticeInfo">
+		<![CDATA[
+		select 	max(to_char(p.bank_etydat,'yyyy')) bank_etydat,
+				max(p.bank_belnr) bank_belnr
+		from  crm.crm_tb_payment p
+		where 1=1
+		]]>
+		<dynamic>
+			<isNotEmpty property="bukrs" prepend="and">
+			<![CDATA[
+			p.BANK_BUKRS = #bukrs#
+			and not exists (select 1 from crm.crm_tb_payment a where 
+		       to_char(a.bank_etydat, 'yyyy') || a.bank_belnr > 
+		                              to_char(p.bank_etydat, 'yyyy') || p.bank_belnr
+		       and a.BANK_BUKRS = #bukrs#
+		       )
+			]]>
+			</isNotEmpty>						
+		</dynamic>
+
+	</select>
+		
+	<insert id="insertPayment" parameterClass="paymentNoticeInfo">
+		<selectKey resultClass="java.lang.Long" keyProperty="paymentId">
+		<![CDATA[
+			SELECT crm.crm_seq_payment.nextval as paymentId from dual
+		]]>
+		</selectKey> 
+	<![CDATA[
+		insert into crm.crm_tb_payment(ID,KUNNR,BANK_ETYDAT,BANK_TRSAMTD,BANK_BELNR,BANK_BUKRS)
+		values(#paymentId#, #kunnr#, to_date(#bank_etydat#,'yyyymmdd'), #bank_trsamtd#, #bank_belnr#, #bukrs#)
+	]]>	
+	</insert>
+	
+	<select id="getKunnrBusinessByKunnrId" parameterClass="java.lang.String" resultClass="kunnrBusiness">
+	    <![CDATA[
+	        select e.business_name as businessHead,
+	               nvl(nvl(i.bus_mobilephone,i.emp_mobile_phone),'无') as headMobile
+	              from crm.crm_tb_kunnrbusiness_emp e
+	              left join basis.basis_tb_salesemp_info i on i.emp_id=e.business_id
+	              where
+	              e.business_type = '1'
+	              and e.kunnr=#kunnr#
+	    ]]>
+	</select>	
+	
+	<update id="updateEmpMobile" parameterClass="Sms" >
+	<![CDATA[
+		update  basis.basis_tb_salesemp_info t
+		set 
+			t.bus_mobilephone = #bus_mobilephone#,
+			t.emp_mobile_phone = #pri_mobilephone#
+		where t.emp_id = #userId#
+	]]>	
+	</update>
+	
+	<update id="updateKunnrMobile1" parameterClass="Sms" >
+	<![CDATA[
+		update  crm.crm_tb_kunnr t
+		set 
+			t.mob_number = #mobile#
+		where t.kunnr = #kunnr#
+		and t.status in (1,3)
+		
+	]]>	
+	</update>
+	
+	<update id="updateKunnrMobile2" parameterClass="Sms" >
+	<![CDATA[
+		update    basis.basis_tb_kunnremp_info t
+		set 
+			t.bus_mobilephone = #mobile#,
+			t.emp_mobile_phone = #mobile#
+		where t.emp_code = #kunnr#
+	]]>	
+	</update>
+	
+	<select id="getCountInKunnrEmpInfo" parameterClass="sms" resultClass="java.lang.Integer">
+	<![CDATA[
+		    select 
+		    	count(*)
+    		from basis.basis_tb_kunnremp_info t
+    		where t.emp_code = #kunnr# 
+	]]>
+	</select>
+	
+	<insert id="saveGroup" parameterClass="sms">
+	<![CDATA[
+		insert into crm.crm_tb_sms_group(KUNNR,USER_ID,IS_PUB_GROUP,OP_USER_ID,GROUP_NAME)
+		values(#kunnr#,#userId#,#isPubGroup#,#opUserId#,#groupName#)
+	]]>	
+	</insert>
+
+
+
+
+
+	<select id="getSelectedGroupInfo" parameterClass="sms"
+		resultClass="sms">
+	<![CDATA[
+		 select * from  
+		 	(select  
+		 		  '' as kunnr,
+		 	 	  t.user_id userId,
+		          t.user_name userName,
+		          t.bus_mobilephone bus_mobilephone,
+		          t.mobile pri_mobilephone,
+		          nvl(t.bus_mobilephone,t.mobile) mobile,
+		          to_char(t.org_id) orgId,
+		          t.org_name orgName,
+		          t.station_name stationName,
+		          t1.station_id stationId,
+		          '员工' as isOffice
+		    from basis.basis_vw_user_psw t
+		    left join basis.basis_tb_station_user t1
+		    on t.user_id = t1.user_id
+		    and t1.is_main_station = 'Y'
+		    where t.user_state in ('Y','S')
+		    and t.isoffice_sign is null
+		 
+		 union ALL
+		 
+		      select 
+		         t3.kunnr kunnr,
+		         null as userId,
+		         t3.name1 userName,
+		         '' as bus_mobilephone,
+		         '' as pri_mobilephone,
+		         t3.mob_number mobile,
+		         t3.org_id orgId,
+		         t3.org_name orgName,
+		         '' as statioName,
+		         '' as stationId,
+		         '经销商' as isOffice
+		      
+		      from crm.crm_tb_kunnr t3
+		      where t3.status != 2
+		      ) t4
+			  left join crm.crm_tb_sms_group t5 
+			  on t4.kunnr = t5.KUNNR 
+			  or t4.userId = t5.user_id
+		      where t4.mobile is not null
+		      and t5.IS_PUB_GROUP = #isPubGroup#
+		      and t5.GROUP_NAME = #groupName#
+		      
+	]]>
+		<dynamic>
+			<isNotEmpty property="opUserId" prepend="and">
+			<![CDATA[ t5.OP_USER_ID = #opUserId#  ]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	
+	
+	<select id="getGroups" parameterClass="sms"
+		resultClass="sms">
+	<![CDATA[
+		 select 
+			distinct t.GROUP_NAME groupName
+		 	from  
+			  crm.crm_tb_sms_group t 
+		      where 
+		      t.IS_PUB_GROUP = #isPubGroup#
+	]]>
+		<dynamic>
+			<isNotEmpty property="opUserId" prepend="and">
+			<![CDATA[ t.OP_USER_ID = #opUserId#  ]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	
+	
+    <select id="checkGroupName" parameterClass="sms" resultClass="java.lang.Integer">
+	<![CDATA[
+		 select count(*) 
+		 	from  crm.crm_tb_sms_group t
+		 where t.IS_PUB_GROUP = #isPubGroup#
+		 and t.GROUP_NAME = #groupName#
+	]]>
+		<dynamic>
+			<isNotEmpty property="opUserId" prepend="and">
+			<![CDATA[ t.OP_USER_ID = #opUserId#  ]]>
+			</isNotEmpty>
+		</dynamic>		
+	</select>	
+	
+	
+	<delete id="deleteGroup" parameterClass="sms">
+		<![CDATA[
+		delete crm.crm_tb_sms_group t 
+		where t.GROUP_NAME = #groupName#
+			and t.IS_PUB_GROUP = #isPubGroup#
+			and t.OP_USER_ID = #opUserId#
+		]]>
+	</delete>
+</sqlMap>

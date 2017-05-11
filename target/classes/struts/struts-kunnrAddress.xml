@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+	"http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="kunnrAddress" extends="kintiger-default">
+		<action name="kunnrAddressAction" class="kunnrAddressAction">
+			<result name="search">/platform/kunnrAddress/kunnrAddressSearch.vm</result>
+			<result name="createKunnrAddress">/platform/kunnrAddress/createKunnrAddress.vm</result>
+			<result name="updateKunnrAddressPre">/platform/kunnrAddress/updateKunnrAddress.vm</result>
+			<result name="resultMessage">/platform/common/resultMessage.vm</result>
+		</action>
+	</package>
+</struts>

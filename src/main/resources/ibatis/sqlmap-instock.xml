@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="GB2312"?>
+<!DOCTYPE sqlMap
+	PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="instock">
+	<typeAlias alias="instock" type="com.kintiger.platform.stock.pojo.Instock" />
+	<typeAlias alias="instockdet" type="com.kintiger.platform.stock.pojo.Instock_det"/>
+	<typeAlias alias="stock" type="com.kintiger.platform.stock.pojo.Stock"/>
+	
+	<select id="getInStockCount" parameterClass="instock" resultClass="java.lang.Integer">
+	   <![CDATA[
+		   select count(*) from crm.crm_tb_instock c where 
+		   1=1
+		]]>
+            <dynamic>
+            <isNotEmpty property="instock_type" prepend="and">
+			<![CDATA[ c.instock_type=#instock_type# ]]> 
+			</isNotEmpty>		
+			<isNotEmpty property="beginDate" prepend="and">
+			<![CDATA[ c.instock_get_date>=#beginDate# ]]> 
+			</isNotEmpty>
+			<isNotEmpty property="endDate" prepend="and">
+			<![CDATA[ c.instock_get_date<=#endDate#+1 ]]> 
+			</isNotEmpty>
+			<isNotEmpty property="instock_total_id" prepend="and">
+			<![CDATA[ c.instock_total_id=#instock_total_id# ]]> 
+			</isNotEmpty>
+			<isNotEmpty property="instock_provide_id" prepend="and">				
+				<![CDATA[  c.instock_provide_id= #instock_provide_id# ]]>
+			</isNotEmpty>	
+		</dynamic> 
+	</select>
+	
+		<select id="getInStockOnly" parameterClass="instock" resultClass="java.lang.Integer">
+	   <![CDATA[
+		   select count(*) from crm.crm_tb_instock c where 
+		   1=1 
+		]]>
+            <dynamic>
+            <isNotEmpty property="instock_type" prepend="and">
+			<![CDATA[ c.instock_type=#instock_type# ]]> 
+			</isNotEmpty>		
+			<isNotEmpty property="instock_total_id" prepend="and">
+			<![CDATA[ c.instock_total_id=#instock_total_id# ]]> 
+			</isNotEmpty>	
+		</dynamic> 
+	</select>
+	
+	<select id="getInStockDetailListByTotalIdCount" parameterClass="instockdet" 
+			resultClass="java.lang.Integer">
+	   <![CDATA[
+		  select count(*)  
+		   from crm.crm_tb_instock_detail d left join crm.crm_tb_instock c  
+           on d.instock_total_id = c.instock_total_id  where 
+		   1=1
+		]]>
+		<dynamic>		
+			<isNotEmpty property="instock_total_id" prepend="and">				
+				<![CDATA[  d.instock_total_id= #instock_total_id# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="instockdetBatch" prepend="and">				
+				<![CDATA[  d.INSTOCKDET_BATCH= #instockdetBatch# ]]>
+			</isNotEmpty>	
+			<isNotEmpty property="type" prepend="and">				
+				<![CDATA[  d.instockdet_type= #type# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="type" prepend="and">				
+				<![CDATA[   c.instock_type= #type# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="matnr" prepend="and">				
+				<![CDATA[  d.matnr= #matnr# ]]>
+			</isNotEmpty>			   
+		</dynamic> 
+	</select>
+	
+	<select id="getInStockDetailListByTotalId" parameterClass="instockdet" resultClass="instockdet">
+		  <include refid="global.paginationStart"/>
+	   <![CDATA[
+		     select       d.instock_total_id as instock_total_id,
+                          d.matnr    as matnr,
+                          d.instockdet_id  as instockdet_id,
+		                  d.category_name  as bezei,
+		                  d.instockdet_anumber as instockdet_anumber,
+		                  d.instockdet_unumber  as instockdet_unumber,
+		                  d.instockdet_number  as instockdet_number,
+		                  d.instockdet_batch  as instockdetBatch
+           from crm.crm_tb_instock_detail d left join crm.crm_tb_instock c  
+           on d.instock_total_id = c.instock_total_id  where 
+		  1=1
+		]]>
+		<dynamic>			
+			<isNotEmpty property="instock_total_id" prepend="and">				
+				<![CDATA[  d.instock_total_id= #instock_total_id# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="instockdetBatch" prepend="and">				
+				<![CDATA[  d.INSTOCKDET_BATCH= #instockdetBatch# ]]>
+			</isNotEmpty>	
+			<isNotEmpty property="type" prepend="and">				
+				<![CDATA[  d.instockdet_type= #type# ]]>
+			</isNotEmpty>
+		   <isNotEmpty property="type" prepend="and">				
+				<![CDATA[   c.instock_type= #type# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="matnr" prepend="and">				
+				<![CDATA[  d.matnr= #matnr# ]]>
+			</isNotEmpty>			   
+		</dynamic> 	   
+		<![CDATA[ order by d.instockdet_id desc]]> 
+		<include refid="global.paginationEnd"/>
+	</select>
+	<select id="getInStockList" parameterClass="instock" resultClass="instock">
+		   <include  refid="global.paginationStart"/>
+	   <![CDATA[
+		   select  c.instock_id as instock_id,
+                   c.instock_send_date as instock_send_date,
+                   c.instock_provide_id  as instock_provide_id,
+                   c.instock_provide_name  as instock_provide_name,
+                   c.instock_send_place  as instock_send_place,
+                   c.instock_good_place  as instock_good_place,
+                   c.instock_total_id  as instock_total_id,
+                    c.instock_flag     as instock_flag
+           from crm.crm_tb_instock c where  
+		   1=1
+		]]>
+		<dynamic>		
+		   <isNotEmpty property="instock_type" prepend="and">
+			<![CDATA[ c.instock_type=#instock_type# ]]> 
+			</isNotEmpty>	
+			<isNotEmpty property="beginDate" prepend="and">
+			<![CDATA[ c.instock_get_date>=#beginDate# ]]> 
+			</isNotEmpty>
+			<isNotEmpty property="endDate" prepend="and">
+			<![CDATA[ c.instock_get_date<=#endDate#+1 ]]> 
+			</isNotEmpty>
+			<isNotEmpty property="instock_total_id" prepend="and">
+			<![CDATA[ c.instock_total_id=#instock_total_id# ]]> 
+			</isNotEmpty>
+			<isNotEmpty property="instock_provide_id" prepend="and">				
+				<![CDATA[  c.instock_provide_id= #instock_provide_id# ]]>
+			</isNotEmpty>	
+				<![CDATA[ order by c.instock_id desc]]>  
+			<include refid="global.paginationEnd"/> 
+		</dynamic> 
+	</select>
+	
+	
+	<select id="getStockList" parameterClass="stock" resultClass="stock">
+	   <![CDATA[
+		  select st.stock_quantity as stock_quantity  from  crm.crm_tb_stock  st 
+		  where 1=1
+		]]>
+		<dynamic>		
+			<isNotEmpty property="cust_id" prepend="and">
+			<![CDATA[ st.cust_id=#cust_id# ]]> 
+			</isNotEmpty>
+			<isNotEmpty property="stock_stock_place" prepend="and">
+			<![CDATA[ st.stock_stock_place=#stock_stock_place# ]]> 
+			</isNotEmpty>
+			<isNotEmpty property="category_id" prepend="and">
+			<![CDATA[ st.category_id=#category_id# ]]> 
+			</isNotEmpty>
+			<isNotEmpty property="batch" prepend="and">				
+				<![CDATA[  st.batch= #batch# ]]>
+			</isNotEmpty>	 
+		</dynamic> 
+	</select>
+	
+	<select id="getStockById" parameterClass="instock"
+	resultClass="instock">	
+	<![CDATA[	 
+		select c.instock_id         as instock_id,
+		       c.instock_total_id   as instock_total_id,
+		       c.instock_provide_id as instock_provide_id,
+		       c.instock_send_place as instock_send_place,
+		       c.instock_good_place as instock_good_place
+		  from crm.crm_tb_instock c
+		 where c.instock_total_id = #instock_total_id#
+		       and  c.instock_type = #instock_type#
+	]]>
+	</select>
+	
+	 <insert id="insertInstock" parameterClass="instock">
+		<selectKey resultClass="java.lang.String" keyProperty="stId">
+			<![CDATA[
+		select  crm.crm_seq_instock.nextval   as   stId from dual
+			]]>
+		</selectKey>
+		<![CDATA[
+			insert into crm.crm_tb_instock (
+			   INSTOCK_ID,
+			   INSTOCK_TOTAL_ID,
+			   INSTOCK_SEND_PLACE,
+			   INSTOCK_GOOD_PLACE,
+			   INSTOCK_GET_DATE,
+			   INSTOCK_FLAG	,
+			   INSTOCK_PROVIDE_ID,
+			   INSTOCK_PROVIDE_NAME	,
+			   INSTOCK_MODIFY_DATE  ,
+			   INSTOCK_TYPE
+				)
+			values (
+				#stId#,
+				#instock_total_id#,
+				#instock_send_place#,
+				#instock_good_place#,
+				sysdate,
+				#instock_flag#,
+				#instock_provide_id#,
+				#instock_provide_name#,
+				sysdate,
+				#instock_type#
+				)
+		]]>
+	</insert>
+	
+	<insert id="insetrInstockdet" parameterClass="instockdet">
+		<selectKey resultClass="java.lang.String" keyProperty="stdId">
+			<![CDATA[
+		select   crm.crm_seq_instock_detail.nextval  as stdId from dual
+			]]>
+		</selectKey>
+		<![CDATA[
+			insert into crm.crm_tb_instock_detail (
+			   INSTOCKDET_ID,
+			   INSTOCK_TOTAL_ID,
+			   INSTOCKDET_BATCH,
+			   INSTOCKDET_ANUMBER,
+			   INSTOCKDET_UNUMBER,
+			   INSTOCKDET_NUMBER,
+			   MATNR,
+			   CATEGORY_NAME,
+			   INSTOCKDET_MODIFY_DATE ,
+			   INSTOCKDET_TYPE,
+			   INSTOCK_ID
+				)
+			   values (
+				#stdId#,
+				#instock_total_id#,
+				#instockdetBatch#,
+				#instockdet_anumber#,
+				#instockdet_unumber#,
+				#instockdet_number#,
+				#matnr#,
+				#bezei#,
+				sysdate,
+				#type#,
+				#instock_id#
+				)
+		]]>
+	</insert>
+	
+	<insert id="insertStock" parameterClass="stock">
+		<selectKey resultClass="java.lang.String" keyProperty="atId">
+			<![CDATA[
+		   select crm.crm_seq_stock.nextval  as atId from dual
+			]]>
+		</selectKey>
+		<![CDATA[
+			insert into crm.crm_tb_stock (
+		         STOCK_ID,
+		         CUST_ID,
+		         STOCK_STOCK_PLACE,
+		         CATEGORY_ID,
+		         STOCK_QUANTITY,
+		         STOCK_OPERATOR,
+		         STOCK_FLAG,
+		         BATCH,
+		         stock_modify_date
+		        )
+		         values (
+		        #atId#,
+		        #cust_id#,
+		        #stock_stock_place#,
+		        #category_id#,
+		        #stock_quantity#,
+		        #stock_operator#,
+		        #stock_flag#,
+		        #batch#,
+		        sysdate
+        )
+		]]>
+	</insert>
+	
+	  <update id="updateStock" parameterClass="instock">
+	<![CDATA[
+			update  crm.crm_tb_instock  s 
+			set s.instock_modify_date = sysdate
+			]]>
+	<dynamic>
+	<isNotEmpty property="instock_provide_id" prepend=",">
+	<![CDATA[ s.instock_provide_id = #instock_provide_id# ]]>
+	</isNotEmpty>
+	<isNotEmpty property="instock_provide_name" prepend=",">
+	<![CDATA[  s.instock_provide_name = #instock_provide_name# ]]>
+	</isNotEmpty>
+   	<isNotEmpty property="instock_send_place" prepend=",">
+	<![CDATA[  s.instock_send_place= #instock_send_place# ]]>
+	</isNotEmpty>
+    <isNotEmpty property="instock_good_place" prepend=",">
+	<![CDATA[ s.instock_good_place= #instock_good_place# ]]>
+	</isNotEmpty>
+	</dynamic>
+	<![CDATA[
+		 where s.instock_total_id = #instock_total_id#
+	]]>
+	</update>	
+	
+		  <update id="updateStockTotal" parameterClass="stock">
+	<![CDATA[
+			update crm.crm_tb_stock  st 
+            set st.stock_modify_date = sysdate 
+			]]>
+	<dynamic>
+	<isNotEmpty property="stock_quantity" prepend=",">
+	<![CDATA[  st.stock_quantity  = #stock_quantity# ]]>
+	</isNotEmpty>
+	</dynamic>
+	<![CDATA[
+		 where st.cust_id = #cust_id#
+		 and  st.stock_stock_place=#stock_stock_place# 
+		 and  st.category_id =#category_id# 
+		 and  st.batch=#batch#
+	]]>
+	</update>	
+	
+
+</sqlMap>

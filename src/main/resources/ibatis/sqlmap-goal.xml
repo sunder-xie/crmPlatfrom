@@ -1,0 +1,2785 @@
+<?xml version="1.0" encoding="GB2312"?>
+<!DOCTYPE sqlMap
+	PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="goal">
+	<typeAlias alias="goal"
+		type="com.kintiger.platform.goal.pojo.BCustomerTarget" />
+	<typeAlias alias="kunnr" type="com.kintiger.platform.kunnr.pojo.Kunnr" />
+	<typeAlias alias="mat" type="com.kintiger.platform.master.pojo.Materiel" />
+    <typeAlias alias="org" type="com.kintiger.platform.goal.pojo.OrgHelps" />
+     <typeAlias alias="priceObj" type="com.kintiger.platform.goal.pojo.MatterPriceObject" />
+	<typeAlias alias="priceBO" type="com.kintiger.platform.goal.pojo.MatterPriceBO" />
+    <typeAlias alias="goalSales" type="com.kintiger.platform.goal.pojo.GoalSales" />
+    <typeAlias alias="goalSalesDetail" type="com.kintiger.platform.goal.pojo.GoalSalesDetail" />
+	<typeAlias alias="printConGoalInfo" type="com.kintiger.platform.goal.pojo.PrintContractGoalInfo" />
+	<!-- 根据品相编号获取品牌 -->
+	<select id="getMaktxAndMaknr" parameterClass="mat" resultClass="goal">
+	    <![CDATA[
+			select t.matnr01 matnr01, t.maktx01 maktx01
+			  from basis.basis_tb_materiel t
+			 where 1=1
+		]]>
+		<dynamic>
+			<isNotEmpty property="mvgr1" prepend="and">
+				<![CDATA[
+					t.matnr = #mvgr1#
+				]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	<!-- 校验用户权限点 -->
+	<select id="getConpointByUser" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+	<![CDATA[
+		select count(v.role_conpoint_id)
+  		from basis.basis_tb_role_conpoint v,
+       		basis.basis_tb_station_role  t,
+       		basis.basis_tb_station_user  r
+ 		where v.role_id = t.role_id
+   			and t.station_id = r.station_id
+   			and v.close_flag = 'Y'
+   			and v.state = 'U'
+   			and v.conpoint_id = #conpointId#
+   			and r.user_id = #userId#
+	]]>	
+	</select>
+	
+	<select id="getGoalListCount" parameterClass="goal" resultClass="java.lang.Integer">
+	   <![CDATA[
+		   select count( distinct s.ct_id) from crm.CRM_TB_TARGET s 
+           left join basis.basis_tb_salesemp_info i on i.emp_id=s.op_id
+           left join  basis.basis_tb_salesemp_info i1 on i1.emp_id = s.check_op_id
+           left join crm.crm_tb_kunnr k on k.kunnr=s.cust_id 
+           left join exp.sap_tb_tvm1t  m on m.mvgr1 =s.matter and   m.bezei is not null
+           left join basis.basis_tb_org  t on s.org_id = t.org_id
+           left join crm.crm_tb_goal_price g on g.matter=s.matter
+           left join basis.basis_tb_materiel mm on mm.matnr=s.matter
+           left join (select p.the_year,p.the_month,p.org_id,p.matter,sum(p.box) box ,sum(nvl(p.box,0)*nvl(g.price,0)) target_num
+			                    from crm.crm_tb_target p
+			                    left join crm.crm_tb_goal_price g on g.matter=p.matter
+			                    where p.mark='Y' and p.ct_state='0'
+	   ]]>
+		                        <isEqual property="kunnrGoalType" compareValue="B" prepend="and">        
+                                    <![CDATA[ (p.kunnr_goal_type='B' or p.kunnr_goal_type is null)]]>
+		                        </isEqual>
+		                        <isEqual property="kunnrGoalType" compareValue="C" prepend="and">				
+			                        <![CDATA[ p.kunnr_goal_type='C' ]]>
+		                        </isEqual>
+	   <![CDATA[
+                                group by p.the_year,p.the_month,p.org_id,p.matter
+                                ) ss on ss.org_id=s.org_id and ss.the_year=s.the_year and ss.the_month=s.the_month and ss.matter=s.matter 
+           where s.ct_state = '0' 
+		]]>
+		<dynamic>
+			<isNotEmpty property="theYear" prepend="and">
+				<isNotEqual property="theYear" compareValue="0">
+				<![CDATA[ s.the_year = #theYear# ]]>
+				</isNotEqual>
+			</isNotEmpty>
+			<isNotEmpty property="theMonth" prepend="and">
+				<isNotEqual property="theMonth" compareValue="0">
+					<![CDATA[ s.the_month = #theMonth# ]]>
+				</isNotEqual>
+			</isNotEmpty>
+			<isNotEmpty property="startDate" prepend="and">
+				<![CDATA[  to_char(to_date(s.the_year||s.the_month,'yyyy-MM'),'yyyy-MM')>=#startDate#]]>
+			</isNotEmpty>
+			<isNotEmpty property="endDate" prepend="and">
+					<![CDATA[ to_char(to_date(s.the_year||s.the_month,'yyyy-MM'),'yyyy-MM')<=#endDate#]]>
+			</isNotEmpty>
+			<isNotEmpty property="matter" prepend="and">				
+				<![CDATA[ s.matter = #matter# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="custId" prepend="and">				
+				<![CDATA[ s.cust_id= #custId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="mark" prepend="and">				
+				<![CDATA[ s.mark= #mark# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="trFlag" prepend="and">				
+				<![CDATA[ s.tr_flag= #trFlag# ]]>
+			</isNotEmpty>
+			<isEqual property="kunnrGoalType" compareValue="B" prepend="and">        
+         <![CDATA[ (s.kunnr_goal_type='B' or  s.kunnr_goal_type is null)]]>
+			</isEqual>
+			<isEqual property="kunnrGoalType" compareValue="C" prepend="and">				
+				<![CDATA[ s.kunnr_goal_type='C' ]]>
+			</isEqual>
+			<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[ s.org_id in 
+				(select o.org_id
+                       from basis.basis_tb_org o
+                       where o.state = 'Y'
+                      start with o.org_id=#orgId#
+                       connect by nocycle prior o.org_id = o.org_parent_id)]]>
+			</isNotEmpty>
+			<isNotEmpty property="orgIds" prepend="and">
+			<![CDATA[ s.org_id in ]]>
+				<iterate property="orgIds" open="(" close=")" conjunction=",">#orgIds[]#
+				</iterate>
+			</isNotEmpty>
+			
+			<isNotEmpty property="brand" prepend="and">				
+				<![CDATA[ mm.matnr01= #brand# ]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<select id="getGoalListCount1" parameterClass="goal"
+		resultClass="java.lang.Integer">
+	   <![CDATA[
+		    select count(*) from crm.CRM_TB_TARGET s 
+		    where  s.ct_state='0'
+		]]>
+		<dynamic>
+			<isNotEmpty property="theYear" prepend="and">
+				<isNotEqual property="theYear" compareValue="0">
+				<![CDATA[ s.the_year = #theYear# ]]>
+				</isNotEqual>
+			</isNotEmpty>
+			<isNotEmpty property="theMonth" prepend="and">
+				<isNotEqual property="theMonth" compareValue="0">
+					<![CDATA[ s.the_month = #theMonth# ]]>
+				</isNotEqual>
+			</isNotEmpty>
+			<isNotEmpty property="orgId" prepend="and">
+				<![CDATA[ s.org_id = #orgId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="custId" prepend="and">
+				<![CDATA[ s.cust_id = #custId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="matter" prepend="and">
+				<![CDATA[ s.matter = #matter# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="mark" prepend="and">				
+				<![CDATA[ s.mark= #mark# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="kunnrGoalType" prepend="and">				
+				<![CDATA[ s.kunnr_Goal_type= #kunnrGoalType# ]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<select id="getMatListCount" parameterClass="mat" resultClass="java.lang.Integer">
+	   <![CDATA[
+		    select count(*) from exp.sap_tb_tvm1t s 
+		    where  s.mvgr1 is not null and s.bezei is  not null
+		]]>
+		<dynamic>
+			<isNotEmpty property="matnr" prepend="and">
+			<![CDATA[ s.matnr like #matnr,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="maktx" prepend="and">
+			<![CDATA[ s.maktx like  #maktx,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<select id="getOrgCount" parameterClass="kunnr" resultClass="java.lang.Integer">
+	   <![CDATA[
+		    select count(*) from  basis.basis_tb_org t where t.state='Y'
+		]]>
+		<dynamic>
+			<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[  t.org_id=#orgId# ]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<select id="getOrgIsExit" parameterClass="kunnr" resultClass="org">
+	   <![CDATA[
+		    select t.org_id as orgId,t.org_name as orgName from  basis.basis_tb_org t where t.state='Y'
+		]]>
+		<dynamic>
+			<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[  t.org_id=#orgId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="orgName" prepend="and">
+			<![CDATA[  t.org_name=#orgName# and t.org_city='I']]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<select id="getKunnrListCount" parameterClass="kunnr"
+		resultClass="java.lang.Integer">
+	<![CDATA[
+			select count(*)
+			  from crm.crm_tb_kunnr k
+			  where 1=1
+	]]>
+		<dynamic>
+		    <isNotEmpty property="orgId" prepend="and">
+			<![CDATA[ k.org_id =#orgId#]]>
+			</isNotEmpty>
+			<isNotEmpty property="kunnr" prepend="and">
+			<![CDATA[ k.kunnr like #kunnr,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="name1" prepend="and">
+			<![CDATA[ k.name1 like  #name1,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<select id="getMatList" parameterClass="mat" resultClass="mat">
+		<include refid="global.paginationStart" />
+	<![CDATA[
+	     select  s.matnr  ,s.mvgr1 , s.bezei as bezei , s.matkl, s.maktx, s.meins, s.wgbez
+         from basis.basis_tb_materiel s where 1=1 and s.mvgr1 is not null and s.bezei is  not null
+	]]>
+		<dynamic>
+			<isNotEmpty property="matnr" prepend="and">
+			<![CDATA[ s.matnr like #matnr,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="maktx" prepend="and">
+			<![CDATA[ s.maktx like  #maktx,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+		</dynamic>
+		<include refid="global.paginationEnd" />
+	</select>
+
+	<select id="getMatList1" parameterClass="mat" resultClass="mat">
+	<![CDATA[
+	     select  s.matnr  ,s.mvgr1 , s.bezei as bezei , s.matkl, s.maktx, s.meins, s.wgbez
+         from basis.basis_tb_materiel s where 1=1 and s.mvgr1 is not null and s.bezei is  not null
+	]]>
+		<dynamic>
+			<isNotEmpty property="matnr" prepend="and">
+			<![CDATA[ s.matnr = #matnr#]]>
+			</isNotEmpty>
+			<isNotEmpty property="mvgr1" prepend="and">
+			<![CDATA[ s.mvgr1 = #mvgr1#]]>
+			</isNotEmpty>
+			<isNotEmpty property="maktx" prepend="and">
+			<![CDATA[ s.maktx like  #maktx,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<select id="getGoalById" parameterClass="goal" resultClass="goal">	
+	<![CDATA[	 
+		select distinct t.ct_id      as ctId,
+		       t.the_year   as theYear,
+		       t.the_month  as theMonth,
+		       nvl(t.target_num, 0) as targetNum,
+		       t.cust_id    as custId,
+		       t.matter     as matter,
+		       t.box         as box,
+		       t.mark          as mark,
+		       s.org_name   as orgName,
+		       t.org_id as orgId,
+		       to_char(t.create_date,'yyyy-MM-dd') as createDate,
+		       t.kunnr_goal_type as kunnrGoalType,
+		       k.name1 as custNameZH,
+               m.bezei as bezei
+      from crm.CRM_TB_TARGET t
+      left join basis.basis_tb_org  s on s.org_id = t.org_id
+      left join crm.crm_tb_kunnr k on k.kunnr=t.cust_id
+      left join exp.sap_tb_tvm1t m on m.mvgr1=t.matter
+      where t.ct_id =#ctId#	  
+	]]>
+	</select>
+	<!-- 查询经销商 -->
+	<select id="getKunnrList" parameterClass="kunnr" resultClass="kunnr">
+		<include refid="global.paginationStart" />
+	<![CDATA[
+	 select distinct k.id         as id,
+		       k.kunnr      as kunnr,
+		       k.name1      as name1,
+		       k.mob_number as mobNumber,
+		       k.org_id     as orgId,
+		       o.org_name   as orgName,
+		       k.status
+		  from crm.crm_tb_kunnr k
+		  left join basis.basis_tb_org o on o.org_id=k.org_id and o.state='Y'
+		 where 1=1
+	]]>
+		<dynamic>
+		  <isNotEmpty property="orgId" prepend="and">
+			<![CDATA[ k.org_id =#orgId#]]>
+			</isNotEmpty>
+			<isNotEmpty property="kunnr" prepend="and">
+			<![CDATA[ k.kunnr like #kunnr,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="name1" prepend="and">
+			<![CDATA[ k.name1 like  #name1,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+		</dynamic>
+		<include refid="global.paginationEnd" />
+	</select>
+	
+	<select id="getKunnrListForNormalCount" parameterClass="kunnr"
+		resultClass="java.lang.Integer">
+	<![CDATA[
+			select count(*)
+			  from crm.crm_tb_kunnr k
+			  where 1=1
+			  and k.status=1
+	]]>
+		<dynamic>
+		    <isNotEmpty property="orgId" prepend="and">
+			<![CDATA[ k.org_id =#orgId#]]>
+			</isNotEmpty>
+			<isNotEmpty property="kunnr" prepend="and">
+			<![CDATA[ k.kunnr like #kunnr,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="name1" prepend="and">
+			<![CDATA[ k.name1 like  #name1,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	
+	<select id="getKunnrListForNormal" parameterClass="kunnr" resultClass="kunnr">
+		<include refid="global.paginationStart" />
+	<![CDATA[
+	 select distinct k.id         as id,
+		       k.kunnr      as kunnr,
+		       k.name1      as name1,
+		       k.mob_number as mobNumber,
+		       k.org_id     as orgId,
+		       o.org_name   as orgName,
+		       k.status
+		  from crm.crm_tb_kunnr k
+		  left join basis.basis_tb_org o on o.org_id=k.org_id and o.state='Y'
+		 where 1=1
+			and k.status=1
+	]]>
+		<dynamic>
+		  <isNotEmpty property="orgId" prepend="and">
+			<![CDATA[ k.org_id =#orgId#]]>
+			</isNotEmpty>
+			<isNotEmpty property="kunnr" prepend="and">
+			<![CDATA[ k.kunnr like #kunnr,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="name1" prepend="and">
+			<![CDATA[ k.name1 like  #name1,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+		</dynamic>
+		<include refid="global.paginationEnd" />
+	</select>
+	<!-- 查询经销商 -->
+	<select id="getKunnrList1" parameterClass="kunnr" resultClass="kunnr">
+	<![CDATA[
+	  select distinct k.id         as id,
+             k.kunnr      as kunnr,
+             k.name1      as name1,
+             k.mob_number as mobNumber,
+             k.org_id     as orgId,
+             o.org_name   as orgName
+            from crm.crm_tb_kunnr k
+            left join basis.basis_tb_org o on o.org_id=k.org_id and o.state='Y'
+       where 1=1
+	]]>
+		<dynamic>
+			<isNotEmpty property="kunnr" prepend="and">
+			<![CDATA[ k.kunnr = #kunnr#]]>
+			</isNotEmpty>
+			<isNotEmpty property="name1" prepend="and">
+			<![CDATA[ k.name1 like  #name1,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	<select id="getGoalContractSum" parameterClass="goal" resultClass="goal">
+	<![CDATA[
+		 select  t.cust_id as custId,
+				sum(nvl(p.mvg_price*t.box, 0) )as targetNum,
+        		sum(t.box) as box
+          from crm.crm_tb_target t 
+        left join crm.crm_tb_mar_price p on p.mvgr1 = t.matter and t.the_year = p.year
+        group by t.the_year,t.the_month,t.cust_id,t.kunnr_goal_type
+        having t.kunnr_goal_type  ='C' 
+       		 and 
+		     t.the_year = #theYear# 
+		     and 
+		     t.the_month = #theMonth#   
+		     and 
+		     t.cust_id =  #custId#
+	]]>
+	</select>
+	<select id="searchConGolInfo" parameterClass="printConGoalInfo" resultClass="printConGoalInfo">
+	<![CDATA[
+		select
+    sum(case p.sku when 'A1' Then box else 0 end ) matter1,
+    sum(case  p.sku when 'K1' Then box else 0 end ) matter2,
+    sum(case  p.sku when 'F1' Then box else 0 end ) matter3,
+    sum(case  p.sku when 'J1' Then box else 0 end ) matter4,
+    sum(case  p.sku when 'M1' Then box else 0 end ) matter5,
+    sum(case  p.sku when 'N1' Then box else 0 end ) matter6,
+    sum(case  p.sku when 'G2' Then box else 0 end ) matter7,
+    sum(case  p.sku when 'A8' Then box else 0 end ) matter8,
+    sum(case  p.sku when 'K8' Then box else 0 end ) matter9,
+    sum(case  p.sku when 'F8' Then box else 0 end ) matter10,
+    sum(case  p.sku when 'J8' Then box else 0 end ) matter11,
+    sum(case  p.sku when 'M8' Then box else 0 end ) matter12,
+    sum(case  p.sku when 'N8' Then box else 0 end ) matter13,
+    sum(case  p.sku when 'G9' Then box else 0 end ) matter14,
+    t.the_year as theYear,
+    t.the_month as theMonth ,
+    t.org_id
+    from crm.CRM_TB_TARGET t 
+    left join crm.crm_tb_mar_price p on p.mvgr1 = t.matter and p.year = #yearFlag#
+		group by t.the_year , t.the_month,t.cust_id,t.kunnr_goal_type,t.ct_state ,t.org_id
+		having t.kunnr_goal_type = 'C' and t.cust_id = #custId# and t.ct_state = '0'  and t.org_id in 
+				(select o.org_id
+                       from basis.basis_tb_org o
+                       where o.state = 'Y'
+                      start with o.org_id=#orgId#
+                       connect by nocycle prior o.org_id = o.org_parent_id)
+		and ( (t.the_year =(#yearFlag#+1) and t.the_month <7) or (t.the_year = #yearFlag# and t.the_month> 6) ) 
+		order by t.the_year,t.the_month
+		]]>
+	</select>
+	<select id="searchConGolInfo2" parameterClass="printConGoalInfo" resultClass="printConGoalInfo">
+	<![CDATA[
+		select
+		max(case p.sku  when 'A7' Then box else 0 end ) matter1,
+		max(case p.sku  when 'A10' Then box else 0 end ) matter2,
+		max(case p.sku  when 'B7' Then box else 0 end ) matter3,
+		max(case p.sku  when 'D5' Then box else 0 end ) matter4,
+		max(case p.sku  when 'A4' Then box else 0 end ) matter5,
+		max(case p.sku  when 'D4' Then box else 0 end ) matter6,
+		max(case p.sku  when 'A3' Then box else 0 end ) matter7,
+		max(case p.sku  when 'D3' Then box else 0 end ) matter8,
+		t.the_year as theYear,
+		t.the_month as theMonth,
+		t.org_id
+		from crm.CRM_TB_TARGET t 
+		left join crm.crm_tb_mar_price p on p.mvgr1 = t.matter and p.year = #yearFlag#
+		group by t.the_year , t.the_month,t.cust_id,t.kunnr_goal_type ,t.ct_state ,t.org_id
+		having t.kunnr_goal_type = 'C' and t.cust_id = #custId# and t.ct_state = '0'  and t.org_id in 
+				(select o.org_id
+                       from basis.basis_tb_org o
+                       where o.state = 'Y'
+                      start with o.org_id=#orgId#
+                       connect by nocycle prior o.org_id = o.org_parent_id)
+		and ( (t.the_year =(#yearFlag#+1) and t.the_month <7) or (t.the_year = #yearFlag# and t.the_month> 6) ) 
+		order by t.the_year,t.the_month
+		]]>
+	</select>
+	<select id="searchConGolInfo3" parameterClass="printConGoalInfo" resultClass="printConGoalInfo">
+	<![CDATA[
+		select
+		max(case t.matter  when 'LBZ1DB101' Then box else 0 end ) matter1,
+		max(case t.matter  when 'MBZ1DB101' Then box else 0 end ) matter2,
+		t.the_year as theYear,
+		t.the_month as theMonth ,
+		t.org_id
+		from crm.CRM_TB_TARGET t 
+		group by t.the_year , t.the_month,t.cust_id,t.kunnr_goal_type ,t.ct_state ,t.org_id
+		having t.kunnr_goal_type = 'C' and t.cust_id = #custId# and t.ct_state = '0'  and t.org_id in 
+				(select o.org_id
+                       from basis.basis_tb_org o
+                       where o.state = 'Y'
+                      start with o.org_id=#orgId#
+                       connect by nocycle prior o.org_id = o.org_parent_id)
+		and t.the_year =#yearFlag#
+		order by t.the_year,t.the_month
+		]]>
+	</select>
+	<select id="getGoalContract" parameterClass="goal" resultClass="goal">
+	<![CDATA[
+		  select  t.cust_id as custId,
+					nvl(p.mvg_price, 0)*t.box as targetNum,
+				t.box as box
+  	 		 from crm.crm_tb_target t 
+    		left join crm.crm_tb_mar_price p on p.mvgr1 = t.matter and t.the_year = p.year
+		     where t.kunnr_goal_type  ='C'  
+		     and 
+		     t.matter = #matter# 
+		     and 
+		     t.the_year = #theYear# 
+		     and 
+		     t.the_month = #theMonth#   
+		     and 
+		     t.cust_id =  #custId#
+	]]>
+	</select>
+	<select id="getGoalReportList" parameterClass="goal" resultClass="goal">
+		<include refid="global.paginationStart" />
+	   <![CDATA[
+			select distinct s.ct_id as ctId,
+                   s.org_id as orgId,
+             s.cust_id as custId,
+             (case when  s.kunnr_goal_type ='B' then
+             nvl(p.mvg_price*(s.box/p.mvg_ratio), 0) else 0 end )as targetNum,
+             s.the_year as theYear,
+             s.the_month  as theMonth,
+             s.create_date  as createDate,
+             to_char(s.modify_date,'yyyy-MM-dd') as modifyDate,
+             s.op_id    as opId, 
+             s.tr_flag  as trFlag,
+             s.kunnr_goal_type as kunnrGoalType,
+             s.check_op_id  as checkOpId, 
+             i.emp_name as opName,
+             i1.emp_name  as  checkOpName,
+              (case when s.kunnr_goal_type='B' and s.mark='Y' and k.name1 is null
+         then '经销商开户中' else 
+             k.name1  end) as custNameZH ,
+             (case when  s.kunnr_goal_type ='B' then 
+             nvl(s.BOX,0)  else 0 end) as box,
+             s.matter  as matter,
+                    m.bezei as bezei,
+                    t.org_name  as orgName,
+                    s.mark     as mark,
+                    (case when  s.kunnr_goal_type ='C' then 
+              nvl(s.BOX,0)  else nvl(tt.box,0)  end)
+                    as contractBox,
+                    (case when  s.kunnr_goal_type ='C' then 
+              nvl(p.mvg_price*(s.box/p.mvg_ratio), 0)  
+               else  nvl(p.mvg_price*(tt.box/p.mvg_ratio), 0) end) 
+                    as contractNum,
+                      (case when (nvl(s.BOX,0)-nvl(tt.box,0)<0.01 or s.kunnr_goal_type ='C')
+             then '正常' else '异常'  end) as ztStatus ,
+             s.tr_flag  from crm.CRM_TB_TARGET s 
+             left join crm.CRM_TB_TARGET tt on (( tt.cust_id = s.cust_id and tt.the_year = s.the_year 
+             and tt.the_month = s.the_month and tt.matter = s.matter
+            and tt.ct_state = s.ct_state 
+             and tt.mark = s.mark and s.kunnr_goal_type <> tt.kunnr_goal_type ) )
+             left join crm.crm_tb_mar_price p on p.mvgr1 = s.matter and ((s.the_year =(p.year+1) and s.the_month <7) or (s.the_year = p.year and s.the_month> 6))
+           left join basis.basis_tb_salesemp_info i on i.emp_id=s.op_id
+           left join  basis.basis_tb_salesemp_info i1 on i1.emp_id = s.check_op_id
+           left join crm.crm_tb_kunnr k on k.kunnr=s.cust_id 
+           left join exp.sap_tb_tvm1t  m on m.mvgr1 =s.matter and   m.bezei is not null
+            left join basis.basis_tb_org  t on s.org_id = t.org_id
+           where s.ct_state = '0' and (s.kunnr_goal_type ='B' or (s.kunnr_goal_type ='C' and (s.box is not null and s.box <> 0) and (tt.box is null)))
+	   ]]>
+		<dynamic>
+			<isNotEmpty property="startDate" prepend="and">
+				<![CDATA[  to_char(to_date(s.the_year||s.the_month,'yyyy-MM'),'yyyy-MM')>=#startDate#]]>
+			</isNotEmpty>
+			<isNotEmpty property="endDate" prepend="and">
+				<![CDATA[ to_char(to_date(s.the_year||s.the_month,'yyyy-MM'),'yyyy-MM')<=#endDate#]]>
+			</isNotEmpty>
+			<isNotEmpty property="matter" prepend="and">				
+				<![CDATA[ s.matter = #matter# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="custId" prepend="and">				
+				<![CDATA[ s.cust_id= #custId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="mark" prepend="and">				
+				<![CDATA[ s.mark= #mark# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="trFlag" prepend="and">				
+				<![CDATA[ s.tr_flag= #trFlag# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[ s.org_id in 
+				(select o.org_id
+                       from basis.basis_tb_org o
+                       where o.state = 'Y'
+                      start with o.org_id=#orgId#
+                       connect by nocycle prior o.org_id = o.org_parent_id)]]>
+			</isNotEmpty>
+			<isNotEmpty property="orgIds" prepend="and">
+			<![CDATA[ s.org_id in ]]>
+				<iterate property="orgIds" open="(" close=")" conjunction=",">#orgIds[]#
+				</iterate>
+			</isNotEmpty>
+			
+			<!-- <isNotEmpty property="kunnrCode" prepend="and">				
+				<![CDATA[ s.kunnr_code= #kunnrCode# ]]>
+			</isNotEmpty> -->
+		</dynamic>
+		<include refid="global.orderBy" />
+		<include refid="global.paginationEnd" />
+	<!-- 	<![CDATA[
+		     order by  modifyDate desc,mark,trFlag
+	             ]]> -->
+	</select>
+	
+	<select id="getDistributionGoalTotal" parameterClass="goal" resultClass="java.lang.Integer">
+	<![CDATA[
+		select count(*)
+         from  crm_vm_fxgoal s
+         where 1=1
+	 ]]>
+	<dynamic>
+	 		<isNotEmpty property="startDate" prepend="and">
+				<![CDATA[  to_char(to_date(s.theYear||'-'||s.theMonth,'yyyy-MM'),'yyyy-MM')>=#startDate#]]>
+			</isNotEmpty>
+			<isNotEmpty property="custId" prepend="and">				
+				<![CDATA[ s.custId= #custId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="theYear" prepend="and">
+				<isNotEqual property="theYear" compareValue="0">
+				<![CDATA[ s.theYear = #theYear# ]]>
+				</isNotEqual>
+			</isNotEmpty>
+			<isNotEmpty property="matter" prepend="and">
+				<![CDATA[ s.matter = #matter# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="theMonth" prepend="and">
+				<isNotEqual property="theMonth" compareValue="0">
+				<![CDATA[ s.theMonth = #theMonth# ]]>
+				</isNotEqual>
+			</isNotEmpty>
+			<isEmpty property="custId" prepend="and">				
+				<![CDATA[ s.custId is null ]]>
+			</isEmpty>
+			<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[ s.orgId in 
+				(select o.org_id
+                       from basis.basis_tb_org o
+                       where o.state = 'Y'	
+                      start with o.org_id=#orgId#
+                       connect by nocycle prior o.org_id = o.org_parent_id)]]>
+			</isNotEmpty>
+	 </dynamic>
+	<include refid="global.paginationEnd" />
+	</select>
+	
+	<select id="getDistributionGoalList" parameterClass="goal" resultClass="goal">
+		<include refid="global.paginationStart" />
+	<![CDATA[
+		select s.custId as custId,
+         s.custNameZH as custNameZH,
+         s.theYear as theYear,
+         s.theMonth as theMonth,
+         s.box as box,
+         s.matter as matter,
+         s.goal_mark as mark,
+         to_char(round(to_number(nvl(s.box,0))-to_number(nvl(s.boxd,0)),2)) as boxD,
+         s.ztStatus as ztStatus,
+         s.orgId as orgId ,
+         m.maktx01 as brand
+         from  crm_vm_fxgoal s
+         left join basis.Basis_Tb_Materiel m on m.matnr = s.matter
+         where 1=1
+	 ]]>
+	 <dynamic>
+	 		<isNotEmpty property="startDate" prepend="and">
+				<![CDATA[  to_char(to_date(s.theYear||'-'||s.theMonth,'yyyy-MM'),'yyyy-MM')>=#startDate#]]>
+			</isNotEmpty>
+			<isNotEmpty property="custId" prepend="and">				
+				<![CDATA[ s.custId= #custId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="theYear" prepend="and">
+				<isNotEqual property="theYear" compareValue="0">
+				<![CDATA[ s.theYear = #theYear# ]]>
+				</isNotEqual>
+			</isNotEmpty>
+			<isNotEmpty property="matter" prepend="and">
+				<![CDATA[ s.matter = #matter# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="theMonth" prepend="and">
+				<isNotEqual property="theMonth" compareValue="0">
+				<![CDATA[ s.theMonth = #theMonth# ]]>
+				</isNotEqual>
+			</isNotEmpty>
+			<isEmpty property="custId" prepend="and">				
+				<![CDATA[ s.custId is null ]]>
+			</isEmpty>
+			<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[ s.orgId in 
+				(select o.org_id
+                       from basis.basis_tb_org o
+                       where o.state = 'Y'	
+                      start with o.org_id=#orgId#
+                       connect by nocycle prior o.org_id = o.org_parent_id)]]>
+			</isNotEmpty>
+	 </dynamic>
+	<include refid="global.paginationEnd" />
+	</select>
+	<select id="getGoalList" parameterClass="goal" resultClass="goal">
+		<include refid="global.paginationStart" />
+	   <![CDATA[
+			select distinct s.ct_id as ctId,
+                   s.org_id as orgId,
+			       s.cust_id as custId,
+			       nvl(s.box,0)*nvl(g.price,0) as targetNum,
+			       s.the_year as theYear,
+			       s.the_month  as theMonth,
+			       s.create_date  as createDate,
+			       to_char(s.modify_date,'yyyy-MM-dd') as modifyDate,
+			       s.op_id    as opId, 
+			       s.tr_flag  as trFlag,
+			       s.kunnr_goal_type as kunnrGoalType,
+                   s.check_op_id  as checkOpId, 
+                   i.emp_name as opName,
+                   i1.emp_name  as  checkOpName,
+                   (case when s.kunnr_goal_type='B' and s.mark='Y' and k.name1 is null
+                         then '经销商开户中' 
+                         else k.name1  end) as custNameZH ,
+                   s.BOX   as box,
+                   mm.matnr01 matnr01, 
+                   mm.maktx01 maktx01,
+                   s.matter  as matter,
+                   m.bezei as bezei,
+                   t.org_name  as orgName,
+                   s.mark     as mark,
+                   s.tr_flag,
+                   to_char(round(to_number(nvl(s.box,0))-to_number(nvl(ss.box,0)),2)) as boxD,
+                   to_char(round(to_number(nvl(s.target_num,0))-to_number(nvl(ss.target_num,0)),2)) as targetNumD
+           from crm.CRM_TB_TARGET s 
+           left join basis.basis_tb_salesemp_info i on i.emp_id=s.op_id
+           left join  basis.basis_tb_salesemp_info i1 on i1.emp_id = s.check_op_id
+           left join crm.crm_tb_kunnr k on k.kunnr=s.cust_id 
+           left join exp.sap_tb_tvm1t m on m.mvgr1 =s.matter and   m.bezei is not null
+           left join basis.basis_tb_org t on s.org_id = t.org_id
+           left join crm.crm_tb_goal_price g on g.matter=s.matter
+           left join basis.basis_tb_materiel mm on mm.matnr=s.matter
+           left join (select p.the_year,p.the_month,p.org_id,p.matter,sum(p.box) box ,sum(nvl(p.box,0)*nvl(g.price,0)) target_num
+			                    from crm.crm_tb_target p
+			                    left join crm.crm_tb_goal_price g on g.matter=p.matter
+			                    where p.mark='Y' and p.ct_state='0'
+	   ]]>
+		                        <isEqual property="kunnrGoalType" compareValue="B" prepend="and">        
+                                    <![CDATA[ (p.kunnr_goal_type='B' or p.kunnr_goal_type is null)]]>
+		                        </isEqual>
+		                        <isEqual property="kunnrGoalType" compareValue="C" prepend="and">				
+			                        <![CDATA[ p.kunnr_goal_type='C' ]]>
+		                        </isEqual>
+	   <![CDATA[
+                                group by p.the_year,p.the_month,p.org_id,p.matter
+                                ) ss on ss.org_id=s.org_id and ss.the_year=s.the_year and ss.the_month=s.the_month and ss.matter=s.matter 
+           where s.ct_state = '0' 
+	   ]]>
+		<dynamic>
+			<isNotEmpty property="theYear" prepend="and">
+				<isNotEqual property="theYear" compareValue="0">
+				<![CDATA[ s.the_year = #theYear# ]]>
+				</isNotEqual>
+			</isNotEmpty>
+			<isNotEmpty property="theMonth" prepend="and">
+				<isNotEqual property="theMonth" compareValue="0">
+				<![CDATA[ s.the_month = #theMonth# ]]>
+				</isNotEqual>
+			</isNotEmpty>
+			<isNotEmpty property="startDate" prepend="and">
+				<![CDATA[  to_char(to_date(s.the_year||s.the_month,'yyyy-MM'),'yyyy-MM')>=#startDate#]]>
+			</isNotEmpty>
+			<isNotEmpty property="endDate" prepend="and">
+					<![CDATA[ to_char(to_date(s.the_year||s.the_month,'yyyy-MM'),'yyyy-MM')<=#endDate#]]>
+			</isNotEmpty>
+			<isNotEmpty property="matter" prepend="and">				
+				<![CDATA[ s.matter = #matter# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="custId" prepend="and">				
+				<![CDATA[ s.cust_id= #custId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="eventId" prepend="and">				
+				<![CDATA[ s.event_id= #eventId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="mark" prepend="and">				
+				<![CDATA[ s.mark= #mark# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="trFlag" prepend="and">				
+				<![CDATA[ s.tr_flag= #trFlag# ]]>
+			</isNotEmpty>
+			<isEqual property="kunnrGoalType" compareValue="B" prepend="and">        
+                <![CDATA[ (s.kunnr_goal_type='B' or  s.kunnr_goal_type is null)]]>
+			</isEqual>
+			<isEqual property="kunnrGoalType" compareValue="C" prepend="and">				
+				<![CDATA[ s.kunnr_goal_type='C' ]]>
+			</isEqual>
+			<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[ s.org_id in 
+				(select o.org_id
+                       from basis.basis_tb_org o
+                       where o.state = 'Y'
+                      start with o.org_id=#orgId#
+                       connect by nocycle prior o.org_id = o.org_parent_id)]]>
+			</isNotEmpty>
+			<isNotEmpty property="orgIds" prepend="and">
+			<![CDATA[ s.org_id in ]]>
+				<iterate property="orgIds" open="(" close=")" conjunction=",">#orgIds[]#
+				</iterate>
+			</isNotEmpty>
+			
+			<isNotEmpty property="brand" prepend="and">				
+				<![CDATA[ mm.matnr01= #brand# ]]>
+			</isNotEmpty>
+			<!-- <isNotEmpty property="kunnrCode" prepend="and">				
+				<![CDATA[ s.kunnr_code= #kunnrCode# ]]>
+			</isNotEmpty> -->
+		</dynamic>
+		<include refid="global.orderBy" />
+		<include refid="global.paginationEnd" />
+	<!-- 	<![CDATA[
+		     order by  modifyDate desc,mark,trFlag
+	             ]]> -->
+	</select>
+
+
+	<insert id="insertGoal" parameterClass="goal">
+		<selectKey resultClass="java.lang.String" keyProperty="ctId">
+			<![CDATA[
+		select crm.CRM_SQ_TARGET_ID.NEXTVAL as ctId from dual
+			]]>
+		</selectKey>
+		<![CDATA[
+			insert into crm.CRM_TB_TARGET (
+			   CT_ID,
+			   ORG_ID,
+			   CUST_ID,
+			   TARGET_NUM,
+			   THE_YEAR,
+			   THE_MONTH,
+			   CREATE_DATE,
+			   MODIFY_DATE,
+			   TR_FLAG,
+			   CT_STATE,
+			   OP_ID,
+			   BOX,
+			   matter,
+			   MARK,
+			   check_op_id,
+			   kunnr_goal_type,
+			   event_id
+				)
+			values (
+				#ctId#,
+				#orgId#,
+				#custId#,
+				#targetNum#,
+				#theYear#,
+				#theMonth#,
+				sysdate,
+				sysdate,
+				#trFlag#,
+				#ctState#,
+				#opId#,
+				#box#,
+				#matter#,
+				#mark#,
+				#checkOpId#,
+				#kunnrGoalType#,
+				#eventId#
+				)
+		]]>
+	</insert>
+
+	<insert id="insertFXGoal" parameterClass="goal">
+		<![CDATA[
+			insert into crm.crm_tb_goal_production (
+			   ORG_ID,
+			   kunnr,
+			   GOAL_YEAR,
+			   GOAL_MONTH,
+			   CREATE_DATE,
+			   status,
+			   user_id,
+			   BOX_num,
+			   matter_num,
+			   GOAL_mark,
+			   GOAL_TYPE
+				)
+			values (
+				#orgId#,
+				#custId#,
+				#theYear#,
+				#theMonth#,
+				sysdate,
+				'U',
+				#opId#,
+				#box#,
+				#matter#,
+				#mark#,
+				'A1'
+				)
+		]]>
+	</insert>
+	
+		<update id="updateGoal" parameterClass="goal">
+	<![CDATA[
+		update crm.CRM_TB_TARGET g 
+			set 
+			g.modify_date=sysdate 
+			]]>
+		<dynamic>
+			<isNotEmpty property="custId" prepend=",">
+	<![CDATA[ g.CUST_ID = #custId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="targetNum" prepend=",">
+	<![CDATA[ g.TARGET_NUM = #targetNum# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="box" prepend=",">
+	<![CDATA[ g.BOX= #box# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="theYear" prepend=",">
+	<![CDATA[ g.THE_YEAR= #theYear# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="theMonth" prepend=",">
+	<![CDATA[ g.THE_MONTH= #theMonth# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="checkOpId" prepend=",">
+	<![CDATA[ g.CHECK_OP_ID= #checkOpId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="opId" prepend=",">
+	<![CDATA[ g.OP_ID= #opId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="trFlag" prepend=",">
+	<![CDATA[ g.TR_FLAG= #trFlag# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="ctState" prepend=",">
+	<![CDATA[ g.CT_STATE= #ctState# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="matter" prepend=",">
+	<![CDATA[ g.matter= #matter# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="eventId" prepend=",">
+	<![CDATA[ g.event_id= #eventId# ]]>
+			</isNotEmpty>
+			<!-- <isNotEmpty property="kunnrCode" prepend=",">
+	<![CDATA[ g.kunnr_code= #kunnrCode# ]]>
+			</isNotEmpty> -->
+		</dynamic>
+	<![CDATA[
+		where g.CT_ID =#ctId# 
+	]]>
+	</update>
+
+	<update id="approveGoal" parameterClass="goal">
+	<![CDATA[
+		update crm.CRM_TB_TARGET g 
+			set 
+			g.modify_date=sysdate 
+	]]>
+	<dynamic>
+		<isNotEmpty property="trFlag" prepend=",">
+			<![CDATA[ g.TR_FLAG= #trFlag# ]]>
+		</isNotEmpty>
+		<isNotEmpty property="ctState" prepend=",">
+			<![CDATA[ g.CT_STATE= #ctState# ]]>
+		</isNotEmpty>
+		<isNotEmpty property="opId" prepend=",">
+			<![CDATA[ g.OP_ID= #opId# ]]>
+		</isNotEmpty>
+		<isNotEmpty property="checkOpId" prepend=",">
+			<![CDATA[ g.CHECK_OP_ID= #checkOpId# ]]>
+		</isNotEmpty>
+	</dynamic>
+	<![CDATA[
+		where g.ct_id in 
+	]]>
+		<iterate property="codes" open="(" close=")" conjunction=",">#codes[]#
+		</iterate>
+	</update>
+
+	<select id="getBCustomerTargetList" parameterClass="kunnr"
+		resultClass="goal">
+		<![CDATA[
+	   select distinct t.ct_id as ctId,nvl(t.target_num, 0) as targetNum,
+       t.box as box,
+       t.the_year as theYear,
+       t.the_month as theMonth,
+       t.matter,
+       m.bezei 
+       from crm.crm_tb_target t
+       left join exp.sap_tb_tvm1t m on t.matter=m.mvgr1
+      where  t.kunnr_goal_type='B'
+      and t.ct_state='0'
+		]]>
+		<dynamic>
+			<isNotEmpty property="kunnr" prepend="and">
+			<![CDATA[ t.cust_id = #kunnr# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="eventId" prepend="and">
+			<![CDATA[ t.event_id=#eventId# ]]>
+			</isNotEmpty>
+			<!-- <isNotEmpty property="kunnrCode" prepend="and">
+			<![CDATA[t.kunnr_code=#kunnrCode#]]>
+			</isNotEmpty> -->
+		</dynamic>
+	</select>
+
+	<select id="getMaterielListCount" parameterClass="mat"
+		resultClass="java.lang.Integer">
+	   <![CDATA[
+		    select count(*) from basis.basis_tb_materiel s 
+		    where  1=1
+		]]>
+		<dynamic>
+			<isNotEmpty property="mvgr1" prepend="and">
+			<![CDATA[ s.matnr like #mvgr1,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="bezei" prepend="and">
+			<![CDATA[ s.maktx like  #bezei,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="search" prepend="and">
+			<![CDATA[( s.maktx like  #search,handler=wildcard# escape '\' or  s.matnr like #search,handler=wildcard# escape '\' ) ]]>
+			</isNotEmpty>
+			<isNotEmpty property="brand" prepend="and">
+			<![CDATA[ s.matnr01=#brand#]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	<!-- basis.basis_tb_materiel -->
+	<select id="getMaterielList" parameterClass="mat" resultClass="mat">
+		<include refid="global.paginationStart" />
+	<![CDATA[
+	      select s.matnr mvgr1,s.maktx bezei,s.maktx01 
+         from basis.basis_tb_materiel s where  1=1
+	]]>
+		<dynamic>
+			<isNotEmpty property="mvgr1" prepend="and">
+			<![CDATA[ s.matnr like #mvgr1,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="bezei" prepend="and">
+			<![CDATA[ s.maktx like  #bezei,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="search" prepend="and">
+			<![CDATA[( s.maktx like  #search,handler=wildcard# escape '\' or  s.matnr like #search,handler=wildcard# escape '\' ) ]]>
+			</isNotEmpty>
+			<isNotEmpty property="brand" prepend="and">
+			<![CDATA[ s.matnr01=#brand#]]>
+			</isNotEmpty>
+		</dynamic>
+		<include refid="global.paginationEnd" />
+	</select>
+
+	<update id="approveYearGoal" parameterClass="goal">
+	<![CDATA[
+		update crm.CRM_TB_TARGET g 
+			set 
+			g.modify_date=sysdate 
+			]]>
+		<dynamic>
+			<isNotEmpty property="trFlag" prepend=",">
+	<![CDATA[ g.TR_FLAG= #trFlag# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="ctState" prepend=",">
+	<![CDATA[ g.CT_STATE= #ctState# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="checkOpId" prepend=",">
+	<![CDATA[ g.CHECK_OP_ID= #checkOpId# ]]>
+			</isNotEmpty>
+		</dynamic>
+	<![CDATA[
+		where  g.kunnr_goal_type='B'
+		and g.tr_flag='S'
+		and to_char(to_date(t.the_year||t.the_month,'yyyy-MM'),'yyyy-MM')>=#startDate#
+		and to_char(to_date(t.the_year||t.the_month,'yyyy-MM'),'yyyy-MM')<=#endDate#
+	]]>
+	</update>
+
+	<select id="getGoalByCondition" parameterClass="goal" resultClass="goal">
+	   <![CDATA[
+			select distinct s.ct_id as ctId,
+                   s.org_id as orgId,
+			       s.cust_id as custId,
+			       nvl(s.target_num, 0) as targetNum,
+			       s.the_year as theYear,
+			       s.the_month  as theMonth,
+			       s.create_date  as createDate,
+			       to_char(s.modify_date,'yyyy-MM-dd') as modifyDate,
+			       s.op_id    as opId, 
+			       s.tr_flag  as trFlag,
+			       s.kunnr_goal_type as kunnrGoalType,
+                   s.check_op_id  as checkOpId, 
+                   i.emp_name as opName,
+                   i1.emp_name  as  checkOpName,
+                   k.name1  as custNameZH ,
+                   s.BOX   as box,
+                   s.matter  as matter,
+                   m.bezei as bezei,
+                   t.org_name  as orgName,
+                   s.mark     as mark,
+                   s.ct_state as ctState,
+                   s.tr_flag 
+                   from crm.CRM_TB_TARGET s 
+           left join basis.basis_tb_salesemp_info i on i.emp_id=s.op_id
+           left join  basis.basis_tb_salesemp_info i1 on i1.emp_id = s.check_op_id
+           left join crm.crm_tb_kunnr k on k.kunnr=s.cust_id 
+           left join exp.sap_tb_tvm1t  m on m.mvgr1 =s.matter and   m.bezei is not null
+           left join basis.basis_tb_org  t on s.org_id = t.org_id
+           where s.ct_state = '0' 
+	   ]]>
+		<dynamic>
+			<isNotEmpty property="theYear" prepend="and">
+				<isNotEqual property="theYear" compareValue="0">
+				<![CDATA[ s.the_year = #theYear# ]]>
+				</isNotEqual>
+			</isNotEmpty>
+			<isNotEmpty property="theMonth" prepend="and">
+				<isNotEqual property="theMonth" compareValue="0">
+				<![CDATA[ s.the_month = #theMonth# ]]>
+				</isNotEqual>
+			</isNotEmpty>
+			<isNotEmpty property="matter" prepend="and">				
+				<![CDATA[ s.matter = #matter# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="custId" prepend="and">				
+				<![CDATA[ s.cust_id= #custId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="mark" prepend="and">				
+				<![CDATA[ s.mark= #mark# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="orgId" prepend="and">
+				<![CDATA[ s.org_id = #orgId# ]]>
+			</isNotEmpty>
+			<isEqual property="kunnrGoalType" compareValue="B" prepend="and">        
+               <![CDATA[ (s.kunnr_goal_type='B' or  s.kunnr_goal_type is null)]]>
+			</isEqual>
+			<isEqual property="kunnrGoalType" compareValue="C" prepend="and">				
+				<![CDATA[ s.kunnr_goal_type='C' ]]>
+			</isEqual>
+		</dynamic>
+	</select>
+	<!-- <select id="getGoalDKOrgCount">
+			select count(distinct v.org_id)
+		 	from crm.crm_vw_target v
+		 	left join basis.basis_tb_org o on o.org_id = v.org_id
+		 	left join exp.sap_tb_tvm1t m on m.mvgr1 = v.matter
+		 	where 1=1
+            <dynamic>
+  			<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[ v.org_id in 
+				(select o.org_id
+                       from basis.basis_tb_org o
+                       where o.state = 'Y'
+                      start with o.org_id=#orgId#
+                       connect by nocycle prior o.org_id = o.org_parent_id)]]>
+			</isNotEmpty>
+  			<isNotEmpty property="startDate" prepend="and">
+				<![CDATA[  to_char(to_date(v.the_year||v.the_month,'yyyy-MM'),'yyyy-MM')>=#startDate#]]>
+			</isNotEmpty>
+			<isNotEmpty property="endDate" prepend="and">
+				<![CDATA[ to_char(to_date(v.the_year||v.the_month,'yyyy-MM'),'yyyy-MM')<=#endDate#]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	 -->
+	 <select id="getGoalDKAllCount" parameterClass="goal" resultClass="java.lang.Integer">
+		<![CDATA[   select
+		 		count(sum(v.leftbox))
+      	 from crm.crm_vw_target v
+      	  left join basis.basis_tb_materiel tm on tm.matnr = v.matter
+      	left join crm.crm_tb_mar_price p on p.mvgr1 = v.matter 
+      	and ((v.the_year =(p.year+1) and v.the_month < 7) or (v.the_year = p.year and v.the_month> 6)) 	
+        left join basis.basis_tb_org o on o.org_id = v.org_id
+       	left join exp.sap_tb_tvm1t m on m.mvgr1 = v.matter
+       group by v.the_year,v.the_month,v.org_id, o.org_name,tm.matnr01
+       having 1=1 
+       ]]>
+  		<dynamic>
+  			<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[ v.org_id in 
+				(select o.org_id
+                       from basis.basis_tb_org o
+                       where o.state = 'Y'
+                      start with o.org_id=#orgId#
+                       connect by nocycle prior o.org_id = o.org_parent_id)]]>
+			</isNotEmpty>
+  			<isNotEmpty property="startDate" prepend="and">
+				<![CDATA[  to_char(to_date(v.the_year||v.the_month,'yyyy-MM'),'yyyy-MM')>=#startDate#]]>
+			</isNotEmpty>
+			<isNotEmpty property="endDate" prepend="and">
+				<![CDATA[ to_char(to_date(v.the_year||v.the_month,'yyyy-MM'),'yyyy-MM')<=#endDate#]]>
+			</isNotEmpty>
+			<isNotEmpty property="brand" prepend="and">				
+				<![CDATA[ tm.matnr01 = #brand# ]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+ 	<select id="getGoalDKAll" parameterClass="goal" resultClass="goal">
+ 		<include refid="global.paginationStart" />
+ 		<![CDATA[
+		  select o.org_name   as orgName,
+			    t2.org_name as orgName1,
+           		t3.org_name  as orgName2,
+		 		v.org_id    as orgId,
+		 		v.the_year as theYear,
+		 		v.the_month as theMonth,
+		 		sum((nvl(v.leftbox,0)/p.mvg_ratio)*p.mvg_price)   as targetNum,
+		 		sum(v.leftbox)   as box,
+		 		'待开' as custNameZH,
+		 		 (case when sum(v.leftbox) is null or sum(v.leftbox)=0 
+     		    then '正常' else '异常'  end) as ztStatus,
+     		    tm.maktx01 as brand
+		 	from crm.crm_vw_target v
+		 	 left join basis.basis_tb_materiel tm on tm.matnr = v.matter
+      left join crm.crm_tb_mar_price p on ((v.the_year =(p.year+1) and v.the_month <7) or (v.the_year = p.year and v.the_month> 6)) and p.mvgr1 = v.matter
+		 	left join basis.basis_tb_org o on o.org_id = v.org_id
+		 	 left join basis.basis_tb_org  t2 on t2.org_id = o.org_parent_id
+             left join basis.basis_tb_org  t3 on t3.org_id = t2.org_parent_id
+		 	left join exp.sap_tb_tvm1t m on m.mvgr1 = v.matter
+		 	group by v.the_year,v.the_month,v.org_id, o.org_name,t2.org_name,t3.org_name,tm.maktx01
+		 	having 1=1 
+		 	]]>
+  		<dynamic>
+  			<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[ v.org_id in 
+				(select o.org_id
+                       from basis.basis_tb_org o
+                       where o.state = 'Y'
+                      start with o.org_id=#orgId#
+                       connect by nocycle prior o.org_id = o.org_parent_id)]]>
+			</isNotEmpty>
+  			<isNotEmpty property="startDate" prepend="and">
+				<![CDATA[  to_char(to_date(v.the_year||v.the_month,'yyyy-MM'),'yyyy-MM')>=#startDate#]]>
+			</isNotEmpty>
+			<isNotEmpty property="endDate" prepend="and">
+				<![CDATA[ to_char(to_date(v.the_year||v.the_month,'yyyy-MM'),'yyyy-MM')<=#endDate#]]>
+			</isNotEmpty>
+			<isNotEmpty property="brand" prepend="and">				
+				<![CDATA[ tm.matnr01 = #brand# ]]>
+			</isNotEmpty>
+		</dynamic>
+		<include refid="global.paginationEnd" />
+	</select>
+	
+	<select id="getGoalSumCount" parameterClass="goal" resultClass="java.lang.Integer">
+		<![CDATA[
+		select sum(count(distinct s.cust_id))   from crm.crm_vm_salesGoal  s 
+    	 left join crm.crm_tb_kunnr k on k.kunnr=s.cust_id 
+   		 left join basis.basis_tb_org  t on s.org_id = t.org_id 
+         left join basis.basis_tb_org  t2 on t2.org_id = t.org_parent_id
+         left join basis.basis_tb_org  t3 on t3.org_id = t2.org_parent_id
+         group by s.the_year,s.the_month,s.org_id, t.org_name,s.cust_id,k.name1,t2.org_name,t3.org_name
+   		having  1=1
+         ]]>
+         <dynamic>
+  			<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[ s.org_id in 
+				(select o.org_id
+                       from basis.basis_tb_org o
+                       where o.state = 'Y'
+                      start with o.org_id=#orgId#
+                       connect by nocycle prior o.org_id = o.org_parent_id)]]>
+			</isNotEmpty>
+			<isNotEmpty property="custId" prepend="and">				
+				<![CDATA[ s.cust_id= #custId# ]]>
+			</isNotEmpty>
+			
+  			<isNotEmpty property="startDate" prepend="and">
+				<![CDATA[  to_char(to_date(s.the_year||s.the_month,'yyyy-MM'),'yyyy-MM')>=#startDate#]]>
+			</isNotEmpty>
+			<isNotEmpty property="endDate" prepend="and">
+				<![CDATA[ to_char(to_date(s.the_year||s.the_month,'yyyy-MM'),'yyyy-MM')<=#endDate#]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	<select id="getGoalSum" parameterClass="goal" resultClass="goal">
+		<include refid="global.paginationStart" />
+		<![CDATA[
+		 select max(case s.kunnr_goal_type when 'B' then s.box else 0 end) as box,
+          max(case s.kunnr_goal_type when 'C' then s.box else 0 end) as contractBox,
+           max(case when s.kunnr_goal_type = 'B' then s.boxNum   else 0 end)  as targetNum,
+             max(case when s.kunnr_goal_type = 'C' then s.boxNum   else 0 end)  as contractNum,
+             s.the_year as theYear,
+             s.the_month as theMonth,
+             k.name1   as custNameZH ,
+              t.org_name  as orgName,
+              t2.org_name as orgName1,
+             t3.org_name  as orgName2,
+             s.cust_id as custId,
+             (case when k.status ='1'
+              then '正常客户' when k.status ='2' then '关户' else '关户中'  end) as status ,
+             case when  max(case s.kunnr_goal_type when 'B' then s.box else 0 end)-max(case s.kunnr_goal_type when 'C' then s.box else 0 end) <0.01 then  '正常'
+                 else '异常'  end as ztStatus
+   from crm.crm_vm_salesGoal  s 
+     left join crm.crm_tb_kunnr k on k.kunnr=s.cust_id 
+    left join basis.basis_tb_org  t on s.org_id = t.org_id 
+           left join basis.basis_tb_org  t2 on t2.org_id = t.org_parent_id
+             left join basis.basis_tb_org  t3 on t3.org_id = t2.org_parent_id
+             group by s.the_year,s.the_month,s.org_id, t.org_name,s.cust_id,k.name1,t2.org_name,t3.org_name,k.status
+   having  1=1
+         ]]>
+         <dynamic>
+  			<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[ s.org_id in 
+				(select o.org_id
+                       from basis.basis_tb_org o
+                       where o.state = 'Y'
+                      start with o.org_id=#orgId#
+                       connect by nocycle prior o.org_id = o.org_parent_id)]]>
+			</isNotEmpty>
+			
+			<isNotEmpty property="custId" prepend="and">				
+				<![CDATA[ s.cust_id= #custId# ]]>
+			</isNotEmpty>
+  			<isNotEmpty property="startDate" prepend="and">
+				<![CDATA[  to_char(to_date(s.the_year||s.the_month,'yyyy-MM'),'yyyy-MM')>=#startDate#]]>
+			</isNotEmpty>
+			<isNotEmpty property="endDate" prepend="and">
+				<![CDATA[ to_char(to_date(s.the_year||s.the_month,'yyyy-MM'),'yyyy-MM')<=#endDate#]]>
+			</isNotEmpty>
+		</dynamic>
+		<include refid="global.paginationEnd" />
+	</select>
+	<select id="getGoalDKCount" parameterClass="goal" resultClass="java.lang.Integer">
+		<![CDATA[
+		 select count(*)
+          from crm.crm_vw_target v
+           left join basis.basis_tb_materiel tm on tm.matnr = v.matter
+          left join crm.crm_tb_mar_price p on p.mvgr1 = v.matter and ((v.the_year =(p.year+1) and v.the_month <7) or (v.the_year = p.year and v.the_month> 6)) 
+          left join basis.basis_tb_org o on o.org_id = v.org_id
+          left join exp.sap_tb_tvm1t m on m.mvgr1 = v.matter
+        where 1=1 
+  			]]>
+  		<dynamic>
+  			<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[ v.org_id in 
+				(select o.org_id
+                       from basis.basis_tb_org o
+                       where o.state = 'Y' 
+                      start with o.org_id=#orgId#
+                       connect by nocycle prior o.org_id = o.org_parent_id)]]>
+			</isNotEmpty>
+  			<isNotEmpty property="startDate" prepend="and">
+				<![CDATA[  to_char(to_date(v.the_year||v.the_month,'yyyy-MM'),'yyyy-MM')>=#startDate#]]>
+			</isNotEmpty>
+			<isNotEmpty property="endDate" prepend="and">
+				<![CDATA[ to_char(to_date(v.the_year||v.the_month,'yyyy-MM'),'yyyy-MM')<=#endDate#]]>
+			</isNotEmpty>
+			<isNotEmpty property="matter" prepend="and">
+				<![CDATA[v.matter=#matter# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="brand" prepend="and">				
+				<![CDATA[ tm.matnr01 = #brand# ]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	<select id="getGoalDK" parameterClass="goal" resultClass="goal">
+		<include refid="global.paginationStart" />
+		<![CDATA[
+		 select distinct v.org_id    as orgId,
+                 v.the_year  as theYear,
+                 v.the_month as theMonth,
+                 v.matter    as matter,
+                  nvl((v.leftbox/p.mvg_ratio)*p.mvg_price, 0)   as targetNum,
+                  nvl(v.leftbox, 0)   as box,
+                  nvl(v.leftbox, 0)   as box1,
+                 o.org_name   as orgName,
+                 t2.org_name as orgName1,
+                   t3.org_name  as orgName2,
+                 m.bezei      as bezei,
+                 '待开'    as custNameZH,
+                  (case when v.leftbox is null or v.leftnum=0 
+             then '正常' else '异常'  end) as ztStatus,
+             tm.maktx01 as brand
+          from crm.crm_vw_target v
+           left join basis.basis_tb_materiel tm on tm.matnr = v.matter
+          left join crm.crm_tb_mar_price p on p.mvgr1 = v.matter and ((v.the_year =(p.year+1) and v.the_month <7) or (v.the_year = p.year and v.the_month> 6) ) 
+          left join basis.basis_tb_org o on o.org_id = v.org_id
+           left join basis.basis_tb_org  t2 on t2.org_id = o.org_parent_id
+             left join basis.basis_tb_org  t3 on t3.org_id = t2.org_parent_id
+          left join exp.sap_tb_tvm1t m on m.mvgr1 = v.matter
+        where 1=1  
+  			]]>
+  		<dynamic>
+  			<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[ v.org_id in 
+				(select o.org_id
+                       from basis.basis_tb_org o
+                       where o.state = 'Y' 
+                      start with o.org_id=#orgId#
+                       connect by nocycle prior o.org_id = o.org_parent_id)]]>
+			</isNotEmpty>
+  			<isNotEmpty property="startDate" prepend="and">
+				<![CDATA[  to_char(to_date(v.the_year||v.the_month,'yyyy-MM'),'yyyy-MM')>=#startDate#]]>
+			</isNotEmpty>
+			<isNotEmpty property="brand" prepend="and">				
+				<![CDATA[ tm.matnr01 = #brand# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="endDate" prepend="and">
+				<![CDATA[ to_char(to_date(v.the_year||v.the_month,'yyyy-MM'),'yyyy-MM')<=#endDate#]]>
+			</isNotEmpty>
+			<isNotEmpty property="matter" prepend="and">
+				<![CDATA[v.matter=#matter# ]]>
+			</isNotEmpty>
+		</dynamic>
+		<include refid="global.paginationEnd" />
+	</select>
+	
+	<select id="getGoalMessege" parameterClass="goal" resultClass="goal">
+	<![CDATA[
+	   select distinct v.org_id    as orgId,
+       v.the_year  as theYear,
+       v.the_month as theMonth,
+       v.matter    as matter,
+       v.leftnum   as targetNum,
+       v.leftbox   as box,
+       o.org_name   as orgName,
+       v.matter    as matter,
+       m.bezei      as bezei
+  from crm.crm_vw_target v
+  left join basis.basis_tb_org o on o.org_id = v.org_id
+  left join exp.sap_tb_tvm1t m on m.mvgr1 = v.matter
+  where 1=1
+	]]>
+		<dynamic>
+			<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[  v.org_id=#orgId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="theYear" prepend="and">
+			<![CDATA[  v.the_year=#theYear# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="theMonth" prepend="and">
+			<![CDATA[v.the_month=#theMonth# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="matter" prepend="and">
+			<![CDATA[v.matter=#matter# ]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<select id="getGoalMessegeByALL" parameterClass="goal"
+		resultClass="goal">
+	<![CDATA[
+	  select distinct a.org_id     as orgId,
+                a.cust_id    as custId,
+                a.the_year   as theYear,
+                a.the_month  as theMonth,
+                a.box        as box,
+                nvl(a.target_num, 0) as targetNum,
+                a.mark       as mark,
+                o.org_name   as orgName,
+                a.matter    as matter,
+                m.bezei      as bezei
+  from crm.crm_tb_target a
+  left join basis.basis_tb_org o on o.org_id = a.org_id
+  left join exp.sap_tb_tvm1t m on m.mvgr1 = a.matter
+ where a.ct_state = '0'
+   and a.kunnr_goal_type = 'B'
+	]]>
+		<dynamic>
+			<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[  a.org_id=#orgId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="theYear" prepend="and">
+			<![CDATA[  a.the_year=#theYear# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="theMonth" prepend="and">
+			<![CDATA[a.the_month=#theMonth# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="matter" prepend="and">
+			<![CDATA[a.matter=#matter# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="startDate" prepend="and">
+			<![CDATA[to_char(to_date(a.the_year||a.the_month,'yyyy-MM'),'yyyy-MM')>=#startDate#]]>
+			</isNotEmpty>
+			<isNotEmpty property="endDate" prepend="and">
+			<![CDATA[to_char(to_date(a.the_year||a.the_month,'yyyy-MM'),'yyyy-MM')<=#endDate#]]>
+			</isNotEmpty>
+		<!-- 	<isNotEmpty property="theStartMonth" prepend="and">
+			<![CDATA[a.the_month>=#theStartMonth# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="theEndMonth" prepend="and">
+			<![CDATA[a.the_month<=#theEndMonth# ]]>
+			</isNotEmpty> -->
+			<isNotEmpty property="codes" prepend="and">
+				a.ct_id in
+				<iterate property="codes" open="(" close=")" conjunction=",">#codes[]#
+				</iterate>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<select id="getKunnrGoalCount" parameterClass="goal"
+		resultClass="java.lang.Integer">
+	<![CDATA[
+	   select count(*)
+         from crm.crm_vw_target v where  v.leftnum<0 
+	]]>
+		<dynamic>
+			<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[  v.org_id=#orgId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="theYear" prepend="and">
+			<![CDATA[  v.the_year=#theYear# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="theMonth" prepend="and">
+			<![CDATA[v.the_month=#theMonth# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="matter" prepend="and">
+			<![CDATA[v.matter=#matter# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="startDate" prepend="and">
+			<![CDATA[to_char(to_date(v.the_year||v.the_month,'yyyy-MM'),'yyyy-MM')>=#startDate#]]>
+			</isNotEmpty>
+			<isNotEmpty property="endDate" prepend="and">
+			<![CDATA[to_char(to_date(v.the_year||v.the_month,'yyyy-MM'),'yyyy-MM')<=#endDate#]]>
+			</isNotEmpty>
+			<!-- <isNotEmpty property="theStartMonth" prepend="and">
+			<![CDATA[v.the_month>=#theStartMonth# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="theEndMonth" prepend="and">
+			<![CDATA[v.the_month<=#theEndMonth# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="theStartYear" prepend="and">
+			<![CDATA[v.the_year>=#theStartYear# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="theEndYear" prepend="and">
+			<![CDATA[v.the_year<=#theEndYear# ]]>
+			</isNotEmpty> -->
+		</dynamic>
+	</select>
+	<select id="getKunnrGoalAll" parameterClass="goal" resultClass="goal">
+	<![CDATA[
+	   select distinct v.org_id    as orgId,
+       v.the_year  as theYear,
+       v.the_month as theMonth,
+       v.matter    as matter,
+       v.leftnum   as targetNum,
+       v.leftbox   as box,
+       o.org_name   as orgName,
+       v.matter    as matter,
+       m.bezei      as bezei
+  from crm.crm_vw_target v
+  left join basis.basis_tb_org o on o.org_id = v.org_id
+  left join exp.sap_tb_tvm1t m on m.mvgr1 = v.matter
+  where v.leftnum<0 
+	]]>
+		<dynamic>
+			<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[  v.org_id=#orgId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="theYear" prepend="and">
+			<![CDATA[  v.the_year=#theYear# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="theMonth" prepend="and">
+			<![CDATA[v.the_month=#theMonth# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="matter" prepend="and">
+			<![CDATA[v.matter=#matter# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="startDate" prepend="and">
+			<![CDATA[to_char(to_date(v.the_year||v.the_month,'yyyy-MM'),'yyyy-MM')>=#startDate#]]>
+			</isNotEmpty>
+			<isNotEmpty property="endDate" prepend="and">
+			<![CDATA[to_char(to_date(v.the_year||v.the_month,'yyyy-MM'),'yyyy-MM')<=#endDate#]]>
+			</isNotEmpty>
+			<!-- <isNotEmpty property="theStartMonth" prepend="and">
+			<![CDATA[v.the_month>=#theStartMonth# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="theEndMonth" prepend="and">
+			<![CDATA[v.the_month<=#theEndMonth# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="theStartYear" prepend="and">
+			<![CDATA[v.the_year>=#theStartYear# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="theEndYear" prepend="and">
+			<![CDATA[v.the_year<=#theEndYear# ]]>
+			</isNotEmpty> -->
+		</dynamic>
+		<![CDATA[order by v.org_id,v.the_year,v.matter]]>
+	</select>
+	
+	<!-- 最初取sap的价格
+     <select id="getMaterielListViewCount" parameterClass="mat"
+		resultClass="java.lang.Integer">
+	   <![CDATA[
+		    select count( distinct s.mvgr1) from basis.basis_tb_materiel s 
+		    left join crm.crm_tb_a603_konp k on k.kondm = s.mvgr1
+           where s.mvgr1 is not null
+             and s.bezei is not null
+		]]>
+		<dynamic>
+			<isNotEmpty property="mvgr1" prepend="and">
+			<![CDATA[ s.mvgr1 like #mvgr1,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="bezei" prepend="and">
+			<![CDATA[ s.bezei like  #bezei,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="search" prepend="and">
+			<![CDATA[( s.bezei like  #search,handler=wildcard# escape '\' or  s.mvgr1 like #search,handler=wildcard# escape '\' ) ]]>
+			</isNotEmpty>
+			<isEmpty property="createDate" prepend="and">
+			<![CDATA[ to_char(k.datab, 'yyyy-MM-dd') <= to_char(sysdate, 'yyyy-MM-dd')
+                  and to_char(k.datbi, 'yyyy-MM-dd') >= to_char(sysdate, 'yyyy-MM-dd')]]>
+			</isEmpty>
+			<isNotEmpty property="createDate" prepend="and">
+			<![CDATA[ to_char(k.datab, 'yyyy-MM-dd') <= #createDate#
+                  and to_char(k.datbi, 'yyyy-MM-dd') >= #createDate#]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	<select id="getMaterielViewList" parameterClass="mat" resultClass="mat">
+		<include refid="global.paginationStart" />
+	<![CDATA[
+	     select distinct s.mvgr1,
+                s.bezei as bezei,
+                nvl(k.kbetr, 0) as kbetr,
+                k.vkorg as vkorg
+            from basis.basis_tb_materiel s
+              left join crm.crm_tb_a603_konp k on k.kondm = s.mvgr1
+              where s.mvgr1 is not null
+              and s.bezei is not null
+	]]>
+		<dynamic>
+			<isNotEmpty property="mvgr1" prepend="and">
+			<![CDATA[ s.mvgr1 like #mvgr1,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="bezei" prepend="and">
+			<![CDATA[ s.bezei like  #bezei,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="search" prepend="and">
+			<![CDATA[( s.bezei like  #search,handler=wildcard# escape '\' or  s.mvgr1 like #search,handler=wildcard# escape '\' ) ]]>
+			</isNotEmpty>
+			<isEmpty property="createDate" prepend="and">
+			<![CDATA[ to_char(k.datab, 'yyyy-MM-dd') <= to_char(sysdate, 'yyyy-MM-dd')
+                  and to_char(k.datbi, 'yyyy-MM-dd') >= to_char(sysdate, 'yyyy-MM-dd')]]>
+			</isEmpty>
+			<isNotEmpty property="createDate" prepend="and">
+			<![CDATA[ to_char(k.datab, 'yyyy-MM-dd') <= #createDate#
+                  and to_char(k.datbi, 'yyyy-MM-dd') >= #createDate#]]>
+			</isNotEmpty>
+		</dynamic>
+		<include refid="global.paginationEnd" />
+	</select> -->
+	<!-- 取预算年初定价 -->
+     <select id="getMaterielListViewCount" parameterClass="mat"
+		resultClass="java.lang.Integer">
+	   <![CDATA[
+		    select count( distinct s.mvgr1) from crm.crm_tb_goal_price k
+              ,exp.sap_tb_tvm1t s 
+              where s.mvgr1 =k.matter
+              and s.bezei is not null
+		]]>
+		<dynamic>
+			<isNotEmpty property="mvgr1" prepend="and">
+			<![CDATA[ s.mvgr1 like #mvgr1,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="bezei" prepend="and">
+			<![CDATA[ s.bezei like  #bezei,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="search" prepend="and">
+			<![CDATA[( s.bezei like  #search,handler=wildcard# escape '\' or  s.mvgr1 like #search,handler=wildcard# escape '\' ) ]]>
+			</isNotEmpty>
+			<isEmpty property="createDate" prepend="and">
+			<![CDATA[ k.start_date<=to_date(to_char(sysdate, 'yyyy-MM-dd'),'yyyy-MM-dd')
+              and k.end_date>=to_date(to_char(sysdate, 'yyyy-MM-dd'),'yyyy-MM-dd')
+		    ]]>
+			</isEmpty>
+			<isNotEmpty property="createDate" prepend="and">
+			<![CDATA[ k.start_date<=to_date(#createDate#,'yyyy-MM-dd')
+              and k.end_date>=to_date(#createDate#,'yyyy-MM-dd')
+			 ]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	<select id="getMaterielViewList" parameterClass="mat" resultClass="mat">
+		<include refid="global.paginationStart" />
+	<![CDATA[
+	      select distinct s.mvgr1,
+                s.bezei as bezei,
+                nvl(k.price, 0) as kbetr
+            from crm.crm_tb_goal_price k
+              ,exp.sap_tb_tvm1t s 
+              where s.mvgr1 =k.matter
+              and s.bezei is not null
+	]]>
+		<dynamic>
+			<isNotEmpty property="mvgr1" prepend="and">
+			<![CDATA[ s.mvgr1 like #mvgr1,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="bezei" prepend="and">
+			<![CDATA[ s.bezei like  #bezei,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="search" prepend="and">
+			<![CDATA[( s.bezei like  #search,handler=wildcard# escape '\' or  s.mvgr1 like #search,handler=wildcard# escape '\' ) ]]>
+			</isNotEmpty>
+			<isEmpty property="createDate" prepend="and">
+			<![CDATA[ k.start_date<=to_date(to_char(sysdate, 'yyyy-MM-dd'),'yyyy-MM-dd')
+              and k.end_date>=to_date(to_char(sysdate, 'yyyy-MM-dd'),'yyyy-MM-dd')
+		    ]]>
+			</isEmpty>
+			<isNotEmpty property="createDate" prepend="and">
+			<![CDATA[ k.start_date<=to_date(#createDate#,'yyyy-MM-dd')
+              and k.end_date>=to_date(#createDate#,'yyyy-MM-dd')
+			 ]]>
+			</isNotEmpty>
+		</dynamic>
+		<include refid="global.paginationEnd" />
+	</select>
+
+<select id="getGoalCountNum" parameterClass="goal" resultClass="java.lang.Double">
+	   <![CDATA[
+		    select sum(s.box) as countGoal
+            from crm.CRM_TB_TARGET s
+            left join basis.basis_tb_materiel mm on mm.matnr=s.matter
+            where s.ct_state=0
+		]]>
+		<dynamic>
+			<isNotEmpty property="theYear" prepend="and">
+				<isNotEqual property="theYear" compareValue="0">
+				<![CDATA[ s.the_year = #theYear# ]]>
+				</isNotEqual>
+			</isNotEmpty>
+			<isNotEmpty property="theMonth" prepend="and">
+				<isNotEqual property="theMonth" compareValue="0">
+					<![CDATA[ s.the_month = #theMonth# ]]>
+				</isNotEqual>
+			</isNotEmpty>
+			<isNotEmpty property="startDate" prepend="and">
+				<![CDATA[  to_char(to_date(s.the_year||s.the_month,'yyyy-MM'),'yyyy-MM')>=#startDate#]]>
+			</isNotEmpty>
+			<isNotEmpty property="endDate" prepend="and">
+					<![CDATA[ to_char(to_date(s.the_year||s.the_month,'yyyy-MM'),'yyyy-MM')<=#endDate#]]>
+			</isNotEmpty>
+			<isNotEmpty property="matter" prepend="and">				
+				<![CDATA[ s.matter = #matter# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="custId" prepend="and">				
+				<![CDATA[ s.cust_id= #custId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="mark" prepend="and">				
+				<![CDATA[ s.mark= #mark# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="trFlag" prepend="and">				
+				<![CDATA[ s.tr_flag= #trFlag# ]]>
+			</isNotEmpty>
+			<isEqual property="kunnrGoalType" compareValue="B" prepend="and">        
+         <![CDATA[ (s.kunnr_goal_type='B' or  s.kunnr_goal_type is null)]]>
+			</isEqual>
+			<isEqual property="kunnrGoalType" compareValue="C" prepend="and">				
+				<![CDATA[ s.kunnr_goal_type='C' ]]>
+			</isEqual>
+			<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[ s.org_id in (select o.org_id
+                       from basis.basis_tb_org o
+                       where o.state = 'Y'
+                      start with o.org_id=#orgId#
+                       connect by nocycle prior o.org_id = o.org_parent_id)]]>
+			</isNotEmpty>
+			<isNotEmpty property="orgIds" prepend="and">
+			<![CDATA[ s.org_id in ]]>
+				<iterate property="orgIds" open="(" close=")" conjunction=",">#orgIds[]#
+				</iterate>
+			</isNotEmpty>
+			<isNotEmpty property="brand" prepend="and">				
+				<![CDATA[ mm.matnr01= #brand# ]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	
+	<select id="getGoalMessegeOnYearAndMatter" parameterClass="goal" resultClass="goal">
+	<![CDATA[
+	  select distinct ss.orgId,
+                ss.matter,
+                ss.box,
+                ss.targetNum,
+                o.org_name as orgName,
+                m.bezei as bezei
+  from (select t.org_id as orgId,
+               t.matter,
+               sum(case
+                     when t.cust_id is not null then
+                      nvl(-t.target_num, 0)
+                     when t.cust_id is null then
+                      nvl(t.target_num, 0)
+                   end) as targetNum,
+               sum(case
+                     when t.cust_id is not null then
+                      nvl(-t.box, 0)
+                     when t.cust_id is null then
+                      nvl(t.box, 0)
+                   end) as box
+          from crm.crm_tb_target t
+          where 1=1
+	]]>
+		<dynamic>
+			<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[  t.org_id=#orgId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="startDate" prepend="and">
+				<![CDATA[  to_char(to_date(t.the_year||t.the_month,'yyyy-MM'),'yyyy-MM')>=#startDate#]]>
+			</isNotEmpty>
+			<isNotEmpty property="endDate" prepend="and">
+					<![CDATA[ to_char(to_date(t.the_year||t.the_month,'yyyy-MM'),'yyyy-MM')<=#endDate#]]>
+			</isNotEmpty>
+			<isNotEmpty property="matter" prepend="and">
+			<![CDATA[ t.matter=#matter# ]]>
+			</isNotEmpty>
+		</dynamic>
+		<![CDATA[ group by t.org_id, t.matter) ss
+             left join basis.basis_tb_org o on o.org_id = ss.orgId
+                                and o.state = 'Y'
+             left join exp.sap_tb_tvm1t m on m.mvgr1 = ss.matter
+         ]]>
+	</select>
+	
+	
+    <delete id="deleteKunnrGoalAppply" parameterClass="goal">
+		<![CDATA[delete  crm.crm_tb_target t where t.ct_id in]]>
+		<iterate property="codes" open="(" close=")" conjunction=",">#codes[]#
+		</iterate>
+	</delete> 
+	
+	<!-- basis.basis_tb_materiel -->
+	<select id="searchMatterPriceCount" parameterClass="priceObj" resultClass="java.lang.Integer">
+		<![CDATA[
+		select count(distinct p.id)
+  from crm.crm_tb_goal_price p
+  left join exp.sap_tb_tvm1t m on p.matter = m.mvgr1
+  where 1=1
+		]]>
+		<dynamic>
+			<isNotEmpty property="matter" prepend="and">
+			<![CDATA[ p.matter=#matter#]]>
+			</isNotEmpty>
+			<isNotEmpty property="bezei" prepend="and">
+			<![CDATA[m.bezei like #bezei,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="remark" prepend="and">
+			<![CDATA[ p.remark like #remark,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="matPriceId" prepend="and">
+			<![CDATA[p.id=#matPriceId#]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	
+	<select id="searchMatterPriceList" parameterClass="priceObj" resultClass="priceObj">
+		<include refid="global.paginationStart" />
+		<![CDATA[
+		select distinct p.id as matPriceId,
+                p.matter,
+                m.bezei,
+                p.price,
+                to_char(p.start_date, 'yyyy-MM-dd') as startDate,
+                to_char(p.end_date, 'yyyy-MM-dd') as endDate,
+                p.remark
+  from crm.crm_tb_goal_price p
+  left join exp.sap_tb_tvm1t m on p.matter = m.mvgr1
+  where 1=1
+		]]>
+		<dynamic>
+			<isNotEmpty property="matter" prepend="and">
+			<![CDATA[ p.matter=#matter#]]>
+			</isNotEmpty>
+			<isNotEmpty property="bezei" prepend="and">
+			<![CDATA[m.bezei like #bezei,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="remark" prepend="and">
+			<![CDATA[ p.remark like #remark,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="matPriceId" prepend="and">
+			<![CDATA[p.id=#matPriceId#]]>
+			</isNotEmpty>
+		</dynamic>
+		<include refid="global.orderBy" />
+		<include refid="global.paginationEnd" />
+	</select>
+	
+	<select id="getMatterPriceObject" parameterClass="priceObj" resultClass="priceObj">
+		<![CDATA[
+		select distinct p.id as matPriceId,
+                p.matter,
+                m.bezei,
+                p.price,
+                to_char(p.start_date, 'yyyy-MM-dd') as startDate,
+                to_char(p.end_date, 'yyyy-MM-dd') as endDate,
+                p.remark
+  from crm.crm_tb_goal_price p
+  left join exp.sap_tb_tvm1t m on p.matter = m.mvgr1
+  where 1=1
+		]]>
+		<dynamic>
+			<isNotEmpty property="matter" prepend="and">
+			<![CDATA[ p.matter=#matter#]]>
+			</isNotEmpty>
+			<isNotEmpty property="bezei" prepend="and">
+			<![CDATA[m.bezei like #bezei,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="remark" prepend="and">
+			<![CDATA[ p.remark like #remark,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="matPriceId" prepend="and">
+			<![CDATA[p.id=#matPriceId#]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	<insert id="createGoalPrice" parameterClass="priceObj">
+		<selectKey resultClass="java.lang.String" keyProperty="matPriceId">
+			<![CDATA[
+		select crm.crm_sq_goal_price_id.NEXTVAL as matPriceId from dual
+			]]>
+		</selectKey>
+		<![CDATA[
+			insert into crm.crm_tb_goal_price (
+			   id,
+			   matter,
+			   price,
+			   create_date,
+			   modify_date,
+			   start_date,
+			   end_date,
+			   remark
+				)
+			values (
+				#matPriceId#,
+				#matter#,
+				#price#,
+				sysdate,
+				sysdate,
+				to_date(#startDate#,'yyyy-MM-dd'),
+				to_date(#endDate#,'yyyy-MM-dd'),
+				#remark#
+				)
+		]]>
+	</insert>
+
+
+	<update id="updateGoalPrice" parameterClass="priceObj">
+	<![CDATA[
+		update crm.crm_tb_goal_price g 
+			set 
+			g.modify_date=sysdate 
+			]]>
+		<dynamic>
+			<isNotEmpty property="matter" prepend=",">
+	<![CDATA[ g.matter = #matter# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="price" prepend=",">
+	<![CDATA[ g.price = #price# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="startDate" prepend=",">
+	<![CDATA[ g.start_date= to_date(#startDate#,'yyyy-MM-dd') ]]>
+			</isNotEmpty>
+			<isNotEmpty property="endDate" prepend=",">
+	<![CDATA[ g.end_date= to_date(#endDate#,'yyyy-MM-dd') ]]>
+			</isNotEmpty>
+			<isNotEmpty property="remark" prepend=",">
+	<![CDATA[ g.remark= #remark# ]]>
+			</isNotEmpty>
+		</dynamic>
+	<![CDATA[
+		where g.id =#matPriceId# 
+	]]>
+	</update>
+	
+	
+	<!-- 预算物料定价(BO报表) -->
+	<select id="searchMatterPriceBoCount" parameterClass="priceBO" resultClass="java.lang.Integer">
+		<![CDATA[
+		select count(1)
+		  from crm.crm_tb_mar_price p
+		  where 1=1
+		]]>
+		<dynamic>
+			<isNotEmpty property="year" prepend="and">
+			<![CDATA[ p.year=#year#]]>
+			</isNotEmpty>
+			<isNotEmpty property="mvgr1" prepend="and">
+			<![CDATA[ p.mvgr1=#mvgr1#]]>
+			</isNotEmpty>
+			<isNotEmpty property="mvgTxt" prepend="and">
+			<![CDATA[p.mvg_txt like #mvgTxt,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="cupType" prepend="and">
+			<![CDATA[ p.cup_type like #cupType,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	
+	<select id="searchMatterPriceBoList" parameterClass="priceBO" resultClass="priceBO">
+		<include refid="global.paginationStart" />
+		<![CDATA[
+		select 	p.year year,
+                p.mvgr1 mvgr1,
+                p.mvg_txt mvgTxt,
+                p.mvg_price mvgPrice,
+                p.sales_price salesPrice,
+                p.mvg_ratio mvgRatio,
+                p.cup_id cupId,
+                p.cup_type cupType,
+                p.sku sku,
+                p.sku_text skuText
+		  from crm.crm_tb_mar_price p
+		  where 1=1
+		]]>
+		<dynamic>
+			<isNotEmpty property="year" prepend="and">
+			<![CDATA[ p.year=#year#]]>
+			</isNotEmpty>
+			<isNotEmpty property="mvgr1" prepend="and">
+			<![CDATA[ p.mvgr1=#mvgr1#]]>
+			</isNotEmpty>
+			<isNotEmpty property="mvgTxt" prepend="and">
+			<![CDATA[p.mvg_txt like #mvgTxt,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="cupType" prepend="and">
+			<![CDATA[ p.cup_type like #cupType,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+		</dynamic>
+		<include refid="global.orderBy" />
+		<include refid="global.paginationEnd" />
+	</select>
+	
+	
+	<insert id="insertMarPrice" parameterClass="priceBO"> 
+	<![CDATA[
+	merge into crm.crm_tb_mar_price t1  
+	using (select #year# year,#mvgr1# MVGR1,#mvgTxt# MVG_TXT,#mvgPrice# MVG_PRICE,
+	              #salesPrice# SALES_PRICE,#mvgRatio# MVG_RATIO,#cupId# CUP_ID,#cupType# CUP_TYPE,
+	              #sku# sku,#skuText# sku_text  from dual) t2  
+	on (t1.year = t2.year and t1.mvgr1=t2.mvgr1)  
+	when matched then  
+	     update set t1.mvg_txt=t2.mvg_txt,t1.MVG_PRICE = t2.MVG_PRICE,t1.SALES_PRICE = t2.SALES_PRICE,
+	                t1.mvg_ratio=t2.mvg_ratio,t1.cup_id=t2.cup_id,t1.cup_type=t2.cup_type,t1.sku=t2.sku,t1.sku_text = t2.sku_text
+	when not matched then  
+	     insert values (800,t2.YEAR,t2.mvgr1, t2.MVG_TXT,t2.mvg_price,t2.mvg_ratio,t2.cup_type,t2.sales_price,t2.cup_id,t2.sku,t2.sku_text) 
+	]]>
+	</insert>
+	
+	<select id="searchKunnrList" parameterClass="kunnr" resultClass="kunnr">
+	<![CDATA[
+		select t.kunnr,
+		t.name1,
+		t.status,
+        t.org_id as orgId,
+        o.org_name as orgName
+		from crm.crm_tb_kunnr t
+		left join basis.basis_tb_org o on o.org_id=t.org_id
+		where t.status='1'
+		]]>
+		<dynamic>
+			<isNotEmpty property="kunnr" prepend="and">
+			<![CDATA[t.kunnr=#kunnr#]]>
+			</isNotEmpty>
+			<isNotEmpty property="name1" prepend="and">
+			<![CDATA[t.name1 like #name1,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="orgName" prepend="and">
+			<![CDATA[o.org_name like #orgName,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="status" prepend="and">
+			<![CDATA[t.status =#status#]]>
+			</isNotEmpty>
+			 <isNotEmpty property="orgId" prepend="and">
+			<![CDATA[exists (select o.org_id
+                     from basis.basis_tb_org o
+                          where o.state = 'Y' and t.org_id=o.org_id
+                          start with o.org_id = #orgId#
+                          connect by nocycle prior o.org_id = o.org_parent_id
+			         )]]>
+			</isNotEmpty>
+			<isNotEmpty property="kunnrs" prepend="and">
+			<![CDATA[ t.kunnr in]]>
+			    <iterate property="kunnrs" open="(" close=")" conjunction=",">#kunnrs[]#
+				</iterate>
+		    </isNotEmpty>
+		</dynamic>
+	</select>
+	
+	<select id="getSkuCount" parameterClass="goalSalesDetail" resultClass="java.lang.Integer">
+	<![CDATA[
+		    select count(*) from crm.crm_tb_sku s 
+		    where s.product_type = '1' and s.sku_company='1' and s.status='U'
+	]]>
+		<dynamic>
+			<isNotEmpty property="skuName" prepend="and">
+			<![CDATA[ s.sku_name like #skuName,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="skuId" prepend="and">
+			<![CDATA[ s.sku_id = #skuId# ]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	
+	<insert id="createGoalDistributionChange" parameterClass="goalSales">
+		<selectKey resultClass="java.lang.Long" keyProperty="changeId">
+			<![CDATA[
+		select crm.crm_seq_goalsales_change.NEXTVAL as changeId from dual
+			]]>
+		</selectKey>
+		<![CDATA[
+			insert into crm.CRM_TB_GOALFX_CHANGE (
+			   change_id,
+			   title,
+			   user_id,
+			   create_date,
+			   event_id,
+			   event_state
+				)
+			values (
+			   #changeId#,
+			   #title#,
+			   #userId#,
+			   sysdate,
+			   #eventId#,
+			   #eventState#
+				)
+		]]>
+	</insert>
+	
+	<insert id="createGoalSalesChange" parameterClass="goalSales">
+		<selectKey resultClass="java.lang.Long" keyProperty="changeId">
+			<![CDATA[
+		select crm.crm_seq_goalsales_change.NEXTVAL as changeId from dual
+			]]>
+		</selectKey>
+		<![CDATA[
+			insert into crm.crm_tb_goalsales_change (
+			   change_id,
+			   title,
+			   user_id,
+			   create_date,
+			   event_id,
+			   event_state
+				)
+			values (
+			   #changeId#,
+			   #title#,
+			   #userId#,
+			   sysdate,
+			   #eventId#,
+			   #eventState#
+				)
+		]]>
+	</insert>
+	
+	<insert id="createGoalFXChangeDetail" parameterClass="goalSalesDetail">
+		<selectKey resultClass="java.lang.Long" keyProperty="detailId">
+			<![CDATA[
+		select crm.crm_seq_goalsales_change_dtl.NEXTVAL as detailId from dual
+			]]>
+		</selectKey>
+		<![CDATA[
+			insert into crm.CRM_TB_GOALFX_CHANGE_DTL (
+			   detail_id,
+			   change_id,
+			   org_id,
+			   kunnr,
+			   matter,
+			   year,
+			   month,
+			   detail_id_to,
+			   quantity
+				)
+			values (
+			   #detailId#,
+			   #changeId#,
+			   #orgId#,
+			   #kunnr#,
+			   #matter#,
+			   #year#,
+			   #month#,
+			   #detailIdTo#,
+			   #quantity#
+				)
+		]]>
+	</insert>
+	<insert id="createGoalSalesChangeDetail" parameterClass="goalSalesDetail">
+		<selectKey resultClass="java.lang.Long" keyProperty="detailId">
+			<![CDATA[
+		select crm.crm_seq_goalsales_change_dtl.NEXTVAL as detailId from dual
+			]]>
+		</selectKey>
+		<![CDATA[
+			insert into crm.crm_tb_goalsales_change_dtl (
+			   detail_id,
+			   change_id,
+			   org_id,
+			   kunnr,
+			   matter,
+			   year,
+			   month,
+			   detail_id_to,
+			   quantity
+				)
+			values (
+			   #detailId#,
+			   #changeId#,
+			   #orgId#,
+			   #kunnr#,
+			   #matter#,
+			   #year#,
+			   #month#,
+			   #detailIdTo#,
+			   #quantity#
+				)
+		]]>
+	</insert>
+	
+	<select id="searchGoalFXChangeListCount" parameterClass="goalSales" resultClass="java.lang.Integer">
+	<![CDATA[
+		    select count(*)
+			       from crm.crm_tb_goalfx_change c
+			       left join basis.basis_tb_salesemp_info i on i.emp_id=c.user_id
+		    where 1=1
+	]]>
+		<dynamic>
+			<isNotEmpty property="changeId" prepend="and">
+			<![CDATA[ c.change_id = #changeId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="title" prepend="and">
+			<![CDATA[ c.title = #title# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="eventId" prepend="and">
+			<![CDATA[ c.event_id = #eventId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="eventState" prepend="and">
+			<![CDATA[ c.event_state = #eventState# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="createDate" prepend="and">
+			<![CDATA[ to_char(c.create_date,'yyyy-MM') = #createDate# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="userName" prepend="and">
+			<![CDATA[ i.emp_name like #userName,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="startDate" prepend="and">
+			<![CDATA[ c.create_date >= to_date(#startDate#,'yyyy-MM') ]]>
+			</isNotEmpty>
+			<isNotEmpty property="endDate" prepend="and">
+			<![CDATA[ c.create_date <= add_months(to_date(#endDate#,'yyyy-MM'),1) ]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	
+	<select id="searchGoalSalesChangeListCount" parameterClass="goalSales" resultClass="java.lang.Integer">
+	<![CDATA[
+		    select count(*)
+			       from crm.crm_tb_goalsales_change c
+			       left join basis.basis_tb_salesemp_info i on i.emp_id=c.user_id
+		    where 1=1
+	]]>
+		<dynamic>
+			<isNotEmpty property="changeId" prepend="and">
+			<![CDATA[ c.change_id = #changeId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="eventId" prepend="and">
+			<![CDATA[ c.event_id = #eventId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="eventState" prepend="and">
+			<![CDATA[ c.event_state = #eventState# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="createDate" prepend="and">
+			<![CDATA[ to_char(c.create_date,'yyyy-MM') = #createDate# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="userName" prepend="and">
+			<![CDATA[ i.emp_name like #userName,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="startDate" prepend="and">
+			<![CDATA[ c.create_date >= to_date(#startDate#,'yyyy-MM') ]]>
+			</isNotEmpty>
+			<isNotEmpty property="endDate" prepend="and">
+			<![CDATA[ c.create_date <= add_months(to_date(#endDate#,'yyyy-MM'),1) ]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	
+	<select id="searchGoalFXChangeList" parameterClass="goalSales" resultClass="goalSales">
+	<include refid="global.paginationStart" />
+	<![CDATA[
+		    select c.change_id changeId,
+			       c.title,
+			       c.user_id userId,
+			       to_char(c.create_date,'yyyy-MM-dd') createDate,
+			       c.event_id eventId,
+			       c.event_state eventState,
+			       i.emp_name userName,
+			       o.org_name orgName,
+			       e.emp_name curUserName
+			       from crm.crm_tb_goalfx_change c
+			       left join basis.basis_tb_salesemp_info i on i.emp_id=c.user_id
+			       left join basis.basis_tb_org o on o.org_id=i.org_id
+			       left join (select et.event_id,i.emp_name,et.last_modify,et.event_title 
+		                         from workflow.workflow_tb_event_total et
+		                         left join workflow.workflow_tb_event_detail ed on et.tododetailid=ed.event_dtl_id
+		                         left join basis.basis_tb_salesemp_info i on i.emp_id=ed.cur_user_id
+		                         ) e on e.event_id=c.event_id
+		    where 1=1
+	]]>
+		<dynamic>
+			<isNotEmpty property="changeId" prepend="and">
+			<![CDATA[ c.change_id = #changeId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="eventId" prepend="and">
+			<![CDATA[ c.event_id = #eventId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="title" prepend="and">
+			<![CDATA[ c.title = #title# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="eventState" prepend="and">
+			<![CDATA[ c.event_state = #eventState# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="createDate" prepend="and">
+			<![CDATA[ to_char(c.create_date,'yyyy-MM') = #createDate# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="userName" prepend="and">
+			<![CDATA[ i.emp_name like #userName,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="startDate" prepend="and">
+			<![CDATA[ c.create_date >= to_date(#startDate#,'yyyy-MM') ]]>
+			</isNotEmpty>
+			<isNotEmpty property="endDate" prepend="and">
+			<![CDATA[ c.create_date <= add_months(to_date(#endDate#,'yyyy-MM'),1) ]]>
+			</isNotEmpty>
+		</dynamic>
+		<![CDATA[ order by c.change_id desc]]>
+	<include refid="global.paginationEnd" />
+	</select>
+
+	<select id="searchGoalSalesChangeList" parameterClass="goalSales" resultClass="goalSales">
+	<include refid="global.paginationStart" />
+	<![CDATA[
+		    select c.change_id changeId,
+			       c.title,
+			       c.user_id userId,
+			       to_char(c.create_date,'yyyy-MM-dd') createDate,
+			       c.event_id eventId,
+			       c.event_state eventState,
+			       i.emp_name userName,
+			       o.org_name orgName,
+			       e.emp_name curUserName
+			       from crm.crm_tb_goalsales_change c
+			       left join basis.basis_tb_salesemp_info i on i.emp_id=c.user_id
+			       left join basis.basis_tb_org o on o.org_id=i.org_id
+			       left join (select et.event_id,i.emp_name,et.last_modify,et.event_title 
+		                         from workflow.workflow_tb_event_total et
+		                         left join workflow.workflow_tb_event_detail ed on et.tododetailid=ed.event_dtl_id
+		                         left join basis.basis_tb_salesemp_info i on i.emp_id=ed.cur_user_id
+		                         ) e on e.event_id=c.event_id
+		    where 1=1
+	]]>
+		<dynamic>
+			<isNotEmpty property="changeId" prepend="and">
+			<![CDATA[ c.change_id = #changeId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="eventId" prepend="and">
+			<![CDATA[ c.event_id = #eventId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="eventState" prepend="and">
+			<![CDATA[ c.event_state = #eventState# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="createDate" prepend="and">
+			<![CDATA[ to_char(c.create_date,'yyyy-MM') = #createDate# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="userName" prepend="and">
+			<![CDATA[ i.emp_name like #userName,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="startDate" prepend="and">
+			<![CDATA[ c.create_date >= to_date(#startDate#,'yyyy-MM') ]]>
+			</isNotEmpty>
+			<isNotEmpty property="endDate" prepend="and">
+			<![CDATA[ c.create_date <= add_months(to_date(#endDate#,'yyyy-MM'),1) ]]>
+			</isNotEmpty>
+		</dynamic>
+		<![CDATA[ order by c.change_id desc]]>
+	<include refid="global.paginationEnd" />
+	</select>
+	
+		<select id="searchGoalFXChangeDetailList" parameterClass="goalSalesDetail" resultClass="goalSalesDetail">
+	<![CDATA[
+		    select d1.detail_id detailId,
+		           d1.change_id changeId,
+			       d1.kunnr,
+			       d1.name1 kunnrName,
+			       d1.org_id orgId,
+			       d1.org_name orgName,
+			       d1.matter matter,
+			       d1.bezei matterName,
+			       d1.year||d1.month yearMonth,
+			       d1.detail_id_to detailIdTo,
+			       d2.detail_id detailIdTo,
+		           d2.change_id changeIdTo,
+			       d2.kunnr kunnrTo,
+			       d2.name1 kunnrNameTo,
+			       d2.org_id orgIdTo,
+			       d2.org_name orgNameTo,
+			       d2.year||d2.month yearMonthTo,
+			       abs(d1.quantity) quantity,
+			       c.title,
+			       mt.maktx01 maktx01,
+			       c.event_id eventId,
+			       to_char(c.create_date,'yyyy-MM') createDate,
+			       decode(c.event_state,'T','流程中','D','已完成','S','已取消','N','未提交') eventState,
+			       i.emp_name userName,
+			       c.user_id userId
+			       from (select d.*,k.name1,o.org_name,s.bezei
+			                    from crm.crm_tb_goalfx_change_dtl d
+			                    left join crm.crm_tb_goalfx_change c on c.change_id=d.change_id
+			                    left join crm.crm_tb_kunnr k on k.kunnr=d.kunnr
+			                    left join basis.basis_tb_org o on o.org_id=d.org_id
+			                    left join exp.sap_tb_tvm1t s on s.mvgr1=d.matter 
+			                    where c.title='经销商关户' or d.detail_id_to is not null) d1
+			       left join (select d.*,k.name1,o.org_name
+			                    from crm.crm_tb_goalfx_change_dtl d
+			                    left join crm.crm_tb_goalfx_change c on c.change_id=d.change_id
+			                    left join crm.crm_tb_kunnr k on k.kunnr=d.kunnr
+			                    left join basis.basis_tb_org o on o.org_id=d.org_id
+			                    where c.title<>'经销商关户' or d.detail_id_to is null) d2 on d2.detail_id=d1.detail_id_to
+			       left join basis.basis_tb_materiel mt on mt.matnr = d1.matter
+			       left join crm.crm_tb_goalfx_change c on c.change_id=d1.change_id
+			       left join basis.basis_tb_salesemp_info i on i.emp_id=c.user_id
+		    where 1=1
+	]]>
+		<dynamic>
+			<isNotEmpty property="changeId" prepend="and">
+			<![CDATA[ d1.change_id = #changeId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="eventId" prepend="and">
+			<![CDATA[ c.event_id = #eventId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="eventState" prepend="and">
+			<![CDATA[ c.event_state = #eventState# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="userName" prepend="and">
+			<![CDATA[ i.emp_name like #userName,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="startDate" prepend="and">
+			<![CDATA[ to_char(c.create_date,'yyyy-MM') >= #startDate# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="endDate" prepend="and">
+			<![CDATA[ to_char(c.create_date,'yyyy-MM') <= #endDate# ]]>
+			</isNotEmpty>
+		</dynamic>
+		<![CDATA[ order by d1.year,d1.month,d1.matter]]>
+	</select>
+	
+	<select id="searchGoalSalesChangeDetailList" parameterClass="goalSalesDetail" resultClass="goalSalesDetail">
+	<![CDATA[
+		    select d1.detail_id detailId,
+		           d1.change_id changeId,
+			       d1.kunnr,
+			       d1.name1 kunnrName,
+			       d1.org_id orgId,
+			       d1.org_name orgName,
+			       d1.matter matter,
+			       d1.maktx matterName,
+			       d1.maktx01 brand,
+			       d1.year||d1.month yearMonth,
+			       d1.detail_id_to detailIdTo,
+			       d2.detail_id detailIdTo,
+		           d2.change_id changeIdTo,
+			       d2.kunnr kunnrTo,
+			       d2.name1 kunnrNameTo,
+			       d2.org_id orgIdTo,
+			       d2.org_name orgNameTo,
+			       d2.year||d2.month yearMonthTo,
+			       abs(d1.quantity) quantity,
+			       c.title,
+			       c.event_id eventId,
+			       to_char(c.create_date,'yyyy-MM') createDate,
+			       decode(c.event_state,'T','流程中','D','已完成','S','已取消','N','未提交') eventState,
+			       i.emp_name userName
+			       from (select d.*,k.name1,o.org_name,s.maktx,s.maktx01
+			                    from crm.crm_tb_goalsales_change_dtl d
+			                    left join crm.crm_tb_goalsales_change c on c.change_id=d.change_id
+			                    left join crm.crm_tb_kunnr k on k.kunnr=d.kunnr
+			                    left join basis.basis_tb_org o on o.org_id=d.org_id
+			                    left join basis.basis_tb_materiel s on s.matnr=d.matter 
+			                    where c.title='经销商关户' or d.detail_id_to is not null) d1
+			       left join (select d.*,k.name1,o.org_name
+			                    from crm.crm_tb_goalsales_change_dtl d
+			                    left join crm.crm_tb_goalsales_change c on c.change_id=d.change_id
+			                    left join crm.crm_tb_kunnr k on k.kunnr=d.kunnr
+			                    left join basis.basis_tb_org o on o.org_id=d.org_id
+			                    where c.title<>'经销商关户' or d.detail_id_to is null) d2 on d2.detail_id=d1.detail_id_to
+			       left join crm.crm_tb_goalsales_change c on c.change_id=d1.change_id
+			       left join basis.basis_tb_salesemp_info i on i.emp_id=c.user_id
+		    where 1=1
+	]]>
+		<dynamic>
+			<isNotEmpty property="changeId" prepend="and">
+			<![CDATA[ d1.change_id = #changeId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="eventId" prepend="and">
+			<![CDATA[ c.event_id = #eventId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="eventState" prepend="and">
+			<![CDATA[ c.event_state = #eventState# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="userName" prepend="and">
+			<![CDATA[ i.emp_name like #userName,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="startDate" prepend="and">
+			<![CDATA[ to_char(c.create_date,'yyyy-MM') >= #startDate# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="endDate" prepend="and">
+			<![CDATA[ to_char(c.create_date,'yyyy-MM') <= #endDate# ]]>
+			</isNotEmpty>
+		</dynamic>
+		<![CDATA[ order by d1.year,d1.month,d1.matter]]>
+	</select>
+	
+	<select id="getSalesGoalFXDetailSum" parameterClass="goalSalesDetail" resultClass="java.lang.Double">
+	    <![CDATA[
+	        select abs(sum(d.quantity))
+			                    from crm.CRM_TB_GOALFX_CHANGE_DTL d
+			                    left join crm.crm_tb_goalfx_change c on c.change_id=d.change_id
+			                    left join basis.basis_tb_org o on o.org_id=d.org_id 
+			                    where d.detail_id_to is not null
+		]]>
+		<dynamic>
+			<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[ d.org_id = #orgId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="year" prepend="and">
+			<![CDATA[ d.year = #year# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="month" prepend="and">
+			<![CDATA[ d.month = #month# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="matter" prepend="and">
+			<![CDATA[ d.matter = #matter# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="eventState" prepend="and">
+			<![CDATA[ c.event_state = #eventState# ]]>
+			</isNotEmpty>
+		 </dynamic>
+	</select>
+	
+	<select id="getSalesGoalCGDetailSum" parameterClass="goalSalesDetail" resultClass="java.lang.Double">
+	    <![CDATA[
+	        select abs(sum(d.quantity))
+			                    from crm.crm_tb_goalsales_change_dtl d
+			                    left join crm.crm_tb_goalsales_change c on c.change_id=d.change_id
+			                    left join basis.basis_tb_org o on o.org_id=d.org_id 
+			                    where d.detail_id_to is not null
+		]]>
+		<dynamic>
+			<isNotEmpty property="orgId" prepend="and">
+			<![CDATA[ d.org_id = #orgId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="year" prepend="and">
+			<![CDATA[ d.year = #year# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="month" prepend="and">
+			<![CDATA[ d.month = #month# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="matter" prepend="and">
+			<![CDATA[ d.matter = #matter# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="eventState" prepend="and">
+			<![CDATA[ c.event_state = #eventState# ]]>
+			</isNotEmpty>
+		 </dynamic>
+	</select>
+	
+	<update id="updateGoalSalesChange" parameterClass="goalSales">
+	<![CDATA[
+	    update crm.crm_tb_goalsales_change c
+	]]>
+	<dynamic prepend="set">
+		<isNotEmpty property="eventState" prepend=",">
+			<![CDATA[ c.event_state = #eventState# ]]>
+		</isNotEmpty>
+		<isNotEmpty property="eventId" prepend=",">
+			<![CDATA[ c.event_id = #eventId# ]]>
+		</isNotEmpty>
+	</dynamic>
+	<dynamic prepend="where">
+		<isNotEmpty property="changeId" prepend="and">
+			<![CDATA[ c.change_id = #changeId# ]]>
+		</isNotEmpty>
+	</dynamic>
+	</update>
+	
+	<update id="updateGoalFXChange" parameterClass="goalSales">
+	<![CDATA[
+	    update crm.crm_tb_goalFX_change c
+	]]>
+	<dynamic prepend="set">
+		<isNotEmpty property="eventState" prepend=",">
+			<![CDATA[ c.event_state = #eventState# ]]>
+		</isNotEmpty>
+		<isNotEmpty property="eventId" prepend=",">
+			<![CDATA[ c.event_id = #eventId# ]]>
+		</isNotEmpty>
+	</dynamic>
+	<dynamic prepend="where">
+		<isNotEmpty property="changeId" prepend="and">
+			<![CDATA[ c.change_id = #changeId# ]]>
+		</isNotEmpty>
+	</dynamic>
+	</update>
+	
+	<delete id="deleteGoalSalesChangeDetail" parameterClass="java.lang.Long">
+	<![CDATA[ delete crm.crm_tb_goalsales_change_dtl c where c.detail_id=#detailId#]]>
+	</delete>
+	<!-- 此处为公用sql，慎重修改。 -->
+	<select id="getStationIdByUserId" parameterClass="java.lang.String" resultClass="com.kintiger.platform.allUser.pojo.AllUsers">
+	    <![CDATA[
+	        select 
+	        r.role_id as posId,
+	        s.org_id as orgId,
+	        o.org_name as orgName
+	        from basis.basis_tb_station_role r
+	        left join basis.basis_tb_station_user s on s.station_id=r.station_id
+	        left join basis.basis_tb_org o on o.org_id=s.org_id
+	        where s.user_id=#userId#
+	    ]]>
+	</select>
+	<!-- 此处为公用sql，慎重修改。 -->
+	<select id="getOrgsByUserId" parameterClass="java.lang.String" resultClass="com.kintiger.platform.allUser.pojo.AllUsers">
+	    <![CDATA[
+	        select o.org_id orgId,
+	               o.org_name orgName
+                   from basis.basis_tb_org o
+                   where o.state = 'Y' 
+                   start with o.org_id in 
+                              (select distinct s.org_id
+	                               from basis.basis_tb_station_user s
+	                               left join basis.basis_tb_org o on o.org_id=s.org_id
+	                               where s.user_id=#userId#)    
+                   connect by nocycle prior o.org_id = o.org_parent_id
+	    ]]>
+	</select>
+	<select id="getGoalListCountForMBL" parameterClass="goal" resultClass="java.lang.Integer">
+		<![CDATA[
+		    select count(*) 
+		     from crm.CRM_TB_TARGET s 
+		     left join basis.basis_tb_materiel tm on tm.matnr = s.matter
+                left join crm.CRM_TB_TARGET tt on (( tt.cust_id = s.cust_id and tt.the_year = s.the_year 
+                and tt.the_month = s.the_month and tt.matter = s.matter and tt.org_id = s.org_id
+               and tt.ct_state = s.ct_state 
+                and tt.mark = s.mark and s.kunnr_goal_type <> tt.kunnr_goal_type ) )
+                left join crm.crm_tb_mar_price p on p.mvgr1 = s.matter 
+                  and ((s.the_year =(p.year+1) and s.the_month <7) or (s.the_year = p.year and s.the_month> 6))
+              left join basis.basis_tb_salesemp_info i on i.emp_id=s.op_id
+              left join  basis.basis_tb_salesemp_info i1 on i1.emp_id = s.check_op_id
+              left join crm.crm_tb_kunnr k on k.kunnr=s.cust_id 
+              left join exp.sap_tb_tvm1t  m on m.mvgr1 =s.matter and   m.bezei is not null
+               left join basis.basis_tb_org  t on s.org_id = t.org_id
+               left join basis.basis_tb_org  t2 on t2.org_id = t.org_parent_id
+                    left join basis.basis_tb_org  t3 on t3.org_id = t2.org_parent_id
+              where s.ct_state = '0' and s.mark = 'Y' and ((s.kunnr_goal_type ='B' and nvl(s.box,0)<>0) or (s.kunnr_goal_type ='C' and nvl(s.box,0)<>0 and nvl(tt.box,0)=0))
+		]]>
+		<dynamic>
+			<isNotEmpty property="startDate" prepend="and">
+				<![CDATA[  to_char(to_date(s.the_year||s.the_month,'yyyy-MM'),'yyyy-MM')>=#startDate#]]>
+			</isNotEmpty>
+			<isNotEmpty property="endDate" prepend="and">
+				<![CDATA[ to_char(to_date(s.the_year||s.the_month,'yyyy-MM'),'yyyy-MM')<=#endDate#]]>
+			</isNotEmpty>
+			<isNotEmpty property="brand" prepend="and">				
+				<![CDATA[ tm.matnr01 = #brand# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="matter" prepend="and">				
+				<![CDATA[ s.matter = #matter# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="custId" prepend="and">				
+				<![CDATA[ s.cust_id= #custId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="mark" prepend="and">				
+				<![CDATA[ s.mark= #mark# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="trFlag" prepend="and">				
+				<![CDATA[ s.tr_flag= #trFlag# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="orgId" prepend="and">
+				<![CDATA[ s.org_id in 
+					(select o.org_id
+                		from basis.basis_tb_org o
+                		where o.state = 'Y'
+               			start with o.org_id=#orgId#
+                		connect by nocycle prior o.org_id = o.org_parent_id)]]>
+			</isNotEmpty>
+			<isNotEmpty property="orgIds" prepend="and">
+				<![CDATA[ s.org_id in ]]>
+				<iterate property="orgIds" open="(" close=")" conjunction=",">#orgIds[]#
+				</iterate>
+			</isNotEmpty>
+			
+		</dynamic>
+	</select>
+	<select id="getGoalReportListForMBL" parameterClass="goal" resultClass="goal">
+		<include refid="global.paginationStart" />
+		<![CDATA[
+				select distinct 
+                s.ct_id as ctId,
+            		    s.org_id as orgId,
+      					s.cust_id as custId,
+				      (case when  s.kunnr_goal_type ='B' then
+      					nvl(p.mvg_price*(s.box/p.mvg_ratio), 0) else 0 end )as targetNum,
+      					s.the_year as theYear,
+      					s.the_month  as theMonth,
+      					s.create_date  as createDate,
+      					to_char(s.modify_date,'yyyy-MM-dd') as modifyDate,	
+      					s.op_id    as opId, 
+      					s.tr_flag  as trFlag,
+      					s.check_op_id  as checkOpId, 
+      					i.emp_name as opName,
+                i1.emp_name  as  checkOpName,
+                 (case when s.kunnr_goal_type='B' and s.mark='Y' and k.name1 is null
+              then '经销商开户中' else 
+                k.name1  end) as custNameZH ,
+                (case when  s.kunnr_goal_type ='B' then 
+                nvl(s.BOX,0)  else 0 end) as box,
+                s.matter  as matter,
+                   m.bezei as bezei,
+                   t.org_name  as orgName,
+                   t2.org_name as orgName1,
+                   t3.org_name as orgName2,
+                   tm.maktx01 as brand,
+                   s.mark as mark,
+                   (case when  s.kunnr_goal_type ='C' then 
+                 nvl(s.BOX,0)  else nvl(tt.box,0)  end)
+                   as contractBox,
+                   (case when  s.kunnr_goal_type ='C' then 
+                 nvl(p.mvg_price*(s.box/p.mvg_ratio), 0)  
+                else  nvl(p.mvg_price*(tt.box/p.mvg_ratio), 0) end)   
+                   as contractNum,
+                     (case when (nvl(s.BOX,0)-nvl(tt.box,0)<0.01 or s.kunnr_goal_type ='C')
+              then '正常' else '异常'  end) as ztStatus ,
+               (case when k.status ='1'
+              then '正常客户' when k.status ='2' then '关户' else '关户中'  end) as status ,
+                s.tr_flag  from crm.CRM_TB_TARGET s 
+                left join basis.basis_tb_materiel tm on tm.matnr = s.matter
+                left join crm.CRM_TB_TARGET tt on (( tt.cust_id = s.cust_id and tt.the_year = s.the_year 
+                and tt.the_month = s.the_month and tt.matter = s.matter and tt.org_id = s.org_id
+               and tt.ct_state = s.ct_state 
+                and tt.mark = s.mark and s.kunnr_goal_type <> tt.kunnr_goal_type ) )
+                left join crm.crm_tb_mar_price p on p.mvgr1 = s.matter 
+                  and ((s.the_year =(p.year+1) and s.the_month <7) or (s.the_year = p.year and s.the_month> 6))
+              left join basis.basis_tb_salesemp_info i on i.emp_id=s.op_id
+              left join  basis.basis_tb_salesemp_info i1 on i1.emp_id = s.check_op_id
+              left join crm.crm_tb_kunnr k on k.kunnr=s.cust_id 
+              left join exp.sap_tb_tvm1t  m on m.mvgr1 =s.matter and   m.bezei is not null
+               left join basis.basis_tb_org  t on s.org_id = t.org_id
+               left join basis.basis_tb_org  t2 on t2.org_id = t.org_parent_id
+                    left join basis.basis_tb_org  t3 on t3.org_id = t2.org_parent_id
+              where s.ct_state = '0' and s.mark = 'Y' and ((s.kunnr_goal_type ='B' and nvl(s.box,0)<>0) or (s.kunnr_goal_type ='C' and nvl(s.box,0)<>0 and nvl(tt.box,0)=0))
+				]]>
+	<dynamic>
+		<isNotEmpty property="startDate" prepend="and">
+			<![CDATA[  to_char(to_date(s.the_year||s.the_month,'yyyy-MM'),'yyyy-MM')>=#startDate#]]>
+		</isNotEmpty>
+		<isNotEmpty property="endDate" prepend="and">
+				<![CDATA[ to_char(to_date(s.the_year||s.the_month,'yyyy-MM'),'yyyy-MM')<=#endDate#]]>
+		</isNotEmpty>
+		<isNotEmpty property="matter" prepend="and">				
+			<![CDATA[ s.matter = #matter# ]]>
+		</isNotEmpty>
+		<isNotEmpty property="custId" prepend="and">				
+			<![CDATA[ s.cust_id= #custId# ]]>
+		</isNotEmpty>
+		<isNotEmpty property="brand" prepend="and">				
+			<![CDATA[ tm.matnr01 = #brand# ]]>
+		</isNotEmpty>
+		<isNotEmpty property="mark" prepend="and">				
+			<![CDATA[ s.mark= #mark# ]]>
+		</isNotEmpty>
+		<isNotEmpty property="trFlag" prepend="and">				
+			<![CDATA[ s.tr_flag= #trFlag# ]]>
+		</isNotEmpty>
+		<isNotEmpty property="orgId" prepend="and">
+		<![CDATA[ s.org_id in 
+			(select o.org_id
+                from basis.basis_tb_org o
+                where o.state = 'Y'
+               start with o.org_id=#orgId#
+                connect by nocycle prior o.org_id = o.org_parent_id)]]>
+		</isNotEmpty>
+		<isNotEmpty property="orgIds" prepend="and">
+		<![CDATA[ s.org_id in ]]>
+			<iterate property="orgIds" open="(" close=")" conjunction=",">#orgIds[]#
+			</iterate>
+		</isNotEmpty>
+		
+		<!-- <isNotEmpty property="kunnrCode" prepend="and"> <![CDATA[ s.kunnr_code= 
+			#kunnrCode# ]]> </isNotEmpty> -->
+	</dynamic>
+	<include refid="global.orderBy" />
+	<include refid="global.paginationEnd" />
+	<!-- <![CDATA[ order by modifyDate desc,mark,trFlag ]]> -->
+</select>
+	<select id="searchSkuText" parameterClass="java.lang.String"
+		resultClass="java.lang.Integer">
+	   <![CDATA[
+		    select count(*) from basis.basis_tb_materiel s 
+		    where s.maktx = #skuText#
+		]]>
+	</select>
+	<select id="searchSku" parameterClass="java.lang.String"
+		resultClass="java.lang.Integer">
+	   <![CDATA[
+		    select count(*) from basis.basis_tb_materiel s 
+		    where s.matnr = #sku#
+		]]>
+	</select>
+</sqlMap>

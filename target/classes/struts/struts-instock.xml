@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+	"http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="instock" extends="kintiger-default">
+		<action name="instockAction" class="instockAction">
+			<result name="StockSearchPre">/platform/instock/InStockSearch.vm</result>
+			<result name="searchStockPrepare">/platform/instock/searchStock.vm</result>
+			<result name="createStockPrepare">/platform/instock/createStock.vm</result>
+			<result name="updateStockPrepare">/platform/instock/updateStock.vm</result>
+			<result name="StockSearchPre1">/platform/instock/searchStockNew.vm</result>
+			<result name="StockSearchPreO">/platform/instock/searchStockNewO.vm</result>
+			<result name="createStockPrepare1">/platform/instock/createStockNew.vm</result>
+			<result name="createStockPrepareO">/platform/instock/createStockNewO.vm</result>
+			<result name="createStockdtPrepare">/platform/instock/createStockdtNew.vm</result>
+			<result name="createStockdtPrepareO">/platform/instock/createStockdtNewO.vm</result>
+			<result name="updateStockPrepare1">/platform/instock/updateStockNew.vm</result>
+			<result name="updateStockPrepareO">/platform/instock/updateStockNewO.vm</result>
+		</action>
+	</package>
+</struts>

@@ -1,0 +1,22 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		#CSSM(["pikachoose"])
+		#JSM(["jquery","pikachoose"])
+		<script language="javascript">
+			$(document).ready(function (){
+					$("#pikame").PikaChoose({showTooltips:true});
+				});
+		</script>
+</head>
+<body>
+<div class="pikachoose">
+	<ul id="pikame" >
+		#foreach($kunnrLicense in $kunnrLicenseList)
+		<li><a href="#"><img src="$!{kunnrLicense.licensePath}"/></a><span>$!{kunnrLicense.licenseName}  ÓÐÐ§ÆÚ:$!dateUtil.datetime($!{kunnrLicense.licenseValid},'yyyy-MM-dd')</span></li>
+		#end
+	</ul>
+</div>
+</body>
+</html>

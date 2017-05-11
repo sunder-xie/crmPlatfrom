@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+        #CSSM(["easyui","style"])
+        #JSM(["jquery", "easyui"])
+        #JS_ENV_VAL()
+    </head>
+    <body>
+        <form method="post" id="acyivityPlanRepotySerarchForm">
+            <div class="easyui-panel" title="查询条件" data-options="collapsible:true,iconCls:'icon-search'" style="padding: 2px;">
+                <table width="100%" border="0" cellpadding="0" cellspacing="1">
+                    <tr>
+                        <td class="head" noWrap>组织：</td>
+                    	<td>
+                    		<input class="easyui-validatebox"  id="orgName" name="orgName" value='$!{orgName}' readonly="true">
+							<input class="easyui-validatebox" type='hidden' id="orgId" name="orgId" value='$!{orgId}'> 
+							<a class="easyui-linkbutton"  href="javascript:choseOrg()">选择</a>
+							&nbsp;
+            			</td>
+            			<td class="head" nowrap>门店：</td>
+						<td>
+							<input type="hidden" id="isOffice" name="isOffice" value="$!{isOffice}">
+							<input id="custId" name="custId" data-options="editable:false">
+						</td>
+							<div id="toolbarCust" class="datagrid-toolbar" >
+				            <input class="easyui-searchbox" searcher="searcherCust" prompt="请填写客户名"  style="width:300px"></input>
+				            </div>
+                        <td class="head" noWrap>日期:</td>
+                        <td><input type="text" id="startDate" name = "startDate" onfocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy-MM-dd'})" class="Wdate"/>至</td>
+                        <td>&nbsp;</td>
+                        <td><input type="text" id="endDate" name = "endDate" onfocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy-MM-dd'})" class="Wdate"/></td>
+                    </tr>
+                    <tr>
+                        <td class="head" noWrap>所属经分销商：</td>
+                        <td><input id="custKunnr" name="kunnr" data-options="editable:false"></td>
+					    <div id="toolbarKonzs" class="datagrid-toolbar">
+					    <input class="easyui-searchbox" searcher="searcherKonzs" prompt="请输入经销商名称查询" style="width:300px"></input>		
+				        </div>
+				        <td class="head" nowrap>品项：</td>
+		                <td>
+			            <input id="skuId" name="skuId" data-options="editable:false">
+			            </td>
+			            <div id="toolbarSku" class="datagrid-toolbar" >
+			            <input class="easyui-searchbox" searcher="searcherSku" prompt="请填写物料名"  style="width:300px" />
+			            </div>
+			            <td class="head" noWrap>年:</td>
+                        <td>
+                            <select name="s_year" id="year" style="width:153px;">
+                                  <option value="">请选择...</option>
+                                  #foreach($!stringResult in $!theYearList)
+                                      <option value="$!stringResult.result">
+                                        $!{stringResult.result}年
+                                        </option>
+                                  #end
+                            </select>
+                        </td>
+                        <td class="head" noWrap>月:</td>
+					    <td>
+                            <select name="s_month" id="month" style="width:153px;">
+                                  <option value="">请选择...</option>
+                                  #foreach($!stringResult in $!theMonthList)
+                                      <option value="$!stringResult.result">
+                                        $!{stringResult.result}月
+                                      </option>
+                                  #end
+                            </select>
+                       </td>
+			        </tr>
+			        <tr>
+			            <td colspan="6">&nbsp;</td>
+                        <td class="head" noWrap>点击查询:</td>
+                        <td >
+                             <a href="javascript:search()"  class="easyui-linkbutton" iconCls="icon-search">Search</a>
+                             <a href="javascript:clearValue()" class="easyui-linkbutton" iconCls="icon-clear">Clear</a>
+                        </td>
+                   </tr>
+             </table>
+        </div>
+   <table id="datagrid">  
+   </table>
+ </form>
+<iframe id="hideFrame" name="hideFrame"  style="height: 0; width: 0"></iframe>
+<div id="maintActivityPlanInfo"/>
+</body>
+	<script type="text/javascript" src="$!{env.imgUrl}/js/My97DatePicker/WdatePicker.js"></script>
+    <script type="text/javascript" src="$!{env.imgUrl}/js/platform/visitInfo/getStock.js?version=20170421"></script>
+</html>

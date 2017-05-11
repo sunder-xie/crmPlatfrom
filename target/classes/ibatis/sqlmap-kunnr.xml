@@ -1,0 +1,1602 @@
+<?xml version="1.0" encoding="GB2312"?>
+<!DOCTYPE sqlMap
+	PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="kunnr">
+	<typeAlias alias="kunnr" type="com.kintiger.platform.kunnr.pojo.Kunnr" />
+	<typeAlias alias="kunnrBusiness"
+		type="com.kintiger.platform.kunnr.pojo.KunnrBusiness" />
+	<typeAlias alias="kunnrAddress"
+		type="com.kintiger.platform.kunnr.pojo.KunnrAddress" />
+	<typeAlias alias="kunnrBrand"
+		type="com.kintiger.platform.kunnr.pojo.KunnrBrand" />
+	<typeAlias alias="kunnrAcount"
+		type="com.kintiger.platform.kunnr.pojo.KunnrAcount" />
+	<typeAlias alias="kunnrLicense"
+		type="com.kintiger.platform.kunnr.pojo.KunnrLicense" />
+	<typeAlias alias="kunnrSalesArea"
+		type="com.kintiger.platform.kunnr.pojo.KunnrSalesArea" />
+    <typeAlias alias="kunnrLogisticsArea"
+		type="com.kintiger.platform.kunnr.pojo.KunnrLogisticsArea" />
+    <typeAlias alias="kunnrApplyObject"
+		type="com.kintiger.platform.kunnr.pojo.KunnrApplySave" />
+	<typeAlias alias="sapCodeObj"
+		type="com.kintiger.platform.kunnr.pojo.KunnrSapCodeObject" />
+	<typeAlias alias="userRole"
+		type="com.kintiger.platform.kunnr.pojo.KunnrRole" />
+	<typeAlias alias="borg"
+		type="com.kintiger.platform.org.pojo.Borg" />
+
+<!-- 校验用户角色 -->
+	<select id="getRoleOnEventByUser" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+	<![CDATA[
+		select count(*) from  basis.basis_tb_station_role  t,
+           basis.basis_tb_station_user  r
+           where t.station_id=r.station_id
+           and t.flag='U'
+           and r.user_id=#userId#
+           and t.role_id=#roleId#
+	]]>	
+	</select>
+	<select id="getRanKunnrCode" resultClass="java.lang.String">
+		<![CDATA[select crm.crm_sq_kunnrcode.nextval from dual]]>
+	</select>
+	<select id="getCityOrgId" parameterClass="borg" resultClass="java.lang.String">
+		<![CDATA[select o.org_id from basis.basis_tb_org o where o.org_id = #orgId# and o.org_city = #orgCity#]]>
+	</select>
+	<select id="getRanKunnrSapCode" resultClass="java.lang.String">
+		<![CDATA[select LPAD( crm.crm_sq_kunnrsapcode.nextval, 4, '0') from dual]]>
+	</select>
+	
+	<select id="getRanKunnrDMCode" resultClass="java.lang.String">
+		<!-- <![CDATA[select crm.crm_sq_kunnr_dm.nextval from dual]]> -->
+		<![CDATA[select max(to_number(substr(k.locco,3,length(k.locco))))+1 from crm.crm_tb_kunnr k]]> 
+	</select>
+	<!-- select lpad(max(to_number(SUBSTR(k.kunnr,5,length(k.kunnr))+1)),4,'0') from crm.crm_tb_kunnr k where SUBSTR(k.kunnr,0,4)=#code#
+                 group by SUBSTR(k.kunnr,0,4) -->
+    <select id="getRanKunnrCodeNew" resultClass="java.lang.String" parameterClass="java.lang.String">
+		<![CDATA[select lpad(nvl(max(to_number(s.code)),0)+1,4,'0') from   crm.crm_tb_kunnr_sapcode s where s.vkgrp||s.bzirk=#code# and s.status='Y'
+		]]> 
+	</select>
+	<insert id="createKunnrSapCode" parameterClass="sapCodeObj">
+		<selectKey keyProperty="id" resultClass="java.lang.Long">
+			<![CDATA[select crm.crm_sq_kunnr_sap_code.nextval as id from dual]]>
+		</selectKey>
+		<![CDATA[
+		insert into crm.crm_tb_kunnr_sapcode t
+		(id,
+		vkgrp,
+		bzirk,
+		create_date,
+		modify_date,
+		event_id,
+		status,
+		code
+		)
+		values
+		(#id#,
+		#vkgrp#,
+		#bzirk#,
+		sysdate,
+		sysdate,
+		#eventId#,
+		'Y',
+		#code#)
+		]]>
+	</insert>
+	
+	<update id="updateKunnrSapCodeStatus" parameterClass="sapCodeObj">
+	<![CDATA[
+		update crm.crm_tb_kunnr_sapcode s
+		set s.modify_date=sysdate
+	]]>
+	<dynamic>
+			<isNotEmpty property="status" prepend=",">
+			<![CDATA[s.status=#status#]]>
+			</isNotEmpty>
+		</dynamic>
+		<![CDATA[where s.event_id=#eventId#]]>
+	</update>
+	<insert id="createKunnr" parameterClass="kunnr">
+		<selectKey keyProperty="id" resultClass="java.lang.Long">
+			<![CDATA[select crm.crm_sq_kunnr.nextval as id from dual]]>
+		</selectKey>
+		<![CDATA[
+		insert into crm.crm_tb_kunnr t
+		(
+  id              ,
+  kunnr             ,
+  locco             ,
+  name1            ,
+  name3             ,
+  sex              ,
+  age               ,
+  mob_number        ,
+  bukrs            ,
+  vkorg             ,
+  vtweg             ,
+  spart            ,
+  ktokd             ,
+  channel_id        ,
+  konzs            ,
+  bank              ,
+  bank_account      ,
+  health_number     ,
+  stceg             ,
+  business_license  ,
+  kverm             ,
+  last_annual       ,
+  province          ,
+  city             ,
+  area             ,
+  town             ,
+  street1          ,
+  kp_phone          ,
+  tel_number        ,
+  street           ,
+  name102         ,
+  name102tel        ,
+  name102mob        ,
+  fax_number       ,
+  zip              ,
+  business_life     ,
+  cooperation_start ,
+  cooperation_end   ,
+  create_user       ,
+  create_date       ,
+  status            ,
+  maximum           ,
+  warehouse_area    ,
+  nature_enterprise ,
+  fp_recipient     ,
+  fp_address        ,
+  fp_contact_phone  ,
+  org_id           ,
+  org_name          ,
+  zc_address        ,
+  noticefile1      ,
+  noticefile1_path  ,
+  noticefile2      ,
+  noticefile2_path  ,
+  noticefile3       ,
+  noticefile3_path ,
+  nameupdate_file   ,
+  nameupdate_path   ,
+  first_create_date ,
+  last_modify_date  ,
+  sh_town           ,
+  brands,
+  kunag)
+		values
+		(#id#,
+		#kunnr#,
+		#locco#,
+		#name1#,
+		#name3#,
+		#sex#,
+		#age#,
+		#mobNumber#,
+		#bukrs#,
+		#vkorg#,
+		#vtweg#,
+		#spart#,
+		#ktokd#,
+		#channelId#,
+		#konzs#,
+		#bank#,
+		#bankAccount#,
+		#healthNumber#,
+		#stceg#,
+		#businessLicense#,
+		#kverm#,
+		#lastAnnual#,
+		#province#,#city#,#area#,#town#,
+		#street1#,
+		#kpPhone#,
+		#telNumber#,
+		#street#,
+		#name102#,#name102tel#,#name102mob#,
+		#faxNumber#,
+		#zip#,
+		#businessLife#,
+		sysdate,sysdate,
+		to_char(#createUserId#),
+		#createDate#,
+		1,
+		#maximum#,
+		#warehouseArea#,
+		#natureEnterprise#,
+		#fpRecipient#,
+		#fpAddress#,
+		#fpContactPhone#,
+		#orgId#,
+		#orgName#,
+		#zcAddress#,
+		#noticeFile1#,
+		#noticeFilePath1#,
+		#noticeFile2#,
+		#noticeFilePath2#,
+		#noticeFile3#,
+		#noticeFilePath3#,
+		#nameUpdateFile#,
+		#nameUpdatePath#,
+		sysdate,
+		sysdate,
+		#shTown#,
+		#brands#,
+		#kunag#)
+		]]>
+	</insert>
+
+	<insert id="createKunnrBusiness" parameterClass="kunnrBusiness">
+		<selectKey keyProperty="id" resultClass="java.lang.Long">
+			<![CDATA[select crm.CRM_SQ_KUNNRBUSINESS.nextval as id from dual]]>
+		</selectKey>
+		<![CDATA[
+		insert into crm.crm_tb_kunnrbusiness t
+		(
+  id,
+  kunnr,
+  categories,
+  business_manager,
+  manager_mobile,
+  business_competent,
+  competent_mobile,
+  werks,
+  lastyear_sales,
+  theyear_sales,
+  cover_area,
+  akont,
+  zterm,
+  waers,
+  kalks,
+  versg,
+  vsbed,
+  podkz,
+  autlf,
+  kztlf,
+  antlf,
+  bokre,
+  ktgrd,
+  taxkd_01,
+  title_medi,
+  country,
+  langu,
+  bzirk,
+  vkbur,
+  vkgrp,
+  kvgr1,
+  kvgr2,
+  lprio,
+  accessfile,
+  accessfile_path,
+  customerfile,
+  customerfile_path,
+  kunnr_leader,
+  kunnr_phone,
+  business_manager_id,
+  business_competent_id,
+  kukla,
+  create_date,
+  modify_date
+)
+		values
+		(#id#,
+		#kunnr#,
+		#categories#,
+		#businessManager#,
+		#managerMobile#,
+		#businessCompetent#,
+		#competentMobile#,
+		#werks#,
+		#lastyearSales#,
+		#theyearSales#,
+		#coverArea#,
+		#akont#,#zterm#,#waers#,
+		#kalks#,#versg#,#vsbed#,
+		#podkz#,#autlf#,#kztlf#,
+		#antlf#,#bokre#,#ktgrd#,
+		#taxkd01#,#titleMedi#,
+		#country#,#langu#,#bzirk#,
+		#vkbur#,#vkgrp#,
+		#kvgr1#,#kvgr2#,
+		#lprio#,
+		#accessFile#,
+		#accessFilePath#,
+		#customerFile#,
+		#customerFilePath#,
+		#kunnrLeader#,
+		#kunnrPhone#,
+		#businessManagerId#,
+		#businessCompetentId#,
+		#kukla#,
+		sysdate,
+		sysdate)
+		]]>
+	</insert>
+
+	<insert id="createKunnrAddress" parameterClass="kunnrAddress">
+		<selectKey keyProperty="id" resultClass="java.lang.Long">
+			<![CDATA[select crm.crm_sq_kunnraddress.nextval as id from dual]]>
+		</selectKey>
+		<![CDATA[
+		insert into crm.crm_tb_kunnraddress t
+		(
+		 id,
+         kunnr_sd,
+         kunnr,
+         address,
+         name,
+         telephone,
+         mobile,
+         maximum,
+         state,
+         create_date,
+         last_modify_date,
+         town
+		)
+		values
+		(#id#,
+		#kunnrSd#,
+		#kunnr#,
+		#address#,
+		#name#,
+		#telephone#,
+		#mobile#,
+		#maximum#,
+		'U',
+		sysdate,
+		sysdate,
+		#town#)
+		]]>
+	</insert>
+
+    <!-- 之前的 -->
+	<!-- <delete id="deleteKunnrAddress" parameterClass="kunnrAddress">
+		<![CDATA[delete  crm.crm_tb_kunnraddress t where t.kunnr_SD in]]>
+		<iterate property="codes" open="(" close=")" conjunction=",">#codes[]#
+		</iterate>
+	</delete> -->
+
+
+	<update id="deleteKunnrAddress" parameterClass="kunnrAddress">
+		<![CDATA[update  crm.crm_tb_kunnraddress t set t.state='N',t.last_modify_date=sysdate where t.kunnr_SD in]]>
+		<iterate property="codes" open="(" close=")" conjunction=",">#codes[]#
+		</iterate>
+	</update>
+	
+	<select id="getKunnrAddressById" parameterClass="kunnrAddress"
+		resultClass="kunnrAddress">	
+	<![CDATA[	 
+		select t.kunnr_SD as kunnrSd,
+       t.kunnr,
+       t.address,
+       t.name,
+       t.telephone,
+       t.mobile,
+       t.maximum,
+       z.zwl01 as province,
+       z.zwl02 as city,
+       z.zwl03 as area,
+       t.town,
+       z.zwl01t||z.zwl02t||z.zwl03t||z.zwl04t as xzAddress
+       from crm.crm_tb_kunnraddress t
+       left join crm.crm_tb_zwlqy z on t.town=z.zwl04
+	   where t.kunnr_SD =#kunnrSd#	  
+	]]>
+	</select>
+
+
+	<update id="updateKunnrAddress" parameterClass="kunnrAddress">
+	<![CDATA[
+		update crm.crm_tb_kunnraddress a
+		set a.address = #address#,
+		a.name = #name#,
+		a.telephone = #telephone#,
+		a.mobile = #mobile#,
+		a.maximum=#maximum#,
+        a.town=#town#,
+		a.last_modify_date=sysdate
+		where a.id = #id#
+		and a.kunnr = #kunnr#
+	]]>
+	</update>
+
+
+	<update id="updateKunnrAddress1" parameterClass="kunnrAddress">
+	<![CDATA[
+		update crm.crm_tb_kunnraddress a
+		set a.address = #address#,
+		a.name = #name#,
+		a.telephone = #telephone#,
+		a.mobile = #mobile#,
+		a.maximum=#maximum#,
+        a.town=#town#,
+		a.last_modify_date=sysdate
+		where  a.kunnr = #kunnr# and a.kunnr_sd=#kunnrSd#
+	]]>
+	</update>
+
+
+
+	<insert id="createKunnrBrand" parameterClass="kunnrBrand">
+		<selectKey keyProperty="id" resultClass="java.lang.Long">
+			<![CDATA[select crm.crm_sq_kunnrbrand.nextval as id from dual]]>
+		</selectKey>
+		<![CDATA[
+		insert into crm.crm_tb_kunnrbrand t
+		(
+		 id,
+         kunnr,
+         brand,
+         sales
+         )
+		values
+		(#id#,
+		#kunnr#,
+		#brand#,
+		#sales#)
+		]]>
+	</insert>
+
+	<update id="updateKunnrBrand" parameterClass="kunnrBrand">
+		<![CDATA[
+		update crm.crm_tb_kunnrbrand b
+		set b.brand = #brand#, b.sales = #sales#
+		where b.id = #id# and b.kunnr = #kunnr#
+		]]>
+	</update>
+
+	<insert id="createKunnrAcount" parameterClass="kunnrAcount">
+		<selectKey keyProperty="id" resultClass="java.lang.Long">
+			<![CDATA[select crm.crm_sq_kunnracount.nextval as id from dual]]>
+		</selectKey>
+		<![CDATA[
+		insert into crm.crm_tb_kunnracount t
+		(
+		 id,
+         kunnr,
+         acount_type,
+         acount,
+         acount_sap,
+         bonus,
+         flag,
+         start_date,
+         end_date,
+         type_money,
+         state,
+         create_date,
+         modify_date
+		)
+		values
+		(#id#,
+		#kunnr#,
+		#acountType#,
+		#acount#,#acountSap#,#bonus#,#flag#
+		,to_date(#startDate#,'yyyy-MM-dd'),
+		to_date(#endDate#,'yyyy-MM-dd'),
+		#typeMoney#,'Y',sysdate,sysdate)
+		]]>
+	</insert>
+
+	<update id="updateKunnrAcount" parameterClass="kunnrAcount">
+		<![CDATA[
+		update crm.crm_tb_kunnracount a
+		set a.acount_type = #acountType#,
+		a.acount = #acount#,
+		a.acount_sap = #acountSap#,
+		a.bonus = #bonus#,
+		a.flag = #flag#,
+		a.start_date=to_date(#startDate#,'yyyy-MM-dd'),
+		a.end_date=to_date(#endDate#,'yyyy-MM-dd'),
+		a.type_money=#typeMoney#,
+		a.modify_date=sysdate
+		where a.id = #id#
+		and a.kunnr = #kunnr#
+		]]>
+	</update>
+
+
+	<insert id="createKunnrLicense" parameterClass="kunnrLicense">
+		<selectKey keyProperty="id" resultClass="java.lang.Long">
+			<![CDATA[select crm.crm_sq_kunnrlicense.nextval as id from dual]]>
+		</selectKey>
+		<![CDATA[
+		insert into crm.crm_tb_kunnrlicense t
+		(
+		 id,
+         kunnr,
+         license_name,
+         license_file,
+         license_path,
+         license_valid,
+         file_type,
+         state,
+         create_date,
+         modify_date
+		)
+		values
+		(#id#,
+		#kunnr#,
+		#licenseName#,
+		#licenseFile#,#licensePath#,#licenseValid#,#fileType#,'Y',sysdate,sysdate)
+		]]>
+	</insert>
+
+	<update id="kunnrFreeze" parameterClass="kunnr">
+		<![CDATA[
+		update crm.crm_tb_kunnr t
+		set t.status = '2',
+		t.create_user = to_char(#createUserId#),
+		t.create_date = #createDate#,
+		t.cooperation_end=sysdate,
+		t.noticefile1=#noticeFile1#,
+		t.noticefile1_path=#noticeFilePath1#,
+		t.noticefile2=#noticeFile2#,
+		t.noticefile2_path=#noticeFilePath2#,
+		t.noticefile3=#noticeFile3#,
+		t.noticefile3_path=#noticeFilePath3#,
+		t.last_modify_date=sysdate
+		where t.kunnr = #kunnr#
+		]]>
+	</update>
+	<update id="kunnrClose" parameterClass="kunnr">
+		<![CDATA[
+		update crm.crm_tb_kunnr t
+		set t.status = '3',
+		t.create_user = to_char(#createUserId#),
+		t.create_date = #createDate#,
+		t.noticefile1=#noticeFile1#,
+		t.noticefile1_path=#noticeFilePath1#,
+		t.noticefile2=#noticeFile2#,
+		t.noticefile2_path=#noticeFilePath2#,
+		t.noticefile3=#noticeFile3#,
+		t.noticefile3_path=#noticeFilePath3#,
+		t.last_modify_date=sysdate
+		where t.kunnr = #kunnr#
+		]]>
+	</update>
+
+	<update id="updateKunnr" parameterClass="kunnr">
+		<![CDATA[
+		update crm.crm_tb_kunnr t
+    set 
+    t.name1=#name1#,
+    t.name3=#name3#,
+    t.sex = #sex#,
+    t.age = #age#,
+    t.mob_number = #mobNumber#,
+    t.bukrs = #bukrs#,
+    t.vkorg = #vkorg#,
+    t.vtweg = #vtweg#,
+    t.spart = #spart#,
+    t.ktokd = #ktokd#,
+    t.channel_id = #channelId#,
+    t.konzs = #konzs#,
+    t.kunag = #kunag#,
+    t.bank = #bank#,
+    t.bank_account = #bankAccount#,
+    t.health_number = #healthNumber#,
+    t.stceg = #stceg#,
+    t.business_license = #businessLicense#,
+    t.kverm = #kverm#,
+    t.last_annual = #lastAnnual#, 
+    t.province=#province#,
+    t.city=#city#,
+    t.area=#area#,
+    t.town=#town#,
+    t.street1 = #street1#,
+    t.kp_phone = #kpPhone#,
+    t.tel_number = #telNumber#,
+    t.street = #street#,
+    t.name102 = #name102#,
+    t.name102tel = #name102tel#,
+    t.name102mob = #name102mob#,
+    t.fax_number = #faxNumber#,
+    t.zip = #zip#,
+    t.business_life = #businessLife#,
+    t.create_user = to_char(#createUserId#),
+    t.create_date = #createDate#,
+    t.cooperation_end=sysdate,
+    t.maximum=#maximum#,
+    t.warehouse_area=#warehouseArea#,
+    t.nature_enterprise=#natureEnterprise#,
+    t.fp_recipient=#fpRecipient#,
+    t.fp_address=#fpAddress#,
+    t.fp_contact_phone=#fpContactPhone#,
+    t.org_id=#orgId#,
+    t.org_name=#orgName#,
+    t.zc_address=#zcAddress#,
+    t.nameupdate_file=#nameUpdateFile#,
+    t.nameupdate_path=#nameUpdatePath#,
+    t.last_modify_date=sysdate,
+    t.sh_town =#shTown#,
+    t.brands = #brands#
+    where t.kunnr = #kunnr#
+		]]>
+	</update>
+	<update id="updateKunnrBusiness" parameterClass="kunnrBusiness">
+		<![CDATA[
+		update
+    crm.CRM_TB_KUNNRBUSINESS b
+    set b.categories = #categories#,
+    b.business_manager = #businessManager#,
+    b.manager_mobile = #managerMobile#,
+    b.business_competent = #businessCompetent#,
+    b.competent_mobile = #competentMobile#,
+    b.werks = #werks#,
+    b.lastyear_sales = #lastyearSales#,
+    b.theyear_sales = #theyearSales#,
+    b.cover_area = #coverArea#,
+    b.akont = #akont#,
+    b.zterm = #zterm#,
+    b.waers = #waers#,
+    b.kalks = #kalks#,
+    b.versg = #versg#,
+    b.vsbed = #vsbed#,
+    b.podkz = #podkz#,
+    b.autlf = #autlf#,
+    b.kztlf = #kztlf#,
+    b.antlf = #antlf#,
+    b.bokre = #bokre#,
+    b.ktgrd = #ktgrd#,
+    b.taxkd_01 = #taxkd01#,
+    b.title_medi = #titleMedi#,
+    b.country = #country#,
+    b.langu = #langu#,
+    b.bzirk = #bzirk#,
+    b.vkbur = #vkbur#,
+    b.vkgrp = #vkgrp#,
+    b.lprio = #lprio#,
+    b.accessfile=#accessFile#,
+    b.accessfile_path=#accessFilePath#,
+    b.customerfile=#customerFile#,
+    b.customerfile_path=#customerFilePath#,
+    b.kunnr_leader=#kunnrLeader#,
+    b.kunnr_phone=#kunnrPhone#,
+    b.business_manager_id=#businessManagerId#,
+    b.business_competent_id=#businessCompetentId#,
+    b.kukla=#kukla#,
+    b.modify_date=sysdate
+    where b.kunnr = #kunnr#
+		]]>
+	</update>
+
+	<delete id="removeBrand" parameterClass="java.lang.Long">
+		<![CDATA[delete crm.crm_tb_kunnrbrand tt where tt.id=#brandId#]]>
+	</delete>
+
+	<!-- <delete id="removeAcount" parameterClass="java.lang.Long">
+		<![CDATA[delete crm.crm_tb_kunnracount aa where aa.id=#acountId#]]>
+	</delete> -->
+    <update id="removeAcount" parameterClass="java.lang.Long">
+		<![CDATA[update  crm.crm_tb_kunnracount t set t.state='N',t.modify_date=sysdate where t.id=#acountId#]]>
+	</update>
+
+
+	<select id="kunnrSearchCount" parameterClass="kunnr"
+		resultClass="java.lang.Integer">
+		<![CDATA[
+		select 
+		count(t.kunnr)
+		from crm.crm_tb_kunnr t left join crm.crm_tb_kunnrbusiness b  on t.kunnr=b.kunnr 
+		where 1=1
+
+		]]>
+		<dynamic>
+			<isNotEmpty property="kunnr" prepend="and">
+			<![CDATA[t.kunnr=#kunnr#]]>
+			</isNotEmpty>
+			<isNotEmpty property="brands" prepend="and">
+			( 1=2
+				<isNotEmpty property="brandOfMeco" prepend="or">
+				<![CDATA[t.brands like #brandOfMeco,handler=wildcard# escape '\']]>
+				</isNotEmpty>
+				<isNotEmpty property="brandOfXpp" prepend="or">
+				<![CDATA[t.brands like #brandOfXpp,handler=wildcard# escape '\']]>
+				</isNotEmpty>
+				<isNotEmpty property="brandOfLfy" prepend="or">
+				<![CDATA[t.brands like #brandOfLfy,handler=wildcard# escape '\']]>
+				</isNotEmpty>
+			)
+			</isNotEmpty>
+			<isNotEmpty property="name1" prepend="and">
+			<![CDATA[t.name1 like #name1,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="channelId" prepend="and">
+			<![CDATA[t.channel_Id =#channelId#]]>
+			</isNotEmpty>
+			<isNotEmpty property="status" prepend="and">
+			<![CDATA[t.status =#status#]]>
+			</isNotEmpty>
+			<isNotEmpty property="businessManager" prepend="and">
+			<![CDATA[b.business_Manager like #businessManager,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="businessCompetent" prepend="and">
+			<![CDATA[b.business_Competent like #businessCompetent,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+		    <isNotEmpty property="orgId" prepend="and">
+		        <isEmpty property="bhxjFlag">
+			        <![CDATA[t.org_id =#orgId#]]>
+			    </isEmpty>
+			    <isNotEmpty property="bhxjFlag">
+			        <![CDATA[exists (select o.org_id
+                                            from basis.basis_tb_org o
+                                            where o.state = 'Y'
+                                            and t.org_id=o.org_id
+                                            start with o.org_id = #orgId#
+                                            connect by nocycle prior o.org_id = o.org_parent_id
+			        )]]>
+			    </isNotEmpty>
+			</isNotEmpty>
+			<isNotEmpty property="orgIds" prepend="and">
+			<![CDATA[ t.org_id in (select b.org_id from basis.basis_tb_org b 
+				      start with b.org_id in ($orgIds$)
+				      connect by prior b.org_id= b.org_parent_id)]]>
+		    </isNotEmpty>
+			<isNotEmpty property="kunnrs" prepend="and">
+			<![CDATA[ t.kunnr in]]>
+			    <iterate property="kunnrs" open="(" close=")" conjunction=",">#kunnrs[]#
+				</iterate>
+		    </isNotEmpty>
+		</dynamic>
+	</select>
+
+	<select id="kunnrSearch" parameterClass="kunnr" resultClass="kunnr">
+		<include refid="global.paginationStart" />
+		<![CDATA[
+		select t.kunnr,
+		t.name1,
+		t.name3,
+		t.mob_number mobNumber,
+		c.channel_name channelName,
+		t.konzs,
+		t.kunag,
+		t.kp_phone kpPhone,
+		t.province,t.city,t.area,t.town,
+		z.zwl01t||z.zwl02t||z.zwl03t||z.zwl04t||t.street1 street1,
+		z.zwl01t||z.zwl02t||z.zwl03t||z.zwl04t||t.street1 bgXzAddress,
+		t.tel_number telNumber,
+		t.fax_number  faxNumber,
+		t.locco,
+		t.bukrs,
+		t.vkorg,
+		b.werks,
+		t.bank,
+		t.bank_account bankAccount,
+		t.health_number healthNumber,
+		t.BUSINESS_LICENSE businessLicense,
+		t.stceg,
+		b.business_Manager businessManager,
+		b.MANAGER_MOBILE managerMobile,
+		b.business_Competent businessCompetent,
+		b.COMPETENT_MOBILE competentMobile,
+		z1.zwl01t||z1.zwl02t||z1.zwl03t||z1.zwl04t||t.street as street,
+		t.name102,
+		t.name102tel,
+		t.name102mob,
+		t.brands,
+		t.maximum as maximum,
+        d.item_value as maximumTxt,
+		b.LASTYEAR_SALES lastyearSales,
+		b.THEYEAR_SALES theyearSales,
+		b.COVER_AREA coverArea,
+		t.status,
+		b.kunnr_leader as kunnrLeader,
+		b.kunnr_phone as kunnrPhone,
+		t.warehouse_area as warehouseArea,
+        t.nature_enterprise as natureEnterprise,
+        t.fp_recipient as fpRecipient,
+        t.fp_address as fpAddress,
+        t.fp_contact_phone as fpContactPhone,
+        t.org_id as orgId,
+        t.org_name as orgName,
+        t.zc_address as zcAddress,
+        z1.zwl01 as shProvince,
+        z1.zwl02 as shCity,
+        z1.zwl03 as shArea,
+        t.sh_town as shTown,
+        nvl(i.staff_nubmer,0) as staffNumber,
+        nvl(ss.userNum,0) as staffNumberY,
+        z1.zwl01t||z1.zwl02t||z1.zwl03t||z1.zwl04t  as shXzAddress,
+        to_char(t.cooperation_start,'yyyy-MM-dd') createDate,
+        (case when t.status='2' then to_char(t.cooperation_end,'yyyy-MM-dd') end) endDate
+		from crm.crm_tb_kunnr t left join crm.crm_tb_kunnrbusiness b  on t.kunnr=b.kunnr 
+		left join  crm.crm_tb_channel c on t.channel_Id=c.channel_Id
+		left join  crm.crm_tb_zwlqy z on t.town=z.zwl04
+		left join  crm.crm_tb_zwlqy z1 on t.sh_town=z1.zwl04
+		left join crm.crm_tb_dict d on d.item_name=t.maximum and d.item_state='U'
+        left join crm.crm_tb_dict_type p on p.dict_type_id=d.dict_type_id and d.item_state='U' and p.dict_type_value='最大可通行车型'
+        left join basis.basis_tb_kunnremp_info i on i.emp_code=t.kunnr and i.emp_state='Y'
+        left join (select count(1) as userNum,i1.LIFNR from basis.basis_tb_kunnremp_info i1 
+        where i1.emp_state='Y' group by i1.lifnr)ss  on ss.lifnr=t.kunnr
+		where 1=1
+		]]>
+		<dynamic>
+			<isNotEmpty property="kunnr" prepend="and">
+			<![CDATA[t.kunnr=#kunnr#]]>
+			</isNotEmpty>
+			<isNotEmpty property="brands" prepend="and">
+			( 1=2
+				<isNotEmpty property="brandOfMeco" prepend="or">
+				<![CDATA[t.brands like #brandOfMeco,handler=wildcard# escape '\']]>
+				</isNotEmpty>
+				<isNotEmpty property="brandOfXpp" prepend="or">
+				<![CDATA[t.brands like #brandOfXpp,handler=wildcard# escape '\']]>
+				</isNotEmpty>
+				<isNotEmpty property="brandOfLfy" prepend="or">
+				<![CDATA[t.brands like #brandOfLfy,handler=wildcard# escape '\']]>
+				</isNotEmpty>
+			)
+			</isNotEmpty>
+			<isNotEmpty property="name1" prepend="and">
+			<![CDATA[t.name1 like #name1,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="channelId" prepend="and">
+			<![CDATA[t.channel_Id =#channelId#]]>
+			</isNotEmpty>
+			<isNotEmpty property="status" prepend="and">
+			<![CDATA[t.status =#status#]]>
+			</isNotEmpty>
+			<isNotEmpty property="businessManager" prepend="and">
+			<![CDATA[b.business_Manager like #businessManager,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="businessCompetent" prepend="and">
+			<![CDATA[b.business_Competent like #businessCompetent,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="orgId" prepend="and">
+		        <isEmpty property="bhxjFlag">
+			        <![CDATA[t.org_id =#orgId#]]>
+			    </isEmpty>
+			    <isNotEmpty property="bhxjFlag">
+			        <![CDATA[exists (select o.org_id
+                                            from basis.basis_tb_org o
+                                            where o.state = 'Y'
+                                            and t.org_id=o.org_id
+                                            start with o.org_id = #orgId#
+                                            connect by nocycle prior o.org_id = o.org_parent_id
+			        )]]>
+			    </isNotEmpty>
+			</isNotEmpty>
+			<isNotEmpty property="orgIds" prepend="and">
+			<![CDATA[ t.org_id in (select b.org_id from basis.basis_tb_org b 
+				      start with b.org_id in ($orgIds$)
+				      connect by prior b.org_id= b.org_parent_id)]]>
+		    </isNotEmpty>
+			<isNotEmpty property="kunnrs" prepend="and">
+			<![CDATA[ t.kunnr in]]>
+			    <iterate property="kunnrs" open="(" close=")" conjunction=",">#kunnrs[]#
+				</iterate>
+		    </isNotEmpty>
+		</dynamic>
+			<!-- <![CDATA[order by t.status, t.create_date desc]]> -->
+		<include refid="global.orderBy" />
+		<include refid="global.paginationEnd" />
+	</select>
+
+	<select id="kunnrAddressSearchCount" parameterClass="kunnrAddress"
+		resultClass="java.lang.Integer">
+		<![CDATA[
+		select 
+		count(t.kunnr_SD)
+		from crm.crm_tb_kunnrAddress t left join crm.crm_tb_kunnr b  on t.kunnr=b.kunnr  
+		where 1=1
+		]]>
+		<dynamic>
+			<isNotEmpty property="kunnrSd" prepend="and">
+			<![CDATA[t.kunnr_SD=#kunnrSd#]]>
+			</isNotEmpty>
+			<isNotEmpty property="kunnr" prepend="and">
+			<![CDATA[t.kunnr=#kunnr#]]>
+			</isNotEmpty>
+			<isNotEmpty property="kunnrName" prepend="and">
+			<![CDATA[b.name1 like #kunnrName,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<select id="kunnrAddressSearch" parameterClass="kunnrAddress"
+		resultClass="kunnrAddress">
+		<include refid="global.paginationStart" />
+		<![CDATA[
+		select t.kunnr_SD kunnrSd,
+       t.kunnr,
+       b.name1 kunnrName,
+       t.address,
+       t.name,
+       t.telephone,
+       t.mobile,
+       t.maximum,
+       e.item_value as maximumTxt,
+       t.state,
+       z.zwl01 as province,
+       z.zwl02 as city,
+       z.zwl03 as area,
+       t.town,
+       z.zwl01t||z.zwl02t||z.zwl03t||z.zwl04t as xzAddress
+  from crm.crm_tb_kunnrAddress t
+  left join crm.crm_tb_kunnr b on t.kunnr = b.kunnr
+  left join crm.crm_tb_dict e on e.item_name = t.maximum
+                             and e.item_state = 'U'
+  left join crm.crm_tb_dict_type y on y.dict_type_id = e.dict_type_id
+                                  and y.dict_type_state = 'U'
+   left join crm.crm_tb_zwlqy z on t.town=z.zwl04
+ 
+		where 1=1
+		]]>
+		<dynamic>
+			<isNotEmpty property="kunnrSd" prepend="and">
+			<![CDATA[t.kunnr_SD=#kunnrSd#]]>
+			</isNotEmpty>
+			<isNotEmpty property="kunnr" prepend="and">
+			<![CDATA[t.kunnr=#kunnr#]]>
+			</isNotEmpty>
+			<isNotEmpty property="kunnrName" prepend="and">
+			<![CDATA[b.name1 like #kunnrName,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+		</dynamic>
+		<include refid="global.paginationEnd" />
+	</select>
+
+
+
+
+	<select id="getKunnrEntity" parameterClass="kunnr" resultClass="kunnr">
+	<![CDATA[
+	   select t.id,
+       t.kunnr,
+       t.locco,
+       t.name1,
+       t.name3,
+       t.sex,
+       t.age,
+       t.mob_number mobNumber,
+       t.bukrs,
+       t.vkorg,
+       t.vtweg,
+       t.spart,
+       t.ktokd,
+       t.channel_id channelId,
+       t.konzs,
+       t1.name1 as konzsTxt,
+       t.kunag,
+       t2.name1 as kunagTxt,
+       t.bank,
+       t.bank_account bankAccount,
+       t.health_number healthNumber,
+       t.stceg,
+       t.business_license businessLicense,
+       t.kverm,
+       t.kverm,
+       t.last_annual lastAnnual,
+       t.province,t.city,t.area,t.town,
+       t.street1,
+       z1.zwl01t||z1.zwl02t||z1.zwl03t||z1.zwl04t as bgXzAddress,
+       t.kp_phone kpPhone,
+       t.tel_number telNumber,
+       t.street,
+       t.name102,
+       t.name102tel,
+       t.name102mob,
+       t.fax_number faxNumber,
+       t.zip,
+       t.business_life businessLife,
+       t.cooperation_start cooperationStart,
+       t.cooperation_end cooperationEnd,
+       t.status,
+       t.org_id as orgId,
+       t.org_name as orgName,
+       t.warehouse_area as warehouseArea,
+       t.nature_enterprise as natureEnterprise,
+       t.fp_recipient as fpRecipient,
+       t.fp_address as fpAddress,
+       t.fp_contact_phone as fpContactPhone,
+       t.zc_address as zcAddress,
+       t.maximum as maximum,
+       t.noticefile1 as noticeFile1,
+     t.noticefile1_path as noticeFilePath1,
+     t.noticefile2 as noticeFile2,
+     t.noticefile2_path as noticeFilePath2,
+     t.noticefile3 as noticeFile3,
+     t.noticefile3_path as noticeFilePath3,
+     t.nameupdate_file as nameUpdateFile,
+     t.nameupdate_path as nameUpdatePath,
+     t.brands as brands,
+      z.zwl01 as shProvince,
+      z.zwl02 as shCity,
+      z.zwl03 as shArea,
+      t.sh_town as shTown,
+      z.zwl01t||z.zwl02t||z.zwl03t||z.zwl04t as shXzAddress,
+      nvl(i.staff_nubmer,0) as staffNumber,
+      nvl(ss.userNum,0) as staffNumberY
+      from crm.crm_tb_kunnr t
+      left join crm.crm_tb_kunnr t1 on t.konzs=t1.kunnr
+      left join crm.crm_tb_kunnr t2 on t.kunag=t2.kunnr
+      left join crm.crm_tb_zwlqy z on t.sh_town=z.zwl04
+      left join crm.crm_tb_zwlqy z1 on t.town=z1.zwl04
+      left join basis.basis_tb_kunnremp_info i on i.emp_code=t.kunnr and i.emp_state='Y'
+      left join (select count(1) as userNum,i1.LIFNR from basis.basis_tb_kunnremp_info i1 
+      where i1.emp_state='Y' group by i1.lifnr)ss  on ss.lifnr=t.kunnr
+     where 1=1
+	]]>
+		<dynamic>
+			<isNotEmpty property="kunnr" prepend="and">
+			<![CDATA[t.kunnr=#kunnr#]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<select id="getKunnrBusinessEntity" parameterClass="kunnr"
+		resultClass="kunnrBusiness">
+		<![CDATA[
+		select b.categories,
+    b.business_manager businessManager,
+    b.manager_mobile managerMobile,
+    b.business_competent businessCompetent,
+    b.competent_mobile competentMobile,
+    b.werks,
+    b.lastyear_sales
+    lastyearSales,
+    b.theyear_sales theyearSales,
+    b.cover_area coverArea,
+    b.akont,
+    b.zterm,
+    b.waers,
+    b.kalks,
+    b.versg,
+    b.vsbed,
+    b.podkz,
+    b.autlf,
+    b.kztlf,
+    b.antlf,
+    b.bokre,
+    b.ktgrd,
+    b.taxkd_01 taxkd01,
+    b.title_medi
+    titleMedi,
+    b.country,
+    b.langu,
+    b.bzirk,
+    b.vkbur,
+    b.vkgrp,
+    b.lprio,
+    b.accessfile,
+    b.accessfile_path accessfilePath,
+    b.customerfile,
+    b.customerfile_path customerfilePath,
+    b.kunnr_leader as kunnrLeader,
+    b.kunnr_phone as kunnrPhone,
+    b.business_manager_id as businessManagerId,
+    b.business_competent_id as businessCompetentId,
+    b.kukla as kukla
+    from crm.crm_tb_kunnrbusiness b
+		where b.kunnr = #kunnr#
+		]]>
+	</select>
+
+
+	<select id="getKunnrAddressList" parameterClass="kunnr"
+		resultClass="kunnrAddress">
+		<![CDATA[
+		select a.id,a.kunnr_sd as kunnrSd,a.kunnr,a.address, a.name, a.telephone, a.mobile,a.maximum,
+		a.state, 
+		z.zwl01 as province,
+        z.zwl02 as city,
+        z.zwl03 as area,
+        a.town,
+        z.zwl01t||z.zwl02t||z.zwl03t||z.zwl04t as xzAddress
+        from crm.crm_tb_kunnraddress a
+        left join crm.crm_tb_zwlqy z on a.town=z.zwl04
+		where a.kunnr = #kunnr#
+		]]>
+	</select>
+
+	<select id="getKunnrBrandList" parameterClass="kunnr"
+		resultClass="kunnrBrand">
+		<![CDATA[
+		select b.id, b.brand, b.sales
+		from crm.crm_tb_kunnrbrand b
+		where b.kunnr = #kunnr#
+		]]>
+	</select>
+
+	<select id="getKunnrAcountList" parameterClass="kunnr"
+		resultClass="kunnrAcount">
+		<![CDATA[
+		select a.id,a.bonus, a.acount_type acountType, a.acount, a.acount_sap acountSap,a.flag
+       ,to_char(a.start_date,'yyyy-MM-dd') startDate,to_char(a.end_date,'yyyy-MM-dd') endDate,a.type_money as typeMoney
+       from crm.crm_tb_kunnracount a
+       where a.kunnr = #kunnr#
+       and a.state='Y'
+		]]>
+	</select>
+
+	<select id="getKunnrLicenseList" parameterClass="kunnr"
+		resultClass="kunnrLicense">
+		<![CDATA[
+		select l.id, l.license_name licenseName, l.license_file licenseFile, l.license_path licensePath,
+		l.license_valid licenseValid
+		from crm.crm_tb_kunnrlicense l
+		where l.kunnr = #kunnr#
+		and l.state='Y'
+		]]>
+	</select>
+
+	<select id="getMaxKunnrSd" parameterClass="java.lang.String"
+		resultClass="java.lang.String">
+		<![CDATA[select max(t.kunnr_sd) from crm.crm_tb_kunnraddress t where t.kunnr=#kunnrId#]]>
+	</select>
+
+
+     <insert id="createSaleArea" parameterClass="kunnrSalesArea">
+		<selectKey keyProperty="id" resultClass="java.lang.Long">
+			<![CDATA[select crm.crm_sq_kunnrsalesarea.nextval as id from dual]]>
+		</selectKey>
+		<![CDATA[
+		insert into crm.crm_tb_kunnrsalesarea t
+		(
+		 id,
+         vkorg,
+         kunnr,
+         spart,
+         werks,
+         vsbed,
+         last_modifydate,
+         vtweg,
+         create_date,
+         state
+         )
+		values
+		(#id#,
+		#vkorg#,
+		#kunnr#,
+		#spart#,
+		#werks#,
+		#vsbed#,
+		sysdate,
+		#vtweg#,
+		sysdate,'Y')
+		]]>
+	</insert>
+
+    <!-- <delete id="removeSalesArea" parameterClass="java.lang.Long">
+		<![CDATA[delete crm.crm_tb_kunnrsalesarea aa where aa.id=#salesAreaId#]]>
+	</delete> -->
+	
+    <update id="removeSalesArea" parameterClass="java.lang.Long">
+		<![CDATA[update  crm.crm_tb_kunnrsalesarea t set t.state='N',t.last_modifydate=sysdate where t.id=#salesAreaId#]]>
+	</update>
+
+	<update id="updateKunnrSalesArea" parameterClass="kunnrSalesArea">
+	<![CDATA[
+		update crm.crm_tb_kunnrsalesarea a
+		set a.vkorg=#vkorg#,
+		a.spart=#spart#,
+		a.werks=#werks#,
+		a.vsbed=#vsbed#,
+		a.last_modifydate=sysdate,
+		a.vtweg=#vtweg#
+		where a.id = #id#
+		and a.kunnr = #kunnr#
+	]]>
+	</update> 
+	<select id="getKunnrSalesAreaList" parameterClass="kunnr"
+		resultClass="kunnrSalesArea">
+		<![CDATA[
+	    select l.id, l.vkorg,
+           k.bukrs as vkorgTxt,
+           l.spart,
+           s.vtext as spartTxt,
+           l.werks,
+           l.vsbed,
+           l.vtweg,
+           w.vtext as vtwegTxt
+      from crm.crm_tb_kunnrsalesarea l
+      left join crm.crm_tb_tvko k on l.vkorg = k.vkorg
+      left join crm.crm_tb_tvtwt w on l.vtweg = w.vtweg
+      left join crm.crm_tb_tspa s on l.spart = s.spart
+      where l.kunnr = #kunnr#
+      and l.state='Y'
+		]]>
+	</select>
+	
+	<select id="getKunnrLogisticsArea" parameterClass="kunnrLogisticsArea"
+		resultClass="kunnrLogisticsArea">
+		<include refid="global.paginationStart" />
+		<![CDATA[
+	    select b.kunnr,
+       b.vkgrp,
+       t.bztxt as vkgrpTxt,
+       b.bzirk,
+       v.bezei as bzirkTxt,
+       b.vkbur,
+       k.bezei as vkburTxt
+  from crm.crm_tb_kunnrbusiness b
+  left join crm.crm_tb_t171t t on t.bzirk = b.vkgrp
+  left join crm.crm_tb_tvgrt v on v.vkgrp = b.bzirk
+  left join crm.crm_tb_tvkbt k on k.vkbur = b.vkbur
+  where 1=1
+		]]>
+		<dynamic>
+			<isNotEmpty property="kunnr" prepend="and">
+			<![CDATA[b.kunnr=#kunnr#]]>
+			</isNotEmpty>
+			<isNotEmpty property="vkgrp" prepend="and">
+			<![CDATA[b.vkgrp=#vkgrp#]]>
+			</isNotEmpty>
+			<isNotEmpty property="bzirk" prepend="and">
+			<![CDATA[b.bzirk=#bzirk#]]>
+			</isNotEmpty>
+			<isNotEmpty property="vkbur" prepend="and">
+			<![CDATA[b.vkbur=#vkbur#]]>
+			</isNotEmpty>
+		</dynamic>
+		<include refid="global.paginationEnd" />
+	</select>
+	<select id="getKunnrLogisticsAreaCount" parameterClass="kunnrLogisticsArea"
+		resultClass="java.lang.Integer">
+		<![CDATA[
+	    select count(*)
+  from crm.crm_tb_kunnrbusiness b
+  left join crm.crm_tb_t171t t on t.bzirk = b.vkgrp
+  left join crm.crm_tb_tvgrt v on v.vkgrp = b.bzirk
+  left join crm.crm_tb_tvkbt k on k.vkbur = b.vkbur
+  where 1=1
+		]]>
+		<dynamic>
+			<isNotEmpty property="kunnr" prepend="and">
+			<![CDATA[b.kunnr=#kunnr#]]>
+			</isNotEmpty>
+			<isNotEmpty property="vkgrp" prepend="and">
+			<![CDATA[b.vkgrp=#vkgrp#]]>
+			</isNotEmpty>
+			<isNotEmpty property="bzirk" prepend="and">
+			<![CDATA[b.bzirk=#bzirk#]]>
+			</isNotEmpty>
+			<isNotEmpty property="vkbur" prepend="and">
+			<![CDATA[b.vkbur=#vkbur#]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	<update id="updateLogisticArea" parameterClass="kunnrLogisticsArea">
+	<![CDATA[
+		update crm.crm_tb_kunnrbusiness b
+		set b.vkgrp=#vkgrp#,
+            b.bzirk=#bzirk#,
+            b.vkbur=#vkbur#,
+            b.modify_date=sysdate
+		where b.kunnr = #kunnr# 
+	]]>
+	</update>
+	
+	<select id="getKunnrLicenseListByLicense" parameterClass="kunnrLicense"
+		resultClass="kunnrLicense">
+		<![CDATA[
+		select l.id, l.license_name licenseName, l.license_file licenseFile, l.license_path licensePath,
+		l.license_valid licenseValid
+		from crm.crm_tb_kunnrlicense l
+		where l.kunnr = #kunnr#
+		and l.state='Y'
+			]]>
+		<dynamic>
+			<isNotEmpty property="licenseName" prepend="and">
+			<![CDATA[l.license_name=#licenseName#]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	<update id="updateKunnrLicense" parameterClass="kunnrLicense">
+	<![CDATA[
+		update crm.crm_tb_kunnrlicense l
+		set l.license_name =#licenseName#, 
+		l.license_file =#licenseFile#,
+		 l.license_path=#licensePath#,
+		l.license_valid =#licenseValid#,
+		l.state='N',
+		l.modify_date=sysdate
+		where l.kunnr = #kunnr# 
+		and l.id=#id#
+	]]>
+	</update>
+	
+	<update id="updateKunnrTarget" parameterClass="kunnr">
+	<![CDATA[
+		update crm.crm_tb_target g 
+			set 
+			g.modify_date=sysdate ,
+			g.CT_STATE= '2' ,
+			g.cust_id=#kunnr#,
+			g.event_id=#eventId#
+			where g.event_id=#eventId#
+			]]>
+	</update>
+	
+	
+	<insert id="kunnrApplySave" parameterClass="kunnrApplyObject">
+		<![CDATA[
+		insert into crm.crm_tb_kunnrapply_save
+		(id,
+		xmlid,
+		xmlpath,
+		state,
+		subfolders,
+		create_date,
+		modify_date,
+		xml_name,
+		org_id,
+		emp_id
+		)
+		values
+		(#id#,
+		#xmlId#,
+		#xmlPath#,
+		'Y',
+		#subfolders#,
+		sysdate,
+		sysdate,
+		#xmlName#,
+		#orgId#,
+		#empId#)
+		]]>
+	</insert>
+	
+	
+	
+	<select id="kunnrApplySaveSearchCount" parameterClass="kunnrApplyObject"
+		resultClass="java.lang.Integer">
+		<![CDATA[
+		select 
+		count(s.xmlid)
+		 from  crm.crm_tb_kunnrapply_save s
+		 where 1=1
+
+		]]>
+		<dynamic>
+			<isNotEmpty property="xmlId" prepend="and">
+			<![CDATA[s.xmlid=#xmlId#]]>
+			</isNotEmpty>
+			<isNotEmpty property="xmlName" prepend="and">
+			<![CDATA[s.xml_name like #xmlName,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="eventId" prepend="and">
+			<![CDATA[s.event_id=#eventId#]]>
+			</isNotEmpty>
+			<isNotEmpty property="state" prepend="and">
+			<![CDATA[s.state=#state#]]>
+			</isNotEmpty>
+			<isNotEmpty property="empId" prepend="and">
+			<![CDATA[s.emp_id=#empId#]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<select id="kunnrApplySaveSearch" parameterClass="kunnrApplyObject" resultClass="kunnrApplyObject">
+		<include refid="global.paginationStart" />
+		<![CDATA[
+		select distinct s.xmlid as xmlId,
+		 s.xmlpath as xmlPath,
+		 s.xml_name as xmlName,
+		 s.emp_id as empId,
+		 s.org_id as orgId,
+		 o.org_name as orgName,
+		 i.emp_name as empName,
+		 s.event_id as eventId,
+		 s.state as state,
+		 s.subfolders as subfolders,
+		 to_char(s.create_date,'yyyy-MM-dd') as createDate,
+		 to_char(s.modify_date,'yyyy-MM-dd') as modifyDate
+		 from  crm.crm_tb_kunnrapply_save s
+		 left join basis.basis_tb_org o on o.org_id=s.org_id
+		 left join basis.basis_tb_salesemp_info i on i.emp_id=s.emp_id
+		 where 1=1
+		]]>
+		<dynamic>
+			<isNotEmpty property="xmlId" prepend="and">
+			<![CDATA[s.xmlid=#xmlId#]]>
+			</isNotEmpty>
+			<isNotEmpty property="xmlName" prepend="and">
+			<![CDATA[s.xml_name like #xmlName,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="eventId" prepend="and">
+			<![CDATA[s.event_id=#eventId#]]>
+			</isNotEmpty>
+			<isNotEmpty property="state" prepend="and">
+			<![CDATA[s.state=#state#]]>
+			</isNotEmpty>
+			<isNotEmpty property="empId" prepend="and">
+			<![CDATA[s.emp_id=#empId#]]>
+			</isNotEmpty>
+		</dynamic>
+		<include refid="global.orderBy" />
+		<include refid="global.paginationEnd" />
+	</select>
+	
+	<update id="updateKunnrApplySave" parameterClass="kunnrApplyObject">
+	<![CDATA[
+		update crm.crm_tb_kunnrapply_save s 
+			set 
+			s.modify_date=sysdate
+			]]>
+			<dynamic>
+			<isNotEmpty property="eventId" prepend=",">
+			<![CDATA[s.event_id=#eventId#]]>
+			</isNotEmpty>
+			<isNotEmpty property="state" prepend=",">
+			<![CDATA[s.state=#state#]]>
+			</isNotEmpty>
+			<![CDATA[where s.xmlid=#xmlId#]]>
+		</dynamic>
+	</update>
+	
+	<update id="updateKunnrStatus" parameterClass="kunnr">
+	<![CDATA[
+		update crm.crm_tb_kunnr s 
+			set 
+			s.last_modify_date=sysdate,
+			s.status=#status#
+			where s.kunnr=#kunnr#
+			]]>
+	</update>
+	<select id="getRoleByUser" parameterClass="java.lang.String" resultClass="java.lang.String">
+	<![CDATA[
+		select d.item_value as str
+  from basis.basis_tb_station_user u
+  left join basis.basis_tb_dict d on d.item_name = u.station_id
+  left join basis.basis_tb_dict_type t on t.dict_type_id = d.dict_type_id
+ where u.is_main_station = 'Y'
+   and t.dict_type_value = 'kunnrClose'
+   and t.dict_type_state = 'U'
+   and d.item_state = 'U'
+   and u.user_id = #userId#
+			]]>
+	</select>
+	<!-- 经销商用户及角色  start-->
+	<insert id="createKunnrUser" parameterClass="kunnr">
+		<selectKey keyProperty="id" resultClass="java.lang.Long">
+			<![CDATA[select basis.basis_seq_emp.nextval as id from dual]]>
+		</selectKey>
+		<![CDATA[
+		insert into basis.basis_tb_kunnremp_info
+		(emp_id,
+		 org_id,
+		 bus_mobilephone,
+		 emp_mobile_phone,
+		 emp_phone,
+		 emp_name,
+		 emp_code,
+		 emp_start_date,
+		 emp_state,
+		 last_modify,
+		 modify_date,
+		 emp_address,
+		 emp_psd,
+		 emp_workfax,
+		 paswd_sign_date,
+		 lifnr,
+		 staff_nubmer
+		)
+		values
+		(#id#,
+		#orgId#,
+		#mobNumber#,
+		#mobNumber#,
+		#telNumber#,
+		#name1#,
+		#kunnr#,
+		sysdate,
+		'Y',
+		sysdate,
+		sysdate,
+		#street1#,
+		#kunnrCode#,
+		#faxNumber#,
+		sysdate,
+		#kunnr#,
+		#staffNumber#)
+		]]>
+	</insert>
+	<insert id="createKunnrUserRole" parameterClass="userRole">
+		<selectKey keyProperty="userRoleId" resultClass="java.lang.Long">
+			<![CDATA[select basis.basis_seq_user_role.nextval as userRoleId from dual]]>
+		</selectKey>
+		<![CDATA[
+		insert into basis.basis_tb_user_role
+		(user_role_id,
+		 user_id,
+		 role_id,
+		 modify_date,
+		 start_date,
+		 end_date,
+		 flag
+		)
+		values
+		(#userRoleId#,
+		#userId#,
+		'jxs_role',
+		sysdate,
+		sysdate,
+		to_date('9999/1/1','yyyy/MM/dd'),
+		'U')
+		]]>
+	</insert>
+	<!-- kunnr关户 -->
+	<update id="closeKunnrUser" parameterClass="kunnr">
+	<![CDATA[
+		update basis.basis_tb_kunnremp_info s
+		set s.modify_date=sysdate,
+		s.last_modify=sysdate,
+		s.emp_state=#status#,
+		s.emp_end_date=sysdate
+		where s.lifnr=#kunnr#
+	]]>
+	</update>
+	<update id="updateKunnrUserStaff" parameterClass="kunnr">
+	<![CDATA[
+		update basis.basis_tb_kunnremp_info s
+		set s.modify_date=sysdate,
+		s.last_modify=sysdate,
+		s.staff_nubmer=#staffNumber#
+		where s.emp_code=#kunnr#
+	]]>
+	</update>
+	<update id="updateKunnrUser" parameterClass="kunnr">
+	<![CDATA[
+		update basis.basis_tb_kunnremp_info s
+		set s.modify_date=sysdate,
+		s.last_modify=sysdate,
+		s.org_id=#orgId#,
+		s.bus_mobilephone=#mobNumber#,
+		s.emp_mobile_phone=#mobNumber#,
+		s.emp_phone=#telNumber#,
+		s.emp_name=#name1#,
+		s.emp_address=#street1#,
+		s.emp_workfax=#faxNumber#,
+		s.staff_nubmer=#staffNumber#
+		where s.emp_code=#kunnr#
+	]]>
+	</update>
+	<!-- end 经销商用户及角色 -->
+	<update id="releaseKunnrTarget" parameterClass="kunnr">
+	<![CDATA[
+		update crm.crm_tb_target t 
+			set 
+			t.modify_date=sysdate ,
+			t.target_num=0,
+            t.box=0
+			where t.cust_id = #kunnr#
+                 and t.mark = 'N'
+                 and t.kunnr_goal_type = 'B'
+                 and t.ct_state='0'
+                 and t.the_year||lpad(t.the_month,2,'0') > to_char(sysdate,'yyyymm')
+			]]>
+	</update>
+	<update id="modifyProcessVariable" parameterClass="java.lang.String">
+	<![CDATA[
+		update osap.act_ru_variable t 
+			set 
+			t.text_='Y'
+		where t.proc_inst_id_=#eventId# and t.name_='dataLack'
+			]]>
+	</update>
+	<!-- 经销商当前月之后的月份的经销商目标量清空 -->
+	<delete id="deleteKunnrTarget" parameterClass="kunnr">
+		<![CDATA[
+			delete crm.crm_tb_target t
+		 		where t.cust_id = #kunnr#
+                 and t.mark = 'Y'
+                 and t.kunnr_goal_type = 'B'
+                 and t.ct_state='0'
+                 and t.the_year||lpad(t.the_month,2,'0') > to_char(sysdate,'yyyymm')
+		 ]]>
+	</delete>
+	<!-- 判断用户是不是有这个角色 -->
+	<select id="getOfficeRole" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+	<![CDATA[
+		select count(1) from  basis.basis_tb_station_role  t,
+           basis.basis_tb_station_user  r
+           where t.station_id=r.station_id
+           and t.flag='U'
+           and r.user_id=#userId#
+           and t.role_id=#roleId#
+	]]>	
+	</select>
+</sqlMap>

@@ -1,0 +1,124 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+        #CSSM(["easyui","style"])
+        #JSM(["jquery", "easyui"])
+        #JS_ENV_VAL()
+    </head>
+    <body>
+        <form method="post" id="form">
+            <div class="easyui-panel" data-options="collapsible:true,iconCls:'icon-search'" style="padding: 2px;">
+                <table width="100%" border="0" cellpadding="0" cellspacing="1">
+                   <tr>
+                        <td class="head" noWrap>周库存</td>
+                        <td class="head" noWrap>第一周 库存所属日期：</td>
+                        <td>
+                            <input class="easyui-datebox" id="checkDate1" name="checkTimes" data-options="editable:false">
+                        </td>
+                        <td class="head" noWrap>可提报时间：</td>
+                        <td>
+                            <input class="easyui-datetimebox" id="startDate1" name="startDates" data-options="editable:false">
+                                                                           至
+                            <input class="easyui-datetimebox" id="endDate1" name="endDates" data-options="editable:false">
+                        </td>
+                   </tr>
+                   <tr>
+                        <td>&nbsp;</td>
+                   </tr>
+                   <tr>
+                        <td>&nbsp;</td>
+                        <td class="head" noWrap>第二周 库存所属日期：</td>
+                        <td>
+                            <input class="easyui-datebox" id="checkDate2" name="checkTimes" data-options="editable:false">
+                        </td>
+                        <td class="head" noWrap>可提报时间：</td>
+                        <td>
+                            <input class="easyui-datetimebox" id="startDate2" name="startDates" data-options="editable:false">
+                                                                           至
+                            <input class="easyui-datetimebox" id="endDate2" name="endDates" data-options="editable:false">
+                        </td>
+                   </tr>
+                   <tr>
+                        <td>&nbsp;</td>
+                   </tr>
+                   <tr>
+                        <td>&nbsp;</td>
+                        <td class="head" noWrap>第三周 库存所属日期：</td>
+                        <td>
+                            <input class="easyui-datebox" id="checkDate3" name="checkTimes" data-options="editable:false">
+                        </td>
+                        <td class="head" noWrap>可提报时间：</td>
+                        <td>
+                            <input class="easyui-datetimebox" id="startDate3" name="startDates" data-options="editable:false">
+                                                                           至
+                            <input class="easyui-datetimebox" id="endDate3" name="endDates" data-options="editable:false">
+                        </td>
+                   </tr>
+                   <tr>
+                        <td>&nbsp;</td>
+                   </tr>
+                   <tr>
+                        <td>&nbsp;</td>
+                        <td class="head" noWrap>第四周 库存所属日期：</td>
+                        <td>
+                            <input class="easyui-datebox" id="checkDate4" name="checkTimes" data-options="editable:false">
+                        </td>
+                        <td class="head" noWrap>可提报时间：</td>
+                        <td>
+                            <input class="easyui-datetimebox" id="startDate4" name="startDates" data-options="editable:false">
+                                                                           至
+                            <input class="easyui-datetimebox" id="endDate4" name="endDates" data-options="editable:false">
+                        </td>
+                   </tr>
+                   <tr>
+                        <td>&nbsp;</td>
+                   </tr>
+                   <tr>
+                        <td>&nbsp;</td>
+                        <td class="head" noWrap>第五周 库存所属日期：</td>
+                        <td>
+                            <input class="easyui-datebox" id="checkDate5" name="checkTimes" data-options="editable:false">
+                        </td>
+                        <td class="head" noWrap>可提报时间：</td>
+                        <td>
+                            <input class="easyui-datetimebox" id="startDate5" name="startDates" data-options="editable:false">
+                                                                           至
+                            <input class="easyui-datetimebox" id="endDate5" name="endDates" data-options="editable:false">
+                        </td>
+                   </tr>
+                   <tr>
+                        <td>&nbsp;</td>
+                   </tr>
+                   <tr>
+                        <td class="head" noWrap>月库存</td>
+                        <td class="head" noWrap>库存所属日期：</td>
+                        <td>
+                            <input class="easyui-datebox" id="checkDate6" name="checkTimes" data-options="editable:false">
+                        </td>
+                        <td class="head" noWrap>可提报时间：</td>
+                        <td>
+                            <input class="easyui-datetimebox" id="startDate6" name="startDates" data-options="editable:false">
+                                                                           至
+                            <input class="easyui-datetimebox" id="endDate6" name="endDates" data-options="editable:false">
+                        </td>
+                   </tr>
+                   <tr>
+                        <td>&nbsp;</td>
+                   </tr>
+                   <tr>
+                        <td colspan="5" align="center">
+                             <a href="javascript:submit()"  class="easyui-linkbutton" iconCls="icon-search">修改</a>
+                        </td>
+                   </tr>
+             </table>
+        </div>
+   <table id="datagrid">  
+   </table>
+ </form>
+<iframe id="hideFrame" name="hideFrame"  style="height: 0; width: 0"></iframe>
+<div id="maintActivityPlanInfo"/>
+</body>
+	<script type="text/javascript" src="$!{env.imgUrl}/js/My97DatePicker/WdatePicker.js"></script>
+    <script type="text/javascript" src="$!{env.imgUrl}/js/platform/stockReport/searchStockDate.js"></script>
+</html>

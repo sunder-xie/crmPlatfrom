@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+	"http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="stockReport" extends="kintiger-default">
+	    <global-results>
+	        <result name="ex">/platform/stockReport/exception.vm</result>
+	    </global-results>
+	    <global-exception-mappings>
+	        <exception-mapping result="ex" exception="java.lang.Exception"/>
+	    </global-exception-mappings>
+		<action name="stockReportAction" class="stockReportAction">
+	        <result name="toWeekReport">/platform/stockReport/searchStockReportWeek.vm</result>
+	        <result name="toDayReport">/platform/stockReport/searchStockReportDay.vm</result>
+	        <result name="toMonthReport">/platform/stockReport/searchStockReportMonth.vm</result>
+	        <result name="toMonthReportDD">/platform/stockReport/searchStockReportMonthDD.vm</result>
+	        <result name="toMonthReportCW">/platform/stockReport/searchStockReportMonthCW.vm</result>
+	        <result name="toSalesReport">/platform/stockReport/searchSalesReport.vm</result>
+	        <result name="toWeekDetailCGReport">/platform/stockReport/searchStockReportCG.vm</result>
+	        <result name="toWeekDetailSkuReport">/platform/stockReport/searchStockReportSku.vm</result>
+	        <result name="toWeekDetailSalesReport">/platform/stockReport/searchStockReportSales.vm</result>
+	        <result name="toStockDate">/platform/stockReport/searchStockDate.vm</result>
+	        <result name="toKunnrPlanReport">/platform/stockReport/searchKunnrPlanReport.vm</result>
+	        <result name="toKunnrType">/platform/stockReport/searchKunnrType.vm</result>
+	        <result name="toSkuPercent">/platform/stockReport/searchSkuPercent.vm</result>
+	        <result name="toSalesGoalCG">/platform/stockReport/searchSalesGoalCG.vm</result>
+	        <result name="toStockManager">/platform/stockReport/searchStockManager.vm</result>
+	        <result name="toStockManagerReport">/platform/stockReport/searchStockManagerReport.vm</result>
+	        <result name="toCreateStockReportWeek">/platform/stockReport/createStockReportWeek.vm</result>
+	        <result name="toCreateStockReportMonth">/platform/stockReport/createStockReportMonth.vm</result>
+	        <result name="toCreateStockReportSales">/platform/stockReport/createStockReportSales.vm</result>
+	        <result name="toStockReportSalesByCG">/platform/stockReport/searchStockReportSalesByCG.vm</result>
+	        <result name="toStockCheck">/platform/stockReport/searchStockCheck.vm</result>
+	        <result name="toSearchKunag">/platform/stockReport/searchKunag.vm</result>
+	        <result name="toSalesGoalCGDetail">/platform/stockReport/searchSalesGoalCGDetail.vm</result>
+	        <result name="toSalesGoalCGDetailView">/platform/stockReport/searchSalesGoalCGDetailView.vm</result>
+	        <result name="toOrderCheck">/platform/stockReport/searchOrderCheck.vm</result>
+	        <result name="toStockTotal">/platform/stockReport/searchStockTotal.vm</result>
+	        <result name="toSalesGoalChallenge">/platform/stockReport/searchSalesGoalChallenge.vm</result>
+	        <result name="toKunnrManager">/platform/stockReport/searchKunnrManager.vm</result>
+	        <result name="toStockSafety">/platform/stockReport/searchStockSafety.vm</result>
+	        <result name="toKunnrManagerDate">/platform/stockReport/searchKunnrManagerDate.vm</result>
+		    <result name="toSearchStockStateManager">/platform/stockReport/searchStockStateManager.vm</result>
+	        <result name="toSearchOrderFollow">/platform/stockReport/searchOrderFollow.vm</result>
+	        <result name="toSearchStockWarning">/platform/stockReport/searchStockWarning.vm</result>
+	        <result name="toKunnrManagerKunnrSum">/platform/stockReport/searchKunnrManagerKunnrSum.vm</result>
+	        <result name="toKunnrManagerSku">/platform/stockReport/searchKunnrManagerSku.vm</result>
+	        <result name="toStockWarning">/platform/stockReport/searchStockWarning.vm</result>
+	        <result name="toKunnrSkuPercent">/platform/stockReport/searchKunnrSkuPercent.vm</result>
+	        <result name="toSkuUnitCoefficient">/platform/stockReport/searchSkuUnitCoefficient.vm</result>
+	        <result name="toSearchOrderFollowByKunnr">/platform/stockReport/searchOrderFollowByKunnr.vm</result>
+	        <result name="toSalesPlanChange">/platform/stockReport/salesPlanChange.vm</result>
+	        <result name="toSalesPlanChangeView">/platform/stockReport/salesPlanChangeView.vm</result>
+	        <result name="toSearchSalesPlanChange">/platform/stockReport/searchSalesPlanChange.vm</result>
+	        <result name="toSemiAutomatic">/platform/stockReport/semiAutomatic.vm</result>
+	        <result name="toCustomerStock">/platform/stockReport/searchCustomerSalesReport.vm</result>
+	        <result name="toCreateCustomerStock">/platform/stockReport/createCustomerStockReportSales.vm</result>
+	        <result name="toSkuUnit">/platform/stockReport/searchSkuUnit.vm</result>
+	        <result name="toUpdateSkuUnit">/platform/stockReport/updateSkuUnit.vm</result>
+	        <result name="toSearchCustomerStockByDate">/platform/stockReport/searchCustomerSalesByDate.vm</result>
+	        <result name="toStockReportKunnr">/platform/stockReport/searchStockReportKunnr.vm</result>
+	        </action>
+	        
+	    <action name="treeAction" class="treeAction">
+	    </action>
+	</package>
+</struts>

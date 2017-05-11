@@ -1,0 +1,536 @@
+<?xml version="1.0" encoding="GB2312"?>
+<!DOCTYPE sqlMap
+	PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="orders">
+	<typeAlias alias="orderTitle"
+		type="com.kintiger.platform.order.pojo.OrderTitle" />
+	<typeAlias alias="orderList" type="com.kintiger.platform.order.pojo.OrderList" />
+	<typeAlias alias="materiel" type="com.kintiger.platform.master.pojo.Materiel" />
+	<typeAlias alias="returnList"
+		type="com.kintiger.platform.order.pojo.AssesReturnList" />
+
+	<select id="searchOrderTitles" parameterClass="orderTitle"
+		resultClass="orderTitle">
+		<include refid="global.paginationStart" />
+		<![CDATA[select t.order_id,
+		t.order_state,
+		t.kunnr_num,
+		t.kunnr_id,
+		t.kunnr_name,
+		to_char(t.order_date, 'yyyyMMdd') as order_date,
+		z.bztxt provinceArea,
+		z.bezei province,
+		v.bezei city,
+		nvl(ss.listCount,0) order_count,
+		nvl(ss.totalMoney,0) orderTotalMoney,
+		nvl(ss.userPay,0) order_use_fund,
+		nvl(ss.giveMoney,0) order_give_fund,
+		nvl((ss.totalMoney-ss.userPay),0) order_up_fund,
+		t.memo
+		from crm.crm_tb_order_title t
+		left join crm.crm_tb_kunnr k on k.kunnr = t.kunnr_num
+		left join crm.crm_tb_kunnrbusiness b on b.kunnr = t.kunnr_num
+		left join crm.crm_tb_zdqsf z on z.vkgrp=b.bzirk
+		left join crm.crm_tb_tvkbt v on v.vkbur=b.vkbur
+		left join (select l.order_id,
+		count(l.list_id) as listCount,
+		sum(l.order_use_fund) as userPay,
+		sum(l.order_give_fund) as giveMoney,
+		sum(l.order_up_fund) as totalMoney
+		from crm.crm_tb_order_list l
+		where l.list_state <> 'D'
+		group by l.order_id) ss on ss.order_id = t.order_id
+		where t.order_state<>'D'
+		]]>
+		<dynamic>
+			<isNotEmpty property="order_id" prepend="and">
+				t.order_id=#order_id#
+			</isNotEmpty>
+			<isNotEmpty property="startDate" prepend="and">
+				<![CDATA[t.order_date>=to_date(#startDate#,'yyyy-MM-dd')]]>
+			</isNotEmpty>
+			<isNotEmpty property="endDate" prepend="and">
+				<![CDATA[t.order_date<=to_date(#endDate#,'yyyy-MM-dd')]]>
+			</isNotEmpty>
+			<isNotEmpty property="kunnr_num" prepend="and">
+				t.kunnr_num = #kunnr_num#
+			</isNotEmpty>
+			<isNotEmpty property="kunnr_name" prepend="and">
+				(t.kunnr_num = #kunnr_name# or
+				t.kunnr_name like #kunnr_name,handler=wildcard# escape '\'
+				)
+			</isNotEmpty>
+			<isNotEmpty property="states" prepend="and">
+				t.order_state in
+				<iterate property="states" open="(" close=")" conjunction=",">#states[]#
+				</iterate>
+			</isNotEmpty>
+		    <isNotEmpty property="orgId" prepend="and">
+		   <!--  <isEmpty property="bhxjFlag">
+			<![CDATA[t.org_id =#orgId#]]>
+			</isEmpty>
+			<isNotEmpty property="bhxjFlag"> -->
+			<![CDATA[exists (select o.org_id
+                   from basis.basis_tb_org o
+                    where o.state = 'Y'
+                    and k.org_id=o.org_id
+                    start with o.org_id = #orgId#
+                    connect by nocycle prior o.org_id = o.org_parent_id
+			)]]>
+			<!-- </isNotEmpty> -->
+			</isNotEmpty>
+		</dynamic>
+    <![CDATA[order by t.order_id asc]]>
+		<include refid="global.paginationEnd" />
+	</select>
+	<select id="getOrderTitleListCount" parameterClass="orderTitle"
+		resultClass="java.lang.Integer">
+		<![CDATA[select count(1)
+		from crm.crm_tb_order_title t
+		left join crm.crm_tb_kunnr k on k.kunnr = t.kunnr_num
+		where t.order_state<>'D'
+		]]>
+		<dynamic>
+			<isNotEmpty property="order_id" prepend="and">
+				t.order_id=#order_id#
+			</isNotEmpty>
+			<isNotEmpty property="startDate" prepend="and">
+				<![CDATA[t.order_date>=to_date(#startDate#,'yyyy-MM-dd')]]>
+			</isNotEmpty>
+			<isNotEmpty property="endDate" prepend="and">
+				<![CDATA[t.order_date<=to_date(#endDate#,'yyyy-MM-dd')]]>
+			</isNotEmpty>
+			<isNotEmpty property="kunnr_num" prepend="and">
+				t.kunnr_num = #kunnr_num#
+			</isNotEmpty>
+			<isNotEmpty property="kunnr_name" prepend="and">
+				(t.kunnr_num = #kunnr_name# or
+				t.kunnr_name like #kunnr_name,handler=wildcard# escape '\'
+				)
+			</isNotEmpty>
+			<isNotEmpty property="states" prepend="and">
+				t.order_state in
+				<iterate property="states" open="(" close=")" conjunction=",">#states[]#
+				</iterate>
+			</isNotEmpty>
+			<isNotEmpty property="orgId" prepend="and">
+		   <!--  <isEmpty property="bhxjFlag">
+			<![CDATA[t.org_id =#orgId#]]>
+			</isEmpty>
+			<isNotEmpty property="bhxjFlag"> -->
+			<![CDATA[exists (select o.org_id
+                   from basis.basis_tb_org o
+                    where o.state = 'Y'
+                    and k.org_id=o.org_id
+                    start with o.org_id = #orgId#
+                    connect by nocycle prior o.org_id = o.org_parent_id
+			)]]>
+			<!-- </isNotEmpty> -->
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<insert id="insertOrderTitles">
+		<selectKey resultClass="java.lang.Long" keyProperty="order_id">
+		<![CDATA[
+			select crm.CRM_SEQ_ORDER_TITLE.nextval as order_id from dual
+		]]>
+		</selectKey>
+		<![CDATA[
+			insert into CRM.CRM_TB_ORDER_TITLE 
+			(order_id,
+			 order_num,
+			 order_state,
+			 kunnr_num,
+			 kunnr_name,
+			 order_date,
+			 order_count,
+			 order_up_fund,
+			 order_give_fund,
+			 order_use_fund,
+			 kunnr_id,
+			 user_id,
+			 memo
+			)values
+			(#order_id#,
+			 #order_num#,
+			 #order_state#,
+			 #kunnr_num#,
+			 #kunnr_name#,
+			 to_date(#order_date#,'yyyy-MM-dd'),
+			 #order_count#,
+			 #order_up_fund#,
+			 #order_give_fund#,
+			 #order_use_fund#,
+			 #kunnr_id#,
+			 #user_id#,
+			 #memo#)
+		]]>
+	</insert>
+
+	<update id="updateOrderTitles" parameterClass="orderTitle">
+		update
+		CRM.CRM_TB_ORDER_TITLE set
+		order_num = #order_num#,
+		order_state =
+		#order_state#,
+		kunnr_num = #kunnr_num#,
+		kunnr_name = #kunnr_name#,
+		order_date = to_date(#order_date#,'yyyy-MM-dd'),
+		order_count =
+		#order_count#,
+		order_up_fund = #order_up_fund#,
+		order_give_fund =
+		#order_give_fund#,
+		order_use_fund = #order_use_fund#,
+		kunnr_id =
+		#kunnr_id#,
+		user_id = #user_id#,
+		alter_date =
+		to_Date(#alter_date#,'yyyy-MM-dd'),
+		alter_id = #alter_id#,
+		memo=#memo#,
+		modify_date=sysdate
+		where order_id=#order_id#
+	</update>
+    <update id="updateOrderState" parameterClass="orderTitle">
+		update
+		CRM.CRM_TB_ORDER_TITLE set
+		order_state =#order_state#,
+		modify_date=sysdate
+		<dynamic>
+			<isNotEmpty property="alter_id" prepend=",">
+			  alter_id = #alter_id#
+			  , 
+			  alter_date = sysdate
+			</isNotEmpty>
+			<isNotEmpty property="order_id" prepend="where">
+			    order_id=#order_id#
+			</isNotEmpty>
+			<isNotEmpty property="codes" prepend="where">
+				order_id in
+				<iterate property="codes" open="(" close=")" conjunction=",">#codes[]#
+				</iterate>
+			</isNotEmpty>
+		</dynamic>
+	</update>
+	
+	<select id="findMaterielTypeList" parameterClass="materiel"
+		resultClass="materiel">
+	<![CDATA[
+		select distinct m.matkl, m.wgbez 
+		from BASIS.BASIS_TB_MATERIEL m
+		where m.WGBEZ not like '%停用%'
+	 ]]>
+		<dynamic>
+			<isNotEmpty property="wgbez" prepend="and">
+				m.WGBEZ=#wgbez#
+			</isNotEmpty>
+			<isNotEmpty property="matkl" prepend="and">
+				m.matkl=#matkl#
+			</isNotEmpty>
+			<isNotEmpty property="search" prepend="and">
+				(m.matkl like #search,handler=wildcard# escape '\' or
+				m.WGBEZ like #search,handler=wildcard# escape '\'
+				)
+			</isNotEmpty>
+		</dynamic>
+	 <![CDATA[
+		order by matkl
+	]]>
+	</select>
+
+	<select id="findMaterielList" parameterClass="materiel"
+		resultClass="materiel">
+		<!-- ,m.kbetr -->
+	<![CDATA[
+		select distinct m.matnr, m.maktx
+		from BASIS.BASIS_TB_MATERIEL m
+		where m.WGBEZ not like '%停用%'
+	 ]]>
+		<dynamic>
+			<isNotEmpty property="matkl" prepend="and">
+				m.matkl=#matkl#
+			</isNotEmpty>
+			<isNotEmpty property="matnr" prepend="and">
+				m.matnr=#matnr#
+			</isNotEmpty>
+			<isNotEmpty property="maktx" prepend="and">
+				m.maktx=#maktx#
+			</isNotEmpty>
+			<isNotEmpty property="search" prepend="and">
+				(m.matnr like #search,handler=wildcard# escape '\' or
+				m.maktx like #search,handler=wildcard# escape '\'
+				)
+			</isNotEmpty>
+		</dynamic>
+	 <![CDATA[
+		order by maktx
+	]]>
+	</select>
+
+	<select id="getKunnrs" parameterClass="kunnr" resultClass="kunnr">
+		<![CDATA[
+		select t.kunnr,
+		t.name1
+		from crm.crm_tb_kunnr t
+		where 1=1
+		]]>
+		<dynamic>
+			<isNotEmpty property="kunnr" prepend="and">
+			<![CDATA[t.kunnr=#kunnr#]]>
+			</isNotEmpty>
+			<isNotEmpty property="name1" prepend="and">
+			<![CDATA[t.name1 = #name1#]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<sql id="ibatorgenerated_Example_Where_Clause">
+		<!-- WARNING - This element is automatically generated by Apache iBATIS 
+			ibator, do not modify. This element was generated on Tue Nov 03 10:57:21 
+			CST 2015. -->
+		<iterate property="oredCriteria" conjunction="or" prepend="where"
+			removeFirstPrepend="iterate">
+			<isEqual property="oredCriteria[].valid" compareValue="true">
+				(
+				<iterate prepend="and" property="oredCriteria[].criteriaWithoutValue"
+					conjunction="and">
+					$oredCriteria[].criteriaWithoutValue[]$
+				</iterate>
+				<iterate prepend="and" property="oredCriteria[].criteriaWithSingleValue"
+					conjunction="and">
+					$oredCriteria[].criteriaWithSingleValue[].condition$
+					#oredCriteria[].criteriaWithSingleValue[].value#
+				</iterate>
+				<iterate prepend="and" property="oredCriteria[].criteriaWithListValue"
+					conjunction="and">
+					$oredCriteria[].criteriaWithListValue[].condition$
+					<iterate property="oredCriteria[].criteriaWithListValue[].values"
+						open="(" close=")" conjunction=",">
+						#oredCriteria[].criteriaWithListValue[].values[]#
+					</iterate>
+				</iterate>
+				<iterate prepend="and" property="oredCriteria[].criteriaWithBetweenValue"
+					conjunction="and">
+					$oredCriteria[].criteriaWithBetweenValue[].condition$
+					#oredCriteria[].criteriaWithBetweenValue[].values[0]# and
+					#oredCriteria[].criteriaWithBetweenValue[].values[1]#
+				</iterate>
+				)
+			</isEqual>
+		</iterate>
+	</sql>
+
+	<select id="findOrderDetailListByTitle" parameterClass="java.lang.Long"
+		resultClass="orderList">
+	<![CDATA[
+	select 
+      l.list_id,
+      l.order_id,
+      l.materiel_num,
+      l.materiel_name,
+      nvl(l.list_count,0) list_count,
+      nvl((l.list_count*l.materiel_price),0) order_up_fund,
+      nvl(l.order_give_count,0) order_give_count,
+      nvl((l.order_give_count*l.materiel_price),0) order_give_fund,
+      nvl(l.order_use_fund,0) order_use_fund,
+      nvl(l.materiel_price,0) materiel_price,
+      nvl((l.list_count*l.materiel_price-l.order_use_fund),0) payMoney,
+       l.materiel_mvgr,
+       l.materiel_mvgr_name,
+       l.address,
+       l.list_type,
+       l.remark
+     from crm.crm_tb_order_list l
+     where l.list_state<>'D'
+		and order_id = #titleId#
+		order by LIST_ID
+	]]>
+	</select>
+
+	<insert id="insertOrderDetailList">
+		<selectKey resultClass="java.lang.Long" keyProperty="list_id">
+			SELECT crm.CRM_SEQ_ORDER_LIST.nextval as list_id from dual
+		</selectKey>
+		insert into crm.CRM_TB_ORDER_LIST (LIST_ID, ORDER_ID, MATERIEL_NUM,
+		MATERIEL_NAME, LIST_COUNT,
+		ORDER_UP_FUND, ORDER_GIVE_FUND, ORDER_USE_FUND, LIST_TYPE, REMARK,
+		MATERIEL_PRICE,
+		MATERIEL_MVGR, MATERIEL_MVGR_NAME, ORDER_GIVE_COUNT,address,USER_ID)
+		values (#list_id#, #order_id#, #materiel_num#, #materiel_name#,
+		#list_count#, #order_up_fund#, #order_give_fund#,
+		#order_use_fund#, #list_type#, #remark#,
+		#materiel_price#, #materiel_mvgr#, #materiel_mvgr_name#,
+		#order_give_count#,#address#,#userId#)
+	</insert>
+
+	<update id="updateOrderDetailList">
+		update crm.CRM_TB_ORDER_LIST
+		set
+		order_id = #order_id#,
+		materiel_num = #materiel_num#,
+		materiel_name = #materiel_name#,
+		list_count = #list_count#,
+		order_up_fund = #order_up_fund#,
+		order_give_fund = #order_give_fund#,
+		order_use_fund = #order_use_fund#,
+		list_type = #list_type#,
+		list_state = #list_state#,
+		remark = #remark#,
+		materiel_price = #materiel_price#,
+		materiel_mvgr = #materiel_mvgr#,
+		materiel_mvgr_name = #materiel_mvgr_name#,
+		order_give_count = #order_give_count#,
+		ADDRESS=#address#,
+		modify_Date=sysdate
+		where LIST_ID = #list_id#
+		<!-- <isParameterPresent>
+			<include refid="ibatorgenerated_Example_Where_Clause" />
+		</isParameterPresent> -->
+	</update>
+
+	<update id="deleteOrderList">
+		update crm.CRM_TB_ORDER_LIST t
+		set t.modify_date=sysdate,
+		t.user_id=#userId#,
+		t.list_state='D'
+		<dynamic>
+			<isNotEmpty property="list_id" prepend="where">
+				t.list_id=#list_id#
+			</isNotEmpty>
+			<isNotEmpty property="codes" prepend="where">
+				t.LIST_ID in
+				<iterate property="codes" open="(" close=")" conjunction=",">#codes[]#
+				</iterate>
+			</isNotEmpty>
+		</dynamic>
+	</update>
+	<!-- 考核返还清单start -->
+	<select id="searchReturnListCount" parameterClass="returnList"
+		resultClass="java.lang.Integer">
+		<![CDATA[
+		     select count(1) from crm.crm_tb_return_list l
+		     left join crm.crm_tb_kunnr k on k.kunnr=l.kunnr_num
+		     where l.status='U'
+		]]>
+		<dynamic>
+			<isNotEmpty property="kunnrNum" prepend="and">
+				l.kunnr_num=#kunnrNum#
+			</isNotEmpty>
+			<isNotEmpty property="kunnrName" prepend="and">
+		     <![CDATA[k.name1 like #kunnrName,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="materielNum" prepend="and">
+				l.MATERIEL_NUM=#materielNum#
+			</isNotEmpty>
+			<isNotEmpty property="materielName" prepend="and">
+		     <![CDATA[l.MATERIEL_NAME like #materielName,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="cataId" prepend="and">
+				l.CATA_ID=#cataId#
+			</isNotEmpty>
+			<isNotEmpty property="cataName" prepend="and">
+		     <![CDATA[l.CATA_NAME like #cataName,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	<select id="searchReturnLists" parameterClass="returnList"
+		resultClass="returnList">
+		<include refid="global.paginationStart" />
+		<![CDATA[
+		     select l.relist_id        as relistId,
+                    l.kunnr_num        as kunnrNum,
+                    k.name1            as kunnrName,
+                    l.materiel_num     as materielNum,
+                    l.materiel_name    as materielName,
+                    l.cata_id          as cataId,
+                    l.cata_name        as cataName,
+                    l.year_pay_price   as yearPayPrice,
+                    l.total_bonus      as totalBouns,
+                    l.month_asses      as monthAsses,
+                    l.quarter_asses    as quarterAsses,
+                    l.year_asses       as yearAsses,
+                    l.year_naked_price as yearNakedPrice
+            from crm.crm_tb_return_list l
+            left join crm.crm_tb_kunnr k on k.kunnr = l.kunnr_num
+            where l.status = 'U'
+		]]>
+		<dynamic>
+			<isNotEmpty property="kunnrNum" prepend="and">
+				l.kunnr_num=#kunnrNum#
+			</isNotEmpty>
+			<isNotEmpty property="kunnrName" prepend="and">
+		     <![CDATA[k.name1 like #kunnrName,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="materielNum" prepend="and">
+				l.MATERIEL_NUM=#materielNum#
+			</isNotEmpty>
+			<isNotEmpty property="materielName" prepend="and">
+		     <![CDATA[l.MATERIEL_NAME like #materielName,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="cataId" prepend="and">
+				l.CATA_ID=#cataId#
+			</isNotEmpty>
+			<isNotEmpty property="cataName" prepend="and">
+		     <![CDATA[l.CATA_NAME like #cataName,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+		</dynamic>
+		<![CDATA[order by l.kunnr_num,l.CATA_ID,l.MATERIEL_NUM]]>
+		<include refid="global.paginationEnd" />
+	</select>
+	<insert id="createAssesReturnList">
+		<selectKey resultClass="java.lang.Long" keyProperty="relistId">
+		<![CDATA[
+			select crm.CRM_SEQ_return_list.nextval as relistId from dual
+		]]>
+		</selectKey>
+		<![CDATA[
+			insert into CRM.CRM_TB_return_list
+			(RELIST_ID,
+			KUNNR_NUM,
+			MATERIEL_NUM,
+			MATERIEL_NAME,
+			CATA_ID,
+			CATA_NAME,
+			YEAR_PAY_PRICE,
+			TOTAL_BONUS,
+			MONTH_ASSES,
+			QUARTER_ASSES,
+			YEAR_ASSES,
+			YEAR_NAKED_PRICE,
+			OPER_USER
+			)
+			values
+			(#relistId#,
+			 #kunnrNum#,
+			 #materielNum#,
+			 #materielName#,
+			 #cataId#,
+			 #cataName#,
+			 #yearPayPrice#,
+			 #totalBouns#,
+			 #monthAsses#,
+			 #quarterAsses#,
+			 #yearAsses#,
+			 #yearNakedPrice#,
+			 #userId#
+			)
+		]]>
+	</insert>
+	<update id="delAssesReturnList" parameterClass="returnList">
+		update crm.CRM_TB_return_LIST l
+		set l.status='D',
+		l.modify_date=sysdate,
+		l.oper_user=#userId#
+		<dynamic>
+			<isNotEmpty property="codes" prepend="where">
+				relist_ID in
+				<iterate property="codes" open="(" close=")" conjunction=",">#codes[]#
+				</iterate>
+			</isNotEmpty>
+		</dynamic>
+	</update>
+	<!-- end 考核返还清单 -->
+</sqlMap>

@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui"])
+		#JS_ENV_VAL()	
+	</head>
+	<body>
+		<form method="post" target="hideFrame" enctype="multipart/form-data">
+			<div  class="easyui-panel" title="分销量调整" data-options="iconCls:'icon-edit'">
+				<table width="100%" border="0" cellpadding="0" cellspacing="1">
+					<input type="hidden" id="nextUserId" name="nextUserId" />
+					<input  type="hidden" id="Cflag" name="Cflag" value="Y" />
+					<input type="hidden" id="orgIdValue" value="$!{orgId}" />
+					<input type="hidden" id="orgNameValue" value="$!{orgName}" />
+					<input type="hidden" id="userList" name="userList" />
+					<input type="hidden" id="eventId" name="eventId" value="$!{eventId}"/>
+					<tr>
+					    <td class="head" style="width:10%" noWrap>
+							提报人:
+						</td>
+						<td style="width:23%">
+							<input class="easyui-validatebox" id="userName" name="skuDistribution.userName" value="$!{skuDistribution.userName}" style="width:195px;" readonly />
+							<input type="hidden" id="userId" name="skuDistribution.userId" value="$!{skuDistribution.userId}" />
+						    <input name="key" id="key" type="hidden" value="$!{key}"/>
+						</td>
+						<td class="head" style="width:10%" noWrap>
+							组织:
+						</td>
+						<td style="width:23%">
+							<input class="easyui-validatebox" id='orgName' name="skuDistribution.orgName" value="$!{skuDistribution.orgName}" readonly />
+						</td>
+						<td class="head" style="width:10%" noWrap>
+							提报时间:
+						</td>
+						<td style="width:23%">
+							<input class="easyui-validatebox" id='createDate' name="skuDistribution.createDate" value="$!{skuDistribution.createDate}" readonly />
+						</td>
+						
+					</tr>
+					<tr>
+						<td class="head" noWrap>标题：</td>
+						<td>
+							<input name="skuDistribution.title" id="title" size="30" readonly value="$!{skuDistribution.title}"/>
+						</td>
+					</tr>
+					<tr>
+						<td class="head" noWrap>内容：</td>
+						<td colspan="3">
+						
+							<textarea name="skuDistribution.content" cols="60" rows="6" readonly >$!{skuDistribution.content}</textarea>
+						</td>
+					</tr>
+					
+                    <tr>
+                        <td class="head" noWrap>附件:</td>
+						    <td colspan="5">
+							   $!{skuDistribution.link}
+						    </td>
+                        </tr>
+		
+				</table>
+			</div>
+			<div class="easyui-panel" title="明细信息" data-options="collapsible:true,iconCls:'icon-list'">
+			<table id="myTab" width="100%" cellpadding="0" border="1px" bordercolor="#cccccc" cellspacing="0px" style="border-collapse:collapse">
+				<tr style="height:25px;BACKGROUND-COLOR:#fffbf0">
+                    <td width="8%"style="text-align: center" colspan="4">
+						转出经销商
+                    </td>
+                    <td width="8%"style="text-align: center" colspan="4">
+						转入经销商
+                    </td>
+                    </td>
+					<td width="8%"style="text-align: center" rowspan="2">
+						品项
+                    </td>
+                    <td width="8%"style="text-align: center" rowspan="2">
+						调整数量（标箱）
+                    </td>
+				</tr>
+				<tr style="height:25px;BACKGROUND-COLOR:#fffbf0">
+					<td width="8%" style="text-align: center">
+						组织
+                    </td>
+					<td width="9%" style="text-align: center">
+						经销商
+					<td width="3%"style="text-align: center">
+						年
+                    </td>
+					<td width="3%"style="text-align: center">
+						月
+                    </td>
+					<td width="8%"style="text-align: center">
+						组织
+                    </td>
+					<td width="9%"style="text-align: center">
+						经销商
+                    </td>
+					<td width="3%"style="text-align: center">
+						年
+                    </td>
+					<td width="3%"style="text-align: center">
+						月
+                    </td>
+                </tr>
+		    </table>
+			</div>
+			
+			
+			<div border="false" style="height:15px;"></div>
+			
+			<div class="easyui-panel" border="false" style="text-align:center">
+				<input type="hidden" id="detailJsonStr" name="detailJsonStr" />
+				<input type="hidden" id="detailList" name="detailList" />
+			</div>
+			</br>
+		</form>
+		<div id="maintWindow"/>
+		<iframe id="hideFrame" name="hideFrame"  style="height: 0; width: 0"></iframe>
+		<div id="mainFrame"></div>
+	</body>
+	<script type="text/javascript" src="$!{env.imgUrl}/js/platform/stockReport/salesPlanChangeView.js?js_version=20170222"></script>
+	<script type="text/javascript" src="$!{env.imgUrl}/js/platform/upload.js"></script>
+</html>

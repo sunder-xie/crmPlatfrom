@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<bean id="newOrgAction" class="com.kintiger.platform.org.action.NewOrgAction"
+		parent="baseAction" scope="request">
+		<property name="newOrgService" ref="newOrgService" />
+	</bean>
+	<bean id="newOrgService"
+		class="com.kintiger.platform.org.service.impl.NewOrgServiceImpl">
+		<property name="newOrgDao" ref="newOrgDao" />
+	</bean>
+	<bean id="newOrgDao"
+		class="com.kintiger.platform.org.dao.impl.NewOrgDaoImpl"
+		parent="baseDao"></bean>
+</beans>

@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui"])
+		#JS_ENV_VAL()
+	</head>
+	<body>
+		<!-- 查询 -->
+	        <form method="post">
+			<div id="p_search" class="easyui-panel" title="查询条件"
+				style="padding: 2px; background: #fafafa;" data-options="collapsible:true,iconCls:'icon-search'">
+				<table width="100%" border="0" cellpadding="0" cellspacing="1">
+				<tr>
+				    <td class="head" noWrap>所属组织</td>
+                    <td><input id="orgId" name="orgId" value="$!{orgId}" type="hidden">
+						<input type="text" id="orgName" name="orgName" value="$!{orgName}" readonly>
+						<a class="easyui-linkbutton"  href="javascript:selectOrgTree()">组织</a>
+					</td>
+                    <td class="head" noWrap>所属经分销商：</td>
+                    <td><input id="kunnrId" name="kunnrId" data-options="editable:false"></td>
+					    <div id="toolbarKonzs" class="datagrid-toolbar">
+					    <input class="easyui-searchbox" searcher="searcherKonzs" prompt="请输入经销商名称查询" style="width:300px"></input>		
+				        </div>
+				    <td class="head" noWrap>日期:</td>
+                    <td><input class="easyui-datebox" id="businessEndDate" name = "businessEndDate" data-options="editable:false"/>
+                </tr>
+                <tr>
+                    <td colspan="4">&nbsp;</td>
+					<td colspan="2">
+						<a id="search" href="javascript:search()" class="easyui-linkbutton" data-options="iconCls:'icon-search'">查询</a>
+                    	<a href="javascript:clearValue()" class="easyui-linkbutton" iconCls="icon-clear">重置</a> 	
+					</td>
+			    </tr>	
+                </table>
+				</div>
+			</div>
+			<table id="datagrid"></table>
+	</form>
+	</div>
+	<iframe id="hideFrame" name="hideFrame"  style="height: 0; width: 0"></iframe>
+	<div id="hiddenWin"/> 
+	</body>
+<script type="text/javascript" src="$!{env.imgUrl}/js/platform/kunnrBusinessContact/searchKunnrBusinessReport.js"></script>
+</html>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+	
+  	<bean id="customerAction" class="com.kintiger.platform.customer.action.CustomerAction"
+		scope="request" parent="baseAction">
+		<property name="customerService" ref="customerService"></property>
+		<property name="wfeServiceHessian" ref="wfeServiceHessian" ></property>
+		<property name="dictServiceHessian" ref="dictServiceHessian"></property>
+		<property name="kunnrService" ref="kunnrService"></property>
+		<property name="channelService" ref="channelService" ></property>
+		<property name="crmDictService" ref="crmdictService" ></property>
+		<property name="orgServiceHessian" ref="orgServiceHessian"/>
+		<property name="batChangeService" ref="batChangeService" ></property>
+		<property name="salesService" ref="salesService" />
+		<property name="appUrl">
+			<value>${appUrl}</value>
+		</property>
+		<property name="xmlFilePath">
+			<value>${wfe.xml.filePath}</value>
+		</property>
+		<property name="customer_state">
+			<value>${customer_state}</value>
+		</property>
+		<property name="customer_receive">
+			<value>${customer_receive}</value>
+		</property>
+		<property name="visitDays">
+			<value>${visitDays}</value>
+		</property>
+		<property name="visitFreq">
+			<value>${visitFreq}</value>
+		</property>
+  	</bean>
+  	
+  	<bean id="customerService"
+		class=" com.kintiger.platform.customer.service.impl.CustomerServiceImpl">
+		<property name="customerDao" ref="customerDao" />
+		<property name="transactionTemplate" ref="transactionTemplate"/>
+	</bean>
+  	
+  	<bean id="customerDao"
+		class=" com.kintiger.platform.customer.dao.impl.CustomerDaoImpl"  parent="baseDao">
+	</bean>
+  	
+    <bean id="batChangeAction" class="com.kintiger.platform.customer.action.BatChangeAction"
+		scope="request" parent="baseAction">
+    	<property name="orgServiceHessian" ref="orgServiceHessian" ></property>
+    	<property name="batChangeService" ref="batChangeService" ></property>
+  	</bean>
+  	<bean id="batChangeService"
+		class=" com.kintiger.platform.customer.service.impl.BatChangeServiceImpl">
+		<property name="batChangeDao" ref="batChangeDao" />
+		<property name="custBatchModifyDao" ref="custBatchModifyDao" />
+	</bean>
+		<bean id="batChangeDao" class="com.kintiger.platform.customer.dao.impl.BatChangeDaoImpl" parent="baseDao">
+		</bean>
+    <bean id="custBatchModifyAction" class="com.kintiger.platform.customer.action.CustBatchModifyAction"
+		scope="request" parent="baseAction">
+    			<property name="channelService" ref="channelService" ></property>
+    			<property name="batChangeService" ref="batChangeService" ></property>
+    			<property name="customerService" ref="customerService"></property>
+  	</bean>
+  		<bean id="custBatchModifyDao"
+		class=" com.kintiger.platform.customer.dao.impl.CustBatchModifyDaoImpl"  parent="baseDao">
+	</bean>
+</beans>

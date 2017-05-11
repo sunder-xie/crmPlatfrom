@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui"])
+		#JS_ENV_VAL()
+	</head>
+	<body>
+			<form id="ff" method="post" enctype="multipart/form-data">
+				<div title="业务联系" style="overflow:auto;padding:30px;">  
+					<table width="100%" border="0" cellpadding="0" cellspacing="1">
+					    <tr>
+					        <td class="head" noWrap>经销商名称:</td>
+					        <td><input class="easyui-validatebox" id="kunnrName" name="kunnrBusiness.kunnrName" value="$!{kunnrBusiness.kunnrName}" readonly/></td>
+					        <td class="head" noWrap>&nbsp;&nbsp;&nbsp;&nbsp;经销商编号:</td>
+					        <td><input class="easyui-validatebox" id="kunnr" name="kunnrBusiness.kunnr" value="$!{kunnrBusiness.kunnr}" readonly/></td>
+						</tr><tr style="height:20px"/>
+						<tr>
+        				<td class="head" noWrap>&nbsp;&nbsp;&nbsp;&nbsp;高级经理(主):</td>
+        				<td>
+        				    <input type="hidden" class="easyui-validatebox" id="businessManagerId_0" name="businessManagerIds" value="$!{kunnrBusiness.businessManagerId}" >
+        				    <input style="width:130px" class="easyui-validatebox" id="businessManager_0" name="businessManagers"  value="$!{kunnrBusiness.businessManager}"  readonly >
+        				    <a class="easyui-linkbutton"  href="javascript:selectManager('M',0)">选择</a>
+        				    <a class="easyui-linkbutton"  href="javascript:clearManager(0)">清空</a>
+        				</td>
+        				<td class="head" noWrap>高级经理手机:</td>
+        				<td><input class="easyui-validatebox" id="managerMobile_0" name="managerMobiles" value="$!{kunnrBusiness.managerMobile}"  readonly></td>
+        				</tr>
+        				<tbody id="tbody_businessManager">
+						</tbody>
+						<tr style="height:10px">
+						    <td class="head" noWrap><a href="javascript:addbusinessManager()">添加高级经理手机</a></td>
+						</tr>
+						<tr style="height:10px">
+						</tr>
+						<!--<tr>
+						<td class="head" noWrap>&nbsp;&nbsp;&nbsp;&nbsp;客户经理:</td>
+        				<td>
+        				<input type="hidden" class="easyui-validatebox" id="businessCompetentId" name="kunnrBusiness.businessCompetentId" ">
+        				<input class="easyui-validatebox" id="businessCompetent" name="kunnrBusiness.businessCompetent" value="$!{kunnrBusiness.businessCompetent}" readonly>
+        				</td>
+        				<td class="head" noWrap>客户经理手机:</td>
+        				<td><input class="easyui-validatebox" id="competentMobile" name="kunnrBusiness.competentMobile" value="$!{kunnrBusiness.competentMobile}" readonly></td>
+						</tr>
+						<tr style="height:10px">
+						</tr>-->
+						<tr>
+						<td class="head" noWrap>&nbsp;&nbsp;&nbsp;&nbsp;销售客户经理:</td>
+        				<td>
+        				<input type="hidden" class="easyui-validatebox" id="businessHeadId_0" name="businessHeadIds">
+        				<input style="width:130px" class="easyui-validatebox" id="businessHead_0" name="businessHeads" readonly>
+        				<a class="easyui-linkbutton"  href="javascript:selectDirectory('H',0)">选择</a>
+        				<a class="easyui-linkbutton"  href="javascript:clearHead(0)">清空</a>
+        				</td>
+        				<td class="head" noWrap>销售客户经理手机:</td>
+        				<td><input class="easyui-validatebox" id="headMobile_0" name="headMobiles" readonly></td>
+						</tr>
+						<tbody id="tbody_head">
+						</tbody>
+						<tr style="height:10px">
+						    <td class="head" noWrap><a href="javascript:addHead()">添加销售客户经理</a></td>
+						</tr>
+						<tr>
+						<td class="head" noWrap>&nbsp;&nbsp;&nbsp;&nbsp;业代:</td>
+        				<td>
+        				<input type="hidden" class="easyui-validatebox" id="businessAgentId_0" name="businessAgentIds">
+        				<input style="width:130px" class="easyui-validatebox" id="businessAgent_0" name="businessAgents" readonly>
+        				<a class="easyui-linkbutton"  href="javascript:selectDirectory('A',0)">选择</a>
+        				<a class="easyui-linkbutton"  href="javascript:clearAgent(0)">清空</a>
+        				</td>
+        				<td class="head" noWrap>业代手机:</td>
+        				<td><input class="easyui-validatebox" id="agentMobile_0" name="agentMobiles" readonly></td>
+						</tr>
+						<tbody id="tbody_agent">
+						</tbody>
+						<tr style="height:10px">
+						    <td class="head" noWrap><a href="javascript:addAgent()">添加业代</a></td>
+						</tr>
+						<tr>
+						<td class="head" noWrap>&nbsp;&nbsp;&nbsp;&nbsp;经销商业务负责人:</td>
+        				<td><input class="easyui-validatebox" id="kunnrLeader" name="kunnrBusiness.kunnrLeader"  validType="length[0,6]" value="$!{kunnrBusiness.kunnrLeader}" readonly></td>
+        				<td class="head" noWrap>负责人手机:</td>
+        				<td><input class="easyui-numberbox" id="kunnrPhone" name="kunnrBusiness.kunnrPhone" value="$!{kunnrBusiness.kunnrPhone}" validType="length[11,11]" readonly></td>
+						</tr>
+		    		</table>
+				</div> 
+				<tr/><tr/><tr/>
+				<div region="south" border="false" style="text-align:center;height:30px;line-height:100px;">
+				    <a class="easyui-linkbutton" icon="icon-ok" href="javascript:save_business()">确定</a>
+				    <a class="easyui-linkbutton" icon="icon-cancel" href="javascript:cencel()">取消</a>
+			    </div>
+			<iframe id="hideFrame" name="hideFrame"  style="height: 0; width: 0"></iframe>
+		</form>
+		<div id="nextUserDialog"/>
+	</body>
+		<script type="text/javascript" src="$!{env.imgUrl}/js/platform/kunnrBusinessContact/kunnrBusinessViewInfo.js"></script>
+</html>

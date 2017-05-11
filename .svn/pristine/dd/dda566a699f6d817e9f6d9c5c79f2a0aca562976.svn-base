@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+	"http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="sms" extends="kintiger-default" >
+		<action name="smsAction" class="smsAction">
+			<result name="toSms">/platform/sms/sms.vm</result>
+			<result name="toPaymentNotice">/platform/sms/paymentNotice.vm</result>
+			<result name="toUpdateMobile">/platform/sms/updateMobile.vm</result>
+			<result name="toSelectGroup">/platform/sms/selectGroup.vm</result>			
+		</action>
+	</package>
+</struts>

@@ -1,0 +1,254 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+		#CSSM(["easyui","style"])
+		#JSM(["jquery", "easyui"])
+		#JS_ENV_VAL()
+	</head>
+	<body>
+		<form id="ff" method="post" >
+			#*<div class="easyui-panel" title="客户信息修改" data-options="collapsible:false,iconCls:'icon-tip'" style="padding: 2px; background: #fafafa;">
+			<table width="100%" border="0" cellpadding="0" cellspacing="1">
+			<tr>
+				<td class="head" noWrap>申请人:</td>
+				<td>
+					<input class="easyui-validatebox" id="userName" name="userName"  value='$!{userName}' data-options="required:true" readonly   >
+					<input type='hidden' id="createUser" name="customer.createUser"  value='$!{customer.createUser}' readonly   >
+				</td>
+				<td class="head" noWrap>申请日期:</td>
+				<td><input class="easyui-validatebox" id="createDate" name="customer.createDate"  value='$!{customer.createDate}' data-options="required:true" readonly  ></td>
+			</tr>
+		    </table>
+			</div>
+			</br>*#
+			<input type="hidden" id="title" name="title"  value="信息修改"/>
+			<input type="hidden" id="userId" name="userId" value="$!{customer.createUser}"/>
+				<input type="hidden" id="type" name="type" value="$!{type}"/>
+		   ##	<input type="hidden" id="nextUserId" name="nextUserId" />
+			
+			<div class="easyui-panel" title="基本资料" data-options="collapsible:true,iconCls:'icon-list'" style="padding: 2px; background: #fafafa;">
+			<table width="100%" border="0" cellpadding="1" cellspacing="1">
+			<tr>
+				<td class="head" noWrap>门店名称:</td>
+				<td><input class="easyui-validatebox" id="custName" name="customer.custName" value='$!{customer.custName}' data-options="required:true"  validType="length[0,200]"></td>
+				<td class="head" noWrap>门店状态:</td>
+				<td>
+					<select id="custState"  name="customer.custState" style="width:150px;">
+				    #foreach($list in $cmsTbDictCustStateList)
+						#if($!{customer.custState}==$list.itemValue)
+								<option value='$list.itemValue' selected  readonly>$list.itemName</option>
+						#else
+								<option value='$list.itemValue'  readonly>$list.itemName</option>
+					    #end
+					#end
+					</select>	
+				</td>
+				#if($!{type}!='T')
+				<td class="head" noWrap>配送方式:</td>
+				<td>
+					<select id="custReceive"  name="customer.custReceive" style="width:150px;" >
+					$!{customer.custReceive}
+						#foreach($list in $cmsTbDictCustReceiveList)
+							#if($!{customer.custReceive}==$list.itemValue)
+										<option value='$list.itemValue' selected readonly>$list.itemName</option>
+							#else
+										<option value='$list.itemValue' readonly>$list.itemName</option>
+							#end
+						#end
+					</select>	
+				</td>
+				#end
+			</tr>
+			<tr>
+			 <td class="head" noWrap>所属组织:</td>
+				<td>
+					<input class="easyui-validatebox" id="orgName" name="orgName" value="$!{customer.orgName}"  data-options="required:true" readonly/>
+					<a class="easyui-linkbutton"  href="javascript:selectOrgTree()">选择</a>
+					<input type='hidden' id="orgId" name="customer.orgId" value="$!{customer.orgId}"/>
+				</td>
+				<td class="head" noWrap>我司业务负责人:</td>
+				<td>
+					<input class="easyui-validatebox" id="stationUserName" name="stationUserName" value="$!{customer.empName}" data-options="required:false" readonly/>
+					<a class="easyui-linkbutton"  href="javascript:selectOrgTree4Station()">选择</a>
+					<input type='hidden' id="stationUserId" name="customer.stationUserId" value="$!{customer.stationUserId}"/>
+				</td>	
+				<td class="head" noWrap>经销商业务负责人:</td>
+				<td>
+					<input class="easyui-validatebox" data-options="required:false"  id="kunnrUser" name="customer.kunnrUser" value="$!{customer.kunnrUser}" validType="length[0,50]"/>
+				</td>
+			</tr>
+			<tr>
+				
+				<td class="head" noWrap>渠道：</td>
+				<td>
+				<input class="easyui-combobox" id="channelId" name="customer.channelId" value='$!{customer.channelId}' readonly data-options="required:true,editable:false">
+				</td>
+				<td class="head" noWrap>门店电话:</td>
+				<td><input class="easyui-validatebox" id="custPhone" name="customer.custPhone" value="$!{customer.custPhone}" data-options="required:false" validType="telephone"></td>
+				<td class="head" noWrap>门店重要度:</td>
+				<td>
+					<input class="easyui-combobox" id="customerImportance" name="customer.customerImportance" value='$!{customer.customerImportance}' readonly data-options="required:true,editable:false">
+				</td>
+			</tr>
+			<tr>
+				<td class="head" noWrap>门店年销售额:</td>
+                <td>
+                	<input class="easyui-numberbox" data-options="required:false"  id="customerAnnualSale" name="customer.customerAnnualSale" value="$!{customer.customerAnnualSale} validType="length[0,2000]"><font class="head">元</font>
+                </td>
+				<td class="head" noWrap>售点面积:</td>
+				<td><input class="easyui-validatebox" id="shopArea" name="customer.shopArea" data-options="required:true" value='$!{customer.shopArea}' validType="length[0,200]"></td>
+				</tr>	
+			<tr>
+                <td class="head" noWrap>所属系统：</td>
+				<td >
+					<input type="hidden" id="custSystemId"  value="$!{customer.custSystem}" >
+						<input type="hidden" id="custSystemName"  value="$!{customer.custSystemName}">
+				<input id="custSystem" name="customer.custSystem" data-options="required:false,editable:false">
+				<div id="toolbarSys" class="datagrid-toolbar">
+					<input class="easyui-searchbox" searcher="searcherSys" prompt="请输入所属系统名称查询" style="width:300px"></input>		
+				</div>
+				</td> 
+				<td class="head" noWrap>拜访日期:</td>
+				<td>
+					<input type="hidden" id="days" name="days" value="$!{customer.visitDays}"/>
+				<select class="easyui-combobox" id="visitDays" name="customer.visitDays" style="width:152px;" data-options="required:false,editable:false" />
+				</td>
+				<td class="head" noWrap>拜访频次:</td>
+				<td>
+					<select class="easyui-validatebox" data-options="required:false" id="visitFreq" name="customer.visitFreq" style="width:152px;">
+						#foreach($list in $cmsTbDictVisitFreqList)
+						#if($!{customer.visitFreq}==$list.itemValue)
+										<option value='$list.itemValue' selected  readonly>$list.itemName</option>
+						#else 
+						<option value='$list.itemValue'  readonly>$list.itemName</option>
+						#end
+						#end
+                    </select>	
+                </td>	
+			</tr>
+			<tr>
+			
+			  <td class="head" noWrap>所属经销商:</td>
+				<td colspan="5">
+				<input type="hidden" id="custKunnrId" value="$!{customer.custKunnr}">
+				<input id="custKunnr" name="customer.custKunnr" style="width:320px"  data-options="required:false,editable:false" validType="length[0,200]">
+				<input type="hidden" id="custKunnrName" name="customer.custKunnrName" value="$!{customer.custKunnrName}"  style="BACKGROUND-COLOR:pink" style="width:320px"  data-options="required:false,editable:false" >
+				</td>
+					<div id="toolbarKonzs" class="datagrid-toolbar">
+					<input class="easyui-searchbox" searcher="searcherKonzs" prompt="请输入经销商名称查询" style="width:300px"></input>		
+				    </div>
+				 
+			</tr>
+			  #if($!{type}!='T') 
+			  <tr>
+				   <td class="head" noWrap>上游二阶客户:</td>
+				  <td colspan="5">
+				  <input type="hidden" id="custParentId" value="$!{customer.custParent}">
+				  <input id="custParent" name="customer.custParent" style="width:320px" data-options="required:false,editable:false" validType="length[0,200]">
+				  <input  type="hidden" id="custParentName" name="customer.custParentName" value="$!{customer.custParentName}"  style="BACKGROUND-COLOR:pink" style="width:320px"  data-options="required:false,editable:false">
+				   </td>
+					<div id="toolbarKonzs1" class="datagrid-toolbar">
+					<input class="easyui-searchbox" searcher="searcherKonzs1" prompt="请输入客户名称查询" style="width:300px"></input>		
+				    </div>
+				  </tr>
+			#end
+		
+			<tr>
+				<td class="head" noWrap>身份证号码:</td>
+				<td><input class="easyui-validatebox" data-options="required:false" id="idCopy" name="customer.idCopy" value="$!{customer.idCopy}" validType="length[0,200]"></td>
+				<td class="head" noWrap>营业执照号码:</td>
+				<td><input class="easyui-validatebox" data-options="required:false" id="businessLicense" name="customer.businessLicense" value="$!{customer.businessLicense}" validType="length[0,200]"></td>
+				<td class="head" noWrap>营业执照有效期:</td>
+				<td><input class="easyui-datebox"  id="licenceValidity" name="customer.licenceValidity" value="$!{customer.licenceValidity}"  data-options="required:false,editable:false"></td>
+				
+			</tr>
+			<tr>
+				<td class="head" noWrap>是否有理货员:</td>
+				<td>
+                     #if($!{customer.custLhy} == '1')
+					<input type="radio" name="customer.custLhy" value="1" checked> 有  </input>
+                     <input type="radio" name="customer.custLhy" value="0"> 无  </input>
+					 #else
+						<input type="radio" name="customer.custLhy" value="1" > 有  </input>
+                     <input type="radio" name="customer.custLhy" value="0" checked> 无  </input>
+					 #end	
+                </td>
+				<td class="head" noWrap>资产信息:</td>
+			    <td><input class="easyui-validatebox" data-options="required:false" id="registerCapital" name="customer.registerCapital" value="$!{customer.registerCapital}"></td>
+			</tr>
+		    </table>
+            </div>
+			<div class="easyui-panel" title="详细资料" data-options="collapsible:true,iconCls:'icon-list'" style="padding: 2px; background: #fafafa;">
+			<table width="100%" border="0" cellpadding="0" cellspacing="1">
+				
+			<tr>
+			    <td class="head" noWrap>联系人姓名:</td>
+				<td><input class="easyui-validatebox" id="contactName" name="customer.contactName" value="$!{customer.contactName}" validType="length[0,200]"  data-options="required:true"></td>
+				 <td class="head" noWrap>联系手机:</td>
+				<td><input class="easyui-numberbox" id="contactMobile" data-options="required:false" name="customer.contactMobile" value="$!{customer.contactMobile}" validType="length[11,11]" invalidMessage="请输入正确的11位手机号"></td>
+				<td class="head" noWrap>联系电话:</td>
+				<td ><input class="easyui-validatebox" id="contactPhone" data-options="required:false" name="customer.contactPhone" value="$!{customer.contactPhone}" validType="telephone"></td>
+			</tr>	
+			<tr>
+			    <td class="head" noWrap>法人代表姓名:</td>
+				<td>
+					<input class="easyui-validatebox"  data-options="required:false,missingMessage:'姓名'" validType="length[0,200]" id="corporateDeputy" name="customer.corporateDeputy" value='$!{customer.corporateDeputy}'>
+					</td>
+					<td class="head" noWrap>法人性别:</td>
+					<td><input class="easyui-combobox" data-options="required:false,editable:false,missingMessage:'性别'" style="width:60px;" id="contactSex" name="customer.contactSex" value='$!{customer.contactSex}'>  
+					</input> 
+				</td>
+			  <td class="head" style='width:100px' noWrap></td>
+			</tr>
+			<tr>
+				##<input  type="hidden" name="citylevel" id="citylevel" />
+				<input  type="hidden" name="parent_city_id" id="parent_city_id" />
+				<td class="head" noWrap>省/直辖市/自治区:</td>
+				<td><input class="easyui-combobox" id="city1" name="customer.custProvince" value='$!{customer.custProvince}' data-options="required:true,editable:false"></td>
+				<td class="head" noWrap>地级城市(所在城市):</td>
+				<td><input class="easyui-combobox" id="city2" name="customer.custCity"  value='$!{customer.custCity}' data-options="required:true,editable:false"></td>
+				<td class="head" noWrap>县级城市(所在区)</td>
+				<td><input class="easyui-combobox" id="city3" name="customer.custDistrict" value="$!{customer.custDistrict}" data-options="required:true,editable:false"></td>
+				
+				
+			</tr>
+            <tr>
+				<td class="head" noWrap>镇、乡:</td>
+				<td>
+					<input class="easyui-combobox"   id="city4" name="customer.villages" value="$!{customer.villages}" data-options="required:true,editable:false" ></input>
+				</td>
+				<td class="head" noWrap>村/社区:</td>
+				<td><input class="easyui-validatebox" data-options="required:false" id="custTown" name="customer.custTown" value="$!{customer.custTown}" validType="length[0,200]"></td>
+				<td class="head" noWrap>路/街/巷/里/弄:</td>
+				<td><input class="easyui-validatebox" data-options="required:false" id="custStreet" name="customer.custStreet" value="$!{customer.custStreet}" validType="length[0,200]"></td>
+				
+				<td></td>
+				</tr>
+			<tr>
+				<td class="head" noWrap>门牌号：</td>
+				<td><input class="easyui-validatebox" data-options="required:false" id="custHouserNumber" name="customer.custHouserNumber" value="$!{customer.custHouserNumber}" validType="length[0,200]" data-options="required:false"></td>
+				<td class="head" noWrap>参考位置:</td>
+				<td colspan="3"><input class="easyui-validatebox" data-options="required:false" style="width:60%" id="custAddress" name="customer.custAddress" value='$!{customer.custAddress}' validType="length[0,200]"></td>
+			</tr> 
+			<tr>
+				<td class="head" noWrap>备注:</td>
+				<td colspan="3">
+				<textarea class="easyui-validatebox" id="remark" name="customer.remark" style="width:93%;height:80px;" validType="length[0,200]">$!{customer.remark}</textarea>
+				</td>
+			</tr>
+			 </table>
+            </div>	
+				<div  border="false" style="text-align:center;height:30px;line-height:30px;">
+				<a class="easyui-linkbutton" icon="icon-ok" href="javascript:submit()">保存</a>
+				<a class="easyui-linkbutton" icon="icon-cancel" href="javascript:cancel()">取消</a>
+			</div>
+			<input type="hidden" id="custId" name="customer.custId" value="$!{customer.custId}"/>
+			<iframe id="hideFrame" name="hideFrame"  style="height: 0; width: 0"></iframe>
+		</form>
+		<div id="maintWindow"/> 
+	</body>
+	<script type="text/javascript">
+	</script>
+	<script type="text/javascript" src="$!{env.imgUrl}/js/platform/customer/updateCustomer.js?version=20161103"></script>
+</html>

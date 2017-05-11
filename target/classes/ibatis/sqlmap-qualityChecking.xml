@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="GB2312"?>
+<!DOCTYPE sqlMap
+	PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="qualityChecking">
+	<typeAlias alias="qualityCheckling1"
+		type="com.kintiger.platform.qualityChecking.pojo.QualityChecking" />
+	<typeAlias alias="materiel1"
+		type="com.kintiger.platform.qualityChecking.pojo.Materiel" />
+
+	<!-- 统计物料 -->
+	<select id="getMaterielListCount" parameterClass="materiel1"
+		resultClass="java.lang.Integer">
+	   <![CDATA[
+		   select count(1) from office.office_tb_materiel t where type='FERT'
+		]]>
+		<dynamic>
+			<isNotEmpty property="matnr" prepend="and">
+			<![CDATA[ t.matnr like #matnr,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="maktx" prepend="and">
+			<![CDATA[ t.maktx like  #maktx,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<!-- 获取物料列表 -->
+	<select id="getMaterielList" parameterClass="materiel1"
+		resultClass="materiel1">
+		<include refid="global.paginationStart" />
+	<![CDATA[
+	    select t.matnr matnr, t.maktx maktx
+  			from office.office_tb_materiel t
+ 			where type = 'FERT'
+	]]>
+		<dynamic>
+			<isNotEmpty property="matnr" prepend="and">
+			<![CDATA[ t.matnr like #matnr,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="maktx" prepend="and">
+			<![CDATA[ t.maktx like  #maktx,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+		</dynamic>
+		<include refid="global.paginationEnd" />
+	</select>
+
+	<!-- 获取物料名称 -->
+	<select id="getMaterielNameList" parameterClass="materiel1"
+		resultClass="materiel1">
+	<![CDATA[
+	    select distinct t.matnr matnr, t.maktx maktx
+                  from office.office_tb_materiel t
+                 where type = 'FERT'
+                   and t.matnr = #matnr#
+	]]>
+	</select>
+
+	<!-- 保存提交的数据 -->
+	<insert id="creatQualityChecking" parameterClass="qualityCheckling1">
+		<selectKey resultClass="java.lang.String" keyProperty="id">
+			<![CDATA[
+				select CRM.CRM_SQ_QUALITY_CHECKING.nextval as id from dual 
+			]]>
+		</selectKey>
+		<![CDATA[
+			insert into crm.crm_tb_quality_checking
+			(
+		      	ID,
+				QUALITY_CHECKING_ID,
+				DATE_OF_MANUFACTURE,
+				PRODUCTION_TIME_START,
+				PRODUCTION_TIME_END,
+				MATERIEL_ID
+			)
+			values(
+				#id#,
+				#qualityCheckingId#,
+				#dateOfManufacture#,
+				#productionTimeStart#,
+				#productionTimeEnd#,
+				#materielId#
+			)
+		]]>
+	</insert>
+
+	<!--统计数据 -->
+	<select id="getQualityCheckingCount" parameterClass="qualityCheckling1"
+		resultClass="java.lang.Integer">
+	   <![CDATA[
+		   select count(DISTINCT t.materiel_id) 
+		   from crm.crm_tb_quality_checking t
+		   left join office.office_tb_materiel m on t.materiel_id = m.matnr
+		   where 1=1
+		]]>
+		<dynamic>
+			<isNotEmpty property="qualityCheckingId" prepend="and">
+			<![CDATA[ t.quality_checking_id = #qualityCheckingId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="materielId" prepend="and">
+			<![CDATA[ t.materiel_id = #materielId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="dateOfManufactureStart" prepend="and">
+			<![CDATA[ to_char(to_date(t.date_of_manufacture||t.production_time_start,'yyyy-MM-dd HH24:mi:ss'),'yyyy-MM-dd HH24:mi:ss')>=#dateOfManufactureStart# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="dateOfManufactureEnd" prepend="and">
+			<![CDATA[ to_char(to_date(t.date_of_manufacture||t.production_time_end,'yyyy-MM-dd HH24:mi:ss'),'yyyy-MM-dd HH24:mi:ss')<=#dateOfManufactureEnd# ]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	<!--获取列表 -->
+	<select id="getQualityCheckingJsonList" parameterClass="qualityCheckling1"
+		resultClass="qualityCheckling1">
+	   <![CDATA[
+		   select distinct 
+		           t.id id,
+		   		   t.quality_checking_id qualityCheckingId,
+			       t.date_of_manufacture dateOfManufacture,
+			       t.production_time_start productionTimeStart,
+			       t.production_time_end productionTimeEnd,
+			       t.materiel_id materielId,
+			       t.quality_checking qualityChecking,
+			       m.maktx materielName
+			  from crm.crm_tb_quality_checking t
+			  left join office.office_tb_materiel m on t.materiel_id = m.matnr
+			  where 1=1
+		]]>
+		<dynamic>
+			<isNotEmpty property="qualityCheckingId" prepend="and">
+			<![CDATA[ t.quality_checking_id = #qualityCheckingId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="materielId" prepend="and">
+			<![CDATA[ t.materiel_id = #materielId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="dateOfManufactureStart" prepend="and">
+			<![CDATA[ to_char(to_date(t.date_of_manufacture||t.production_time_start,'yyyy-MM-dd HH24:mi:ss'),'yyyy-MM-dd HH24:mi:ss')>=#dateOfManufactureStart# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="dateOfManufactureEnd" prepend="and">
+			<![CDATA[ to_char(to_date(t.date_of_manufacture||t.production_time_end,'yyyy-MM-dd HH24:mi:ss'),'yyyy-MM-dd HH24:mi:ss')<=#dateOfManufactureEnd# ]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<!-- 上传附件 -->
+	<update id="updateQualityCheckingUploadFile" parameterClass="qualityCheckling1">
+	    <![CDATA[
+	    	update crm.crm_tb_quality_checking t 
+	    	set t.quality_checking=#qualityChecking# 
+	    	where t.id=#id#
+		]]>
+	</update>
+	
+	<!--获取列表 -->
+	<select id="getQualityCheckingName" parameterClass="java.lang.String"
+		resultClass="qualityCheckling1">
+	   <![CDATA[
+		   select  
+		           t.id id,
+		   		   t.quality_checking_id qualityCheckingId,
+			       t.date_of_manufacture dateOfManufacture,
+			       t.production_time_start productionTimeStart,
+			       t.production_time_end productionTimeEnd,
+			       t.materiel_id materielId,
+			       t.quality_checking qualityChecking
+			  from crm.crm_tb_quality_checking t
+			  where t.id = #id#
+		]]>
+	</select>
+	
+	<!-- 判断用户是不是有这个角色 -->
+	<select id="getOfficeRole" parameterClass="java.util.HashMap" resultClass="java.lang.Integer">
+		<![CDATA[
+			select count(1) from  basis.basis_tb_station_role  t,
+	           basis.basis_tb_station_user  r
+	           where t.station_id=r.station_id
+	           and t.flag='U'
+	           and r.user_id=#userId#
+	           and t.role_id=#roleId#
+		]]>	
+	</select>
+
+</sqlMap>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+	"http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="custvist" extends="kintiger-default">
+		<action name="custVistAction" class="custVistAction">
+		     <result name="success">/platform/custVist/custVistOrder.vm</result>
+		   	 <result name="toOrgTree">/platform/custVist/orgTree.vm</result>
+		   	 <result name="input"></result>
+		   	 <result name="selectOrgTree4Station">/platform/custVist/selectOrgTree4Station.vm</result>
+		</action>
+		
+	</package>
+</struts> 

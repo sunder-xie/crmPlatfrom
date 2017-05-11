@@ -1,0 +1,1707 @@
+<?xml version="1.0" encoding="GB2312"?>
+<!DOCTYPE sqlMap
+	PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="order">
+	<typeAlias alias="order"
+		type="com.kintiger.platform.order.pojo.XppOrder" />
+	<typeAlias alias="orderDetail"
+		type="com.kintiger.platform.order.pojo.OrderDetail" />
+	<typeAlias alias="orderSku"
+		type="com.kintiger.platform.order.pojo.Sku" />
+	<typeAlias alias="orderInfo"
+		type="com.kintiger.platform.order.pojo.OrderInfo" />
+	<typeAlias alias="account"
+		type="com.kintiger.platform.order.pojo.Account" />
+	<typeAlias alias="printFormat"
+		type="com.kintiger.platform.order.pojo.PrintFormat" />	
+	<typeAlias alias="kunnr" 
+	    type="com.kintiger.platform.kunnr.pojo.Kunnr" />	
+
+	<select id="searchOrderCount" parameterClass="order"
+		resultClass="java.lang.Integer">
+		<![CDATA[
+		select count(1)
+	            from  crm.crm_tb_order_total  t  
+				left join  basis.basis_vw_user_psw s
+				on s.user_id = t.user_id
+				left join basis.basis_tb_org o
+				on o.org_id = s.org_id
+				left join crm.crm_tb_customer c 
+				on t.cust_id = c.cust_id
+	            where  1=1
+		]]>
+	<dynamic>
+	<isNotEmpty property="custId" prepend="and">
+			<![CDATA[ c.cust_id =#custId#]]>
+		</isNotEmpty>
+		<isNotEmpty property="isOffice" prepend="and">
+			<![CDATA[ t.cloud_id =#isOffice#]]>
+		</isNotEmpty>	
+		<isNotEmpty property="custType" prepend="and">
+			<![CDATA[ c.cust_type =#custType#]]>
+		</isNotEmpty>
+		<isNotEmpty property="custState" prepend="and">
+			<![CDATA[ c.cust_state =#custState#]]>
+		</isNotEmpty>
+		<isNotEmpty property="custName" prepend="and">
+			<![CDATA[ c.cust_name like #custName,handler=wildcard# escape '\']]>
+		</isNotEmpty>
+		<isNotEmpty property="beginDate" prepend="and">
+			<![CDATA[t.create_date >=to_date(#beginDate#,'yyyy-mm-dd')]]>
+		</isNotEmpty>
+	     <isNotEmpty property="endDate" prepend="and">
+			<![CDATA[t.create_date <=to_date(#endDate#,'yyyy-mm-dd')+1]]>
+		</isNotEmpty>
+		<isNotEmpty property="contactName" prepend="and">
+			<![CDATA[ c.contact_name like #contactName,handler=wildcard# escape '\']]>
+		</isNotEmpty>
+		<isNotEmpty property="userName" prepend="and">
+			<![CDATA[ s.user_name like #userName,handler=wildcard# escape '\']]>
+		</isNotEmpty>
+		<isNotEmpty property="userId" prepend="and">
+			<![CDATA[ t.user_id =#userId#]]>
+		</isNotEmpty>
+		<isNotEmpty property="custKunnrs" prepend="and">
+			<![CDATA[ t.cloud_id in]]>
+			    <iterate property="custKunnrs" open="(" close=")" conjunction=",">#custKunnrs[]#
+				</iterate>
+		</isNotEmpty>
+			<isNotEmpty property="orgIds" prepend="and">
+			<![CDATA[ s.org_id in ]]>
+				<iterate property="orgIds" open="(" close=")" conjunction=",">#orgIds[]#
+				</iterate>
+		</isNotEmpty>
+
+	</dynamic>
+	</select>
+	
+		<select id="searchOrderDetailCount" parameterClass="orderDetail"
+		resultClass="java.lang.Integer">
+		<![CDATA[
+       select   count(1)
+       from  crm.crm_tb_order_detail d 
+       left join crm.crm_tb_sku k on d.sku_id = k.sku_id
+       where 1=1 and d.status='U'
+		]]>
+		<dynamic>
+	<isNotEmpty property="orderId" prepend="and">
+			<![CDATA[ d.order_id =#orderId#]]>
+		</isNotEmpty>
+	</dynamic>
+	</select>
+
+
+	<select id="searchOrderList" parameterClass="order"
+		resultClass="order">
+		<include refid="global.paginationStart" />
+		<![CDATA[ 
+            select  t.order_id as orderId ,
+              t.total_price||t.total_price_unit_desc  as totalPrice,
+              t.order_quantity as orderQuntity,
+              c.cust_name  as custName,
+              o.org_name  as orgName,
+              t.ORDER_STATUS  as orderStatus,
+              t.ORDER_FUNDS_STATUS  as orderFundsStatus,
+              t.ORDER_DESCRIPTION  as orderDesc,
+              s.user_name as userName,
+              t.planned_delivery_date  as plannedDeliveryDate,
+              t.real_delivery_date as realDeliveryDate,
+              t.order_create_date as orderCreateDate,
+              t.create_date  as createDate,
+              t.status    as status
+             from  crm.crm_tb_order_total  t  
+             left join basis.basis_vw_user_psw s
+             on s.user_id = t.user_id
+             left join basis.basis_tb_org o
+             on o.org_id = s.org_id
+             left join crm.crm_tb_customer c 
+             on t.cust_id = c.cust_id
+            where 1=1
+		]]>
+	<dynamic>
+	<isNotEmpty property="custId" prepend="and">
+			<![CDATA[ c.cust_id =#custId#]]>
+		</isNotEmpty>
+		<isNotEmpty property="orderDetailId" prepend="and">
+			<![CDATA[ d.order_detail_id =#orderDetailId#]]>
+		</isNotEmpty>
+		<isNotEmpty property="isOffice" prepend="and">
+			<![CDATA[ t.cloud_id =#isOffice#]]>
+		</isNotEmpty>	
+		<isNotEmpty property="custType" prepend="and">
+			<![CDATA[ c.cust_type =#custType#]]>
+		</isNotEmpty>
+		<isNotEmpty property="custState" prepend="and">
+			<![CDATA[ c.cust_state =#custState#]]>
+		</isNotEmpty>
+		<isNotEmpty property="custName" prepend="and">
+			<![CDATA[ c.cust_name like #custName,handler=wildcard# escape '\']]>
+		</isNotEmpty>
+		<isNotEmpty property="beginDate" prepend="and">
+			<![CDATA[t.create_date >=to_date(#beginDate#,'yyyy-mm-dd')]]>
+		</isNotEmpty>
+	     <isNotEmpty property="endDate" prepend="and">
+			<![CDATA[t.create_date <=to_date(#endDate#,'yyyy-mm-dd')+1]]>
+		</isNotEmpty>
+		<isNotEmpty property="contactName" prepend="and">
+			<![CDATA[ c.contact_name like #contactName,handler=wildcard# escape '\']]>
+		</isNotEmpty>
+		<isNotEmpty property="userName" prepend="and">
+			<![CDATA[ s.user_name like #userName,handler=wildcard# escape '\']]>
+		</isNotEmpty>
+		<isNotEmpty property="custKunnrs" prepend="and">
+			<![CDATA[ t.cloud_id in]]>
+			    <iterate property="custKunnrs" open="(" close=")" conjunction=",">#custKunnrs[]#
+				</iterate>
+		</isNotEmpty>
+		<isNotEmpty property="userId" prepend="and">
+			<![CDATA[ t.user_id =#userId#]]>
+		</isNotEmpty>
+			<isNotEmpty property="orgIds" prepend="and">
+			<![CDATA[ s.org_id in ]]>
+				<iterate property="orgIds" open="(" close=")" conjunction=",">#orgIds[]#
+				</iterate>
+			</isNotEmpty>
+		<![CDATA[ order by t.create_date desc]]>
+	</dynamic>
+		<include refid="global.paginationEnd" />
+	</select>
+	
+	<select id="orderExport" parameterClass="order"
+		resultClass="order">
+		<![CDATA[ 
+             select d.order_detail_id as orderDetailId,  
+               d.quantity      as quantity,
+               d.order_type  as orderType,
+               d.total_price  as DtotalPrice,
+               d.price       as price,
+               k.sku_name  as skuName,
+               d.real_quantity  as realQuantity,
+               t.order_id as orderId ,
+              t.total_price||t.total_price_unit_desc  as totalPrice,
+              t.order_quantity as orderQuntity,
+              c.cust_name  as custName,
+              o.org_name  as orgName,
+              t.ORDER_STATUS  as orderStatus,
+              t.ORDER_FUNDS_STATUS  as orderFundsStatus,
+              t.ORDER_DESCRIPTION  as orderDesc,
+              s.user_name as userName,
+              t.planned_delivery_date  as plannedDeliveryDate,
+              t.real_delivery_date as realDeliveryDate,
+              t.order_create_date as orderCreateDate,
+              t.create_date  as createDate,
+              t.status    as status
+             from crm.crm_tb_order_detail d 
+             left join 
+             crm.crm_tb_order_total  t  
+             on t.order_id = d.order_id
+             left join basis.basis_vw_user_psw s
+             on s.user_id = t.user_id
+             left join basis.basis_tb_org o
+             on o.org_id = s.org_id
+            left join crm.crm_tb_customer c 
+            on t.cust_id = c.cust_id
+            left join crm.crm_tb_sku k 
+             on k.sku_id = d.sku_id
+            where 1=1 and d.status='U'
+		]]>
+	<dynamic>
+	<isNotEmpty property="custId" prepend="and">
+			<![CDATA[ c.cust_id =#custId#]]>
+		</isNotEmpty>
+		<isNotEmpty property="isOffice" prepend="and">
+			<![CDATA[ t.cloud_id =#isOffice#]]>
+		</isNotEmpty>	
+		<isNotEmpty property="custType" prepend="and">
+			<![CDATA[ c.cust_type =#custType#]]>
+		</isNotEmpty>
+		<isNotEmpty property="custState" prepend="and">
+			<![CDATA[ c.cust_state =#custState#]]>
+		</isNotEmpty>
+		<isNotEmpty property="custName" prepend="and">
+			<![CDATA[ c.cust_name like #custName,handler=wildcard# escape '\']]>
+		</isNotEmpty>
+		<isNotEmpty property="beginDate" prepend="and">
+			<![CDATA[t.create_date >=to_date(#beginDate#,'yyyy-mm-dd')]]>
+		</isNotEmpty>
+	     <isNotEmpty property="endDate" prepend="and">
+			<![CDATA[t.create_date <=to_date(#endDate#,'yyyy-mm-dd')+1]]>
+		</isNotEmpty>
+		<isNotEmpty property="contactName" prepend="and">
+			<![CDATA[ c.contact_name like #contactName,handler=wildcard# escape '\']]>
+		</isNotEmpty>
+		<isNotEmpty property="userName" prepend="and">
+			<![CDATA[ s.user_name like #userName,handler=wildcard# escape '\']]>
+		</isNotEmpty>
+		<isNotEmpty property="userId" prepend="and">
+			<![CDATA[ t.user_id =#userId#]]>
+		</isNotEmpty>
+		<isNotEmpty property="custKunnrs" prepend="and">
+			<![CDATA[ t.cloud_id in]]>
+			    <iterate property="custKunnrs" open="(" close=")" conjunction=",">#custKunnrs[]#
+				</iterate>
+		</isNotEmpty>
+			<isNotEmpty property="orgIds" prepend="and">
+			<![CDATA[ s.org_id in ]]>
+				<iterate property="orgIds" open="(" close=")" conjunction=",">#orgIds[]#
+				</iterate>
+			</isNotEmpty>
+		<![CDATA[ order by t.create_date desc]]>
+	</dynamic>
+	</select>
+	
+	
+	<select id="searchOrder" parameterClass="order"
+		resultClass="order">
+		<![CDATA[ 
+           select  t.order_id as orderId ,
+              t.total_price as totalPrice,
+              t.order_quantity as orderQuntity,
+              c.cust_name  as custName,
+              o.org_name  as orgName,
+              t.ORDER_STATUS  as orderStatus,
+              t.ORDER_FUNDS_STATUS  as orderFundsStatus,
+              t.ORDER_DESCRIPTION  as orderDesc,
+              s.user_name as userName,
+              t.planned_delivery_date  as plannedDeliveryDate,
+              t.real_delivery_date as realDeliveryDate,
+              t.order_create_date as orderCreateDate,
+              t.create_date  as createDate,
+              t.status    as status,
+              t.cloud_id as isOffice
+             from  crm.crm_tb_order_total  t  
+             left join basis.basis_vw_user_psw s
+             on s.user_id = t.user_id
+             left join basis.basis_tb_org o
+             on o.org_id = s.org_id
+             left join crm.crm_tb_customer c 
+             on t.cust_id = c.cust_id
+            where 1=1
+		]]>
+			<dynamic>
+		<isNotEmpty property="orderId" prepend="and">
+			<![CDATA[ t.order_id =#orderId#]]>
+		</isNotEmpty>
+	</dynamic>
+	</select>
+	
+	<select id="getOrder" parameterClass="order"
+		resultClass="order">
+		<![CDATA[ 
+           select  t.order_id as orderId ,
+              t.total_price as totalPrice,
+              t.order_quantity as orderQuntity,
+              c.cust_name  as custName,
+              o.org_name  as orgName,
+              t.ORDER_STATUS  as orderStatus,
+              t.ORDER_FUNDS_STATUS  as orderFundsStatus,
+              t.ORDER_DESCRIPTION  as orderDesc,
+              s.user_name as userName,
+              t.planned_delivery_date  as plannedDeliveryDate,
+              t.real_delivery_date as realDeliveryDate,
+              t.order_create_date as orderCreateDate,
+              t.create_date  as createDate,
+              t.status    as status,
+              s.bus_mobilephone as busPhone,
+              k.kunnr as kunnr,
+              k.name1 as kunnrName
+             from  crm.crm_tb_order_total  t  
+             left join basis.basis_vw_user_psw s
+             on s.user_id = t.user_id
+             left join basis.basis_tb_org o
+             on o.org_id = s.org_id
+             left join crm.crm_tb_customer c 
+             on t.cust_id = c.cust_id
+             left join crm.crm_tb_kunnr k
+             on k.kunnr = c.cust_kunnr
+            where 1=1
+		]]>
+	<dynamic>
+		<isNotEmpty property="orderId" prepend="and">
+			<![CDATA[ t.order_id =#orderId#]]>
+		</isNotEmpty>
+	</dynamic>
+	</select>
+	
+	<update id="updateOrder" parameterClass="order">
+	<![CDATA[	
+		update crm.crm_tb_order_total d 
+		       set d.MODIFY_DATE = sysdate,
+		           d.LAST_MODIFY_USER = #lastModifyUser#
+		]]>	
+		<isNotEmpty property="custId" prepend=",">
+			<![CDATA[ d.cust_id =#custId#]]>
+		</isNotEmpty>
+		<isNotEmpty property="status" prepend=",">
+			<![CDATA[ d.status =#status#]]>
+		</isNotEmpty>
+		<isNotEmpty property="orderStatus" prepend=",">
+			<![CDATA[ d.order_status =#orderStatus#]]>
+		</isNotEmpty>
+		<isNotEmpty property="orderFundsStatus" prepend=",">
+			<![CDATA[ d.order_funds_status =#orderFundsStatus#]]>
+		</isNotEmpty>
+		<isNotEmpty property="orderDesc" prepend=",">
+			<![CDATA[ d.ORDER_DESCRIPTION =#orderDesc#]]>
+		</isNotEmpty>
+		<isNotEmpty property="totalPrice" prepend=",">
+			<![CDATA[ d.total_price =#totalPrice#]]>
+		</isNotEmpty>
+		<![CDATA[ where  d.order_id = #orderId# ]]>	
+	</update>
+	
+	<update id="updateOrderDetail" parameterClass="orderDetail">
+	<![CDATA[	
+		update crm.crm_tb_order_detail d 
+		       set d.MODIFY_DATE = sysdate,
+		           d.MODIFY_USER_ID = #lastModifyUser#
+		]]>	
+		<isNotEmpty property="quantity" prepend=",">
+			<![CDATA[ d.quantity =#quantity#]]>
+		</isNotEmpty>
+		<isNotEmpty property="skuId" prepend=",">
+			<![CDATA[ d.sku_id =#skuId#]]>
+		</isNotEmpty>
+		<isNotEmpty property="price" prepend=",">
+			<![CDATA[ d.price =#price#]]>
+		</isNotEmpty>
+		<isNotEmpty property="realQuantity" prepend=",">
+			<![CDATA[ d.real_quantity =#realQuantity#]]>
+		</isNotEmpty>
+		<isNotEmpty property="orderType" prepend=",">
+			<![CDATA[ d.order_type =#orderType#]]>
+		</isNotEmpty>
+		<isNotEmpty property="totalPrice" prepend=",">
+			<![CDATA[ d.total_price =#totalPrice#]]>
+		</isNotEmpty>
+		<isNotEmpty property="unitDesc" prepend=",">
+			<![CDATA[ d.unit_desc =#unitDesc#]]>
+		</isNotEmpty>
+		<![CDATA[ where  d.order_detail_id = #orderDetailId# ]]>	
+	</update>
+	
+	<select id="searchOrderDetailList" parameterClass="orderDetail"
+		resultClass="orderDetail">
+		<![CDATA[ 
+           select  
+              d.order_detail_id as orderDetailId,
+              k.sku_name  as skuName,
+              d.quantity as quantity,
+              d.real_quantity   as realQuantity,
+              d.price as price,
+              d.order_type  as orderType ,
+              d.total_price as totalPrice,
+              d.unit_desc as unitDesc,
+              k.sku_code as skuCode
+             from  crm.crm_tb_order_detail d
+             left join crm.crm_tb_sku k 
+             on d.sku_id = k.sku_id
+            where d.STATUS='U' 
+		]]>
+	<dynamic>
+	    <isNotEmpty property="orderId" prepend="and">
+			<![CDATA[ d.order_id =#orderId#]]>
+		</isNotEmpty>
+	</dynamic>
+	</select>
+	
+	<select id="getSkuCount" parameterClass="orderSku" resultClass="java.lang.Integer">
+	<![CDATA[
+		    select count(s.sku_name) from crm.crm_tb_sku s 
+		    where s.product_type = '1'
+		          and s.status='U' 
+	]]>
+		<dynamic>
+			<isNotEmpty property="skuName" prepend="and">
+			<![CDATA[ s.sku_name like #skuName,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="skuCompany" prepend="and">
+			<![CDATA[ s.cloudid in (#skuCompany#,'0000000000')]]>
+		    </isNotEmpty>
+		</dynamic>
+	</select>
+	
+	<select id="getSkuNameList" parameterClass="orderSku" resultClass="orderSku">
+	<include refid="global.paginationStart" />
+	<![CDATA[
+	      select distinct s.sku_id as skuId,
+	      				  s.sku_name as skuName,
+	      				  s.sku_unit as skuUnit 
+	      from crm.crm_tb_sku s 
+	      where s.product_type = '1' and s.status='U'
+	]]>
+		<dynamic>
+			<isNotEmpty property="skuName" prepend="and">
+			<![CDATA[ s.sku_name like #skuName,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isNotEmpty property="skuCompany" prepend="and">
+			<![CDATA[ s.cloudid in (#skuCompany#,'0000000000')]]>
+		    </isNotEmpty>			
+		</dynamic>
+		<![CDATA[order by s.sku_id ]]>
+		<include refid="global.paginationEnd" />
+	</select>
+	
+	<select id="getOrderId" resultClass="java.lang.Long">
+	   <![CDATA[
+	      select crm.crm_seq_order_total.currval from dual
+	   ]]>
+	</select>
+	
+	<insert id="createOrder" parameterClass="order">
+	   <selectKey resultClass="java.lang.Long" keyProperty="orderId">
+	   <![CDATA[
+	      select crm.crm_seq_order_total.nextval as orderId from dual
+	   ]]>
+	   </selectKey>
+	   <![CDATA[
+	     insert into crm.crm_tb_order_total
+		  (order_id,
+		   total_price,
+		   total_price_unit_desc,
+		   order_description,
+		   order_quantity,
+		   cust_id,
+		   org_id,
+		   user_id,
+		   status,
+		   last_modify_user,
+		   order_create_date,
+		   create_date,
+		   modify_date,
+		   order_status,
+		   order_funds_status,
+		   cloud_id)
+		values
+		  (#orderId#,
+		   #totalPrice#,
+		   'Ԫ',
+		   #orderDesc#,
+		   '0.0',
+		   #custId#,
+		   #orgId#,
+		   #userId#,
+		   'U',
+		   #userId#,
+		   sysdate,
+		   sysdate,
+		   sysdate,
+		   'N',
+		   'N',
+		   #isOffice#)
+		 ]]>
+	</insert>
+	
+	<insert id="createOrderDetail" parameterClass="orderDetail">
+	   <selectKey resultClass="java.lang.Long" keyProperty="orderDetailId">
+	   <![CDATA[
+	      select crm.crm_seq_order_detail.nextval as orderDetailId from dual
+	   ]]>
+	   </selectKey>
+	   <![CDATA[
+	     insert into crm.crm_tb_order_detail
+		  (order_id,
+		   order_detail_id,
+		   quantity,
+		   unit_code,
+		   unit_desc,
+		   price_unit_desc,
+		   price,
+		   total_price,
+		   status,
+		   create_date,
+		   modify_date,
+		   sku_id,
+		   order_type)
+		values
+		  (#orderId#,
+		   #orderDetailId#,
+		   #quantity#,
+		   #unitCode#,
+		   #unitDesc#,
+		   'Ԫ',
+		   #price#,
+		   #totalPrice#,
+		   'U',
+		   sysdate,
+		   sysdate,
+		   #skuId#,
+		   #orderType#)
+		 ]]>
+	</insert>
+	
+	<select id="getKunnrEmpLifnrByEmpCode" parameterClass="java.lang.String" resultClass="java.lang.String">
+	     <![CDATA[
+	        select t.lifnr from basis.basis_tb_kunnremp_info t where t.emp_code = #empCode#
+	     ]]>
+	</select>
+	
+	<select id="getKunnrByEmpId" parameterClass="java.lang.Long" resultClass="java.lang.String">
+	     <![CDATA[
+	        select k.kunnr
+	        from crm.crm_tb_kunnrbusiness k
+	        where k.business_competent_id in (select s.id 
+	                                         from basis.basis_tb_station_user s
+	                                         where s.user_id = #userId#)
+	     ]]>
+	</select>
+	
+	<select id="getOrderDetailAllListCount" parameterClass="orderInfo" resultClass="java.lang.Integer">
+	  <![CDATA[
+	  select count(*) from (
+	    select  
+              sum(d.total_price) as totalPrice,
+              sum(d.quantity) as quantity,
+              sum(d.real_quantity) as realQuantity,
+              r.kunnr as kunnr,
+              max(d.unit_desc) as unitDesc,
+              max(r.name1) as kunnrName,
+              k.sku_name as skuName,
+              t.user_id as userId,
+              max(p.user_name) as userName,
+              max(s.station_name) as stationName
+              
+             from  crm.crm_tb_order_detail d
+             left join crm.crm_tb_order_total t on d.order_id = t.order_id
+             left join crm.crm_tb_sku k  on d.sku_id = k.sku_id
+             left join crm.crm_tb_customer c on c.cust_id=t.cust_id
+             left join crm.crm_tb_kunnr r on r.kunnr = c.cust_kunnr
+             left join basis.basis_vw_user_psw p on p.user_id=t.user_id
+             left join (select su.user_id,su.station_id 
+                        from basis.basis_tb_station_user su 
+                        where su.is_main_station='Y') su on t.user_id=su.user_id
+             left join basis.basis_tb_stations s on su.station_id=s.station_id
+            where d.status='U' and t.status='U'
+            ]]>
+        <dynamic>
+		<isNotEmpty property="isOffice" prepend="and">
+			<![CDATA[ t.cloud_id =#isOffice#]]>
+		</isNotEmpty>
+		<isNotEmpty property="skuId" prepend="and">
+			<![CDATA[ k.sku_id = #skuId#]]>
+		</isNotEmpty>
+		<isNotEmpty property="orgIds" prepend="and">
+			<![CDATA[ p.org_id in ]]>
+				<iterate property="orgIds" open="(" close=")" conjunction=",">#orgIds[]#
+				</iterate>
+		</isNotEmpty>
+		<isNotEmpty property="custKunnrs" prepend="and">
+			<![CDATA[ t.cloud_id in]]>
+			    <iterate property="custKunnrs" open="(" close=")" conjunction=",">#custKunnrs[]#
+				</iterate>
+		</isNotEmpty>
+		<isNotEmpty property="startDate" prepend="and">
+			<![CDATA[ d.create_date >= #startDate#]]>
+		</isNotEmpty>
+		<isNotEmpty property="endDate" prepend="and">
+			<![CDATA[ d.create_date <= #endDate#+1]]>
+		</isNotEmpty>
+		<isEqual property="stationName" compareValue="Y" prepend="and">
+			<![CDATA[ s.station_name is not null]]>
+		</isEqual>
+		<isEqual property="stationName" compareValue="N" prepend="and">
+			<![CDATA[ s.station_name is null]]>
+		</isEqual>
+		</dynamic>
+      <![CDATA[     group by r.kunnr,k.sku_name,t.user_id
+                      order by r.kunnr,k.sku_name)
+      ]]>
+	</select>
+	
+	<select id="getOrderDetailAllList" parameterClass="orderInfo" resultClass="orderInfo">
+	<include refid="global.paginationStart" />
+	  <![CDATA[
+	    select  
+              sum(d.total_price) as totalPrice,
+              sum(d.quantity) as quantity,
+              sum(d.real_quantity) as realQuantity,
+              r.kunnr as kunnr,
+              max(d.unit_desc) as unitDesc,
+              max(r.name1) as kunnrName,
+              k.sku_name as skuName,
+              t.user_id as userId,
+              max(p.user_name) as userName,
+              max(s.station_name) as stationName,
+              max(c.cust_name) as custName,
+              max(k.sku_code) as skuCode
+              
+             from  crm.crm_tb_order_detail d
+             left join crm.crm_tb_order_total t on d.order_id = t.order_id
+             left join crm.crm_tb_sku k  on d.sku_id = k.sku_id
+             left join crm.crm_tb_customer c on c.cust_id=t.cust_id
+             left join crm.crm_tb_kunnr r on r.kunnr = c.cust_kunnr
+             left join basis.basis_vw_user_psw p on p.user_id=t.user_id
+             left join (select su.user_id,su.station_id 
+                        from basis.basis_tb_station_user su 
+                        where su.is_main_station='Y') su on t.user_id=su.user_id
+             left join basis.basis_tb_stations s on su.station_id=s.station_id
+            where d.status='U' and t.status='U'
+            ]]>
+        <dynamic>
+		<isNotEmpty property="isOffice" prepend="and">
+			<![CDATA[ t.cloud_id =#isOffice#]]>
+		</isNotEmpty>
+		<isNotEmpty property="skuId" prepend="and">
+			<![CDATA[ k.sku_id = #skuId#]]>
+		</isNotEmpty>
+		<isNotEmpty property="orgIds" prepend="and">
+			<![CDATA[ p.org_id in ]]>
+				<iterate property="orgIds" open="(" close=")" conjunction=",">#orgIds[]#
+				</iterate>
+		</isNotEmpty>
+		<isNotEmpty property="custKunnrs" prepend="and">
+			<![CDATA[ t.cloud_id in]]>
+			    <iterate property="custKunnrs" open="(" close=")" conjunction=",">#custKunnrs[]#
+				</iterate>
+		</isNotEmpty>
+		<isNotEmpty property="startDate" prepend="and">
+			<![CDATA[ d.create_date >= #startDate#]]>
+		</isNotEmpty>
+		<isNotEmpty property="endDate" prepend="and">
+			<![CDATA[ d.create_date <= #endDate#+1]]>
+		</isNotEmpty>
+		<isEqual property="stationName" compareValue="Y" prepend="and">
+			<![CDATA[ s.station_name is not null]]>
+		</isEqual>
+		<isEqual property="stationName" compareValue="N" prepend="and">
+			<![CDATA[ s.station_name is null]]>
+		</isEqual>
+		</dynamic>
+      <![CDATA[     group by r.kunnr,k.sku_name,t.user_id
+                      order by r.kunnr,k.sku_name
+      ]]>
+      <include refid="global.paginationEnd" />
+	</select>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<select id="searchOrderNewCount" parameterClass="order"
+		resultClass="java.lang.Integer">
+		<![CDATA[
+		select count(*)
+	            from  crm.crm_tb_order_kunnr_total  t  
+				left join  basis.basis_vw_user_psw s
+				on s.user_id = t.user_id
+				left join basis.basis_tb_org o
+				on o.org_id = s.org_id
+				left join crm.crm_tb_kunnr c 
+				on t.kunnr = c.kunnr
+	            where  1=1
+		]]>
+	<dynamic>
+	<isNotEmpty property="kunnr" prepend="and">
+			<![CDATA[ c.kunnr =#kunnr#]]>
+		</isNotEmpty>
+		<isNotEmpty property="isOffice" prepend="and">
+			<![CDATA[ t.cloud_id =#isOffice#]]>
+		</isNotEmpty>	
+		<isNotEmpty property="custType" prepend="and">
+			<![CDATA[ c.cust_type =#custType#]]>
+		</isNotEmpty>
+		<isNotEmpty property="custState" prepend="and">
+			<![CDATA[ c.cust_state =#custState#]]>
+		</isNotEmpty>
+		<isNotEmpty property="kunnrName" prepend="and">
+			<![CDATA[ c.name1 like #custName,handler=wildcard# escape '\']]>
+		</isNotEmpty>
+		<isNotEmpty property="beginDate" prepend="and">
+			<![CDATA[t.create_date >=to_date(#beginDate#,'yyyy-mm-dd')]]>
+		</isNotEmpty>
+	     <isNotEmpty property="endDate" prepend="and">
+			<![CDATA[t.create_date <=to_date(#endDate#,'yyyy-mm-dd')+1]]>
+		</isNotEmpty>
+		<isNotEmpty property="name2" prepend="and">
+			<![CDATA[ c.name3 like #contactName,handler=wildcard# escape '\']]>
+		</isNotEmpty>
+		<isNotEmpty property="userName" prepend="and">
+			<![CDATA[ s.user_name like #userName,handler=wildcard# escape '\']]>
+		</isNotEmpty>
+		<isNotEmpty property="userId" prepend="and">
+			<![CDATA[ t.user_id =#userId#]]>
+		</isNotEmpty>
+		<isNotEmpty property="custKunnrs" prepend="and">
+			<![CDATA[ t.cloud_id in]]>
+			    <iterate property="custKunnrs" open="(" close=")" conjunction=",">#custKunnrs[]#
+				</iterate>
+		</isNotEmpty>
+			<isNotEmpty property="orgIds" prepend="and">
+			<![CDATA[ s.org_id in ]]>
+				<iterate property="orgIds" open="(" close=")" conjunction=",">#orgIds[]#
+				</iterate>
+		</isNotEmpty>
+
+	</dynamic>
+	</select>
+	
+		<select id="searchOrderNewDetailCount" parameterClass="orderDetail"
+		resultClass="java.lang.Integer">
+		<![CDATA[
+       select   count(*)
+       from  crm.crm_tb_order_kunnr_detail d 
+       left join crm.crm_tb_sku k on d.sku_id = k.sku_id
+       where 1=1 and d.status='U'
+		]]>
+		<dynamic>
+	<isNotEmpty property="orderId" prepend="and">
+			<![CDATA[ d.order_id =#orderId#]]>
+		</isNotEmpty>
+	</dynamic>
+	</select>
+
+
+	<select id="searchOrderNewList" parameterClass="order"
+		resultClass="order">
+		<include refid="global.paginationStart" />
+		<![CDATA[ 
+            select  t.order_id as orderId ,
+              t.total_price||t.total_price_unit_desc  as totalPrice,
+              t.order_quantity as orderQuntity,
+              c.name1  as kunnrName,
+              o.org_name  as orgName,
+              t.ORDER_STATUS  as orderStatus,
+              t.ORDER_FUNDS_STATUS  as orderFundsStatus,
+              t.ORDER_DESCRIPTION  as orderDesc,
+              s.user_name as userName,
+              t.planned_delivery_date  as plannedDeliveryDate,
+              t.real_delivery_date as realDeliveryDate,
+              t.order_create_date as orderCreateDate,
+              t.create_date  as createDate,
+              t.status    as status
+             from  crm.crm_tb_order_kunnr_total  t  
+             left join basis.basis_vw_user_psw s
+             on s.user_id = t.user_id
+             left join basis.basis_tb_org o
+             on o.org_id = s.org_id
+             left join crm.crm_tb_kunnr c 
+             on t.kunnr = c.kunnr
+            where 1=1
+		]]>
+	<dynamic>
+	<isNotEmpty property="kunnr" prepend="and">
+			<![CDATA[ c.kunnr =#kunnr#]]>
+		</isNotEmpty>
+		<isNotEmpty property="orderDetailId" prepend="and">
+			<![CDATA[ d.order_detail_id =#orderDetailId#]]>
+		</isNotEmpty>
+		<isNotEmpty property="isOffice" prepend="and">
+			<![CDATA[ t.cloud_id =#isOffice#]]>
+		</isNotEmpty>
+		<isNotEmpty property="name2" prepend="and">
+			<![CDATA[ c.name3 =#name2#]]>
+		</isNotEmpty>
+		<isNotEmpty property="kunnrName" prepend="and">
+			<![CDATA[ c.name1 like #custName,handler=wildcard# escape '\']]>
+		</isNotEmpty>
+		<isNotEmpty property="beginDate" prepend="and">
+			<![CDATA[t.create_date >=to_date(#beginDate#,'yyyy-mm-dd')]]>
+		</isNotEmpty>
+	     <isNotEmpty property="endDate" prepend="and">
+			<![CDATA[t.create_date <=to_date(#endDate#,'yyyy-mm-dd')+1]]>
+		</isNotEmpty>
+		<isNotEmpty property="contactName" prepend="and">
+			<![CDATA[ c.contact_name like #contactName,handler=wildcard# escape '\']]>
+		</isNotEmpty>
+		<isNotEmpty property="userName" prepend="and">
+			<![CDATA[ s.user_name like #userName,handler=wildcard# escape '\']]>
+		</isNotEmpty>
+		<isNotEmpty property="custKunnrs" prepend="and">
+			<![CDATA[ t.cloud_id in]]>
+			    <iterate property="custKunnrs" open="(" close=")" conjunction=",">#custKunnrs[]#
+				</iterate>
+		</isNotEmpty>
+		<isNotEmpty property="userId" prepend="and">
+			<![CDATA[ t.user_id =#userId#]]>
+		</isNotEmpty>
+			<isNotEmpty property="orgIds" prepend="and">
+			<![CDATA[ s.org_id in ]]>
+				<iterate property="orgIds" open="(" close=")" conjunction=",">#orgIds[]#
+				</iterate>
+			</isNotEmpty>
+		<![CDATA[ order by t.create_date desc]]>
+	</dynamic>
+		<include refid="global.paginationEnd" />
+	</select>
+	
+	<select id="orderNewExport" parameterClass="order"
+		resultClass="order">
+		<![CDATA[ 
+             select d.order_detail_id as orderDetailId,  
+               d.quantity      as quantity,
+               d.order_type  as orderType,
+               d.total_price  as DtotalPrice,
+               d.price       as price,
+               k.sku_name  as skuName,
+               d.real_quantity  as realQuantity,
+               t.order_id as orderId ,
+              t.total_price||t.total_price_unit_desc  as totalPrice,
+              t.order_quantity as orderQuntity,
+              c.cust_name  as custName,
+              o.org_name  as orgName,
+              t.ORDER_STATUS  as orderStatus,
+              t.ORDER_FUNDS_STATUS  as orderFundsStatus,
+              t.ORDER_DESCRIPTION  as orderDesc,
+              s.user_name as userName,
+              t.planned_delivery_date  as plannedDeliveryDate,
+              t.real_delivery_date as realDeliveryDate,
+              t.order_create_date as orderCreateDate,
+              t.create_date  as createDate,
+              t.status    as status
+             from crm.crm_tb_order_kunnr_detail d 
+             left join 
+             crm.crm_tb_order_kunnr_total  t  
+             on t.order_id = d.order_id
+             left join basis.basis_vw_user_psw s
+             on s.user_id = t.user_id
+             left join basis.basis_tb_org o
+             on o.org_id = s.org_id
+            left join crm.crm_tb_customer c 
+            on t.cust_id = c.cust_id
+            left join crm.crm_tb_sku k 
+             on k.sku_id = d.sku_id
+            where 1=1 and d.status='U'
+		]]>
+	<dynamic>
+	<isNotEmpty property="custId" prepend="and">
+			<![CDATA[ c.cust_id =#custId#]]>
+		</isNotEmpty>
+		<isNotEmpty property="isOffice" prepend="and">
+			<![CDATA[ t.cloud_id =#isOffice#]]>
+		</isNotEmpty>	
+		<isNotEmpty property="custType" prepend="and">
+			<![CDATA[ c.cust_type =#custType#]]>
+		</isNotEmpty>
+		<isNotEmpty property="custState" prepend="and">
+			<![CDATA[ c.cust_state =#custState#]]>
+		</isNotEmpty>
+		<isNotEmpty property="custName" prepend="and">
+			<![CDATA[ c.cust_name like #custName,handler=wildcard# escape '\']]>
+		</isNotEmpty>
+		<isNotEmpty property="beginDate" prepend="and">
+			<![CDATA[t.create_date >=to_date(#beginDate#,'yyyy-mm-dd')]]>
+		</isNotEmpty>
+	     <isNotEmpty property="endDate" prepend="and">
+			<![CDATA[t.create_date <=to_date(#endDate#,'yyyy-mm-dd')+1]]>
+		</isNotEmpty>
+		<isNotEmpty property="contactName" prepend="and">
+			<![CDATA[ c.contact_name like #contactName,handler=wildcard# escape '\']]>
+		</isNotEmpty>
+		<isNotEmpty property="userName" prepend="and">
+			<![CDATA[ s.user_name like #userName,handler=wildcard# escape '\']]>
+		</isNotEmpty>
+		<isNotEmpty property="userId" prepend="and">
+			<![CDATA[ t.user_id =#userId#]]>
+		</isNotEmpty>
+		<isNotEmpty property="custKunnrs" prepend="and">
+			<![CDATA[ t.cloud_id in]]>
+			    <iterate property="custKunnrs" open="(" close=")" conjunction=",">#custKunnrs[]#
+				</iterate>
+		</isNotEmpty>
+			<isNotEmpty property="orgIds" prepend="and">
+			<![CDATA[ s.org_id in ]]>
+				<iterate property="orgIds" open="(" close=")" conjunction=",">#orgIds[]#
+				</iterate>
+			</isNotEmpty>
+		<![CDATA[ order by t.create_date desc]]>
+	</dynamic>
+	</select>
+	
+	
+	<select id="searchOrderNew" parameterClass="order"
+		resultClass="order">
+		<![CDATA[ 
+           select  t.order_id as orderId ,
+              t.total_price as totalPrice,
+              t.order_quantity as orderQuntity,
+              c.name1  as kunnrName,
+              o.org_name  as orgName,
+              t.ORDER_STATUS  as orderStatus,
+              t.ORDER_FUNDS_STATUS  as orderFundsStatus,
+              t.ORDER_DESCRIPTION  as orderDesc,
+              s.user_name as userName,
+              t.planned_delivery_date  as plannedDeliveryDate,
+              t.real_delivery_date as realDeliveryDate,
+              t.order_create_date as orderCreateDate,
+              to_char(t.create_date,'yyyy-MM-dd')  as createDate,
+              t.status    as status,
+              t.cloud_id as isOffice,
+              t.name2 as name2,
+              t.mobile as mobile,
+              t.address as address,
+              t.car_type as carType
+             from  crm.crm_tb_order_kunnr_total  t  
+             left join basis.basis_vw_user_psw s
+             on s.user_id = t.user_id
+             left join basis.basis_tb_org o
+             on o.org_id = s.org_id
+             left join crm.crm_tb_kunnr c 
+             on t.kunnr = c.kunnr
+            where 1=1
+		]]>
+			<dynamic>
+		<isNotEmpty property="orderId" prepend="and">
+			<![CDATA[ t.order_id =#orderId#]]>
+		</isNotEmpty>
+	</dynamic>
+	</select>
+	
+	<select id="getOrderNew" parameterClass="order"
+		resultClass="order">
+		<![CDATA[ 
+           select  t.order_id as orderId ,
+              t.total_price as totalPrice,
+              t.order_quantity as orderQuntity,
+              c.cust_name  as custName,
+              o.org_name  as orgName,
+              t.ORDER_STATUS  as orderStatus,
+              t.ORDER_FUNDS_STATUS  as orderFundsStatus,
+              t.ORDER_DESCRIPTION  as orderDesc,
+              s.user_name as userName,
+              t.planned_delivery_date  as plannedDeliveryDate,
+              t.real_delivery_date as realDeliveryDate,
+              t.order_create_date as orderCreateDate,
+              t.create_date  as createDate,
+              t.status    as status
+             from  crm.crm_tb_order_total  t  
+             left join basis.basis_vw_user_psw s
+             on s.user_id = t.user_id
+             left join basis.basis_tb_org o
+             on o.org_id = s.org_id
+             left join crm.crm_tb_customer c 
+             on t.cust_id = c.cust_id
+            where 1=1
+		]]>
+	<dynamic>
+		<isNotEmpty property="orderId" prepend="and">
+			<![CDATA[ t.order_id =#orderId#]]>
+		</isNotEmpty>
+	</dynamic>
+	</select>
+	
+	<update id="updateOrderNew" parameterClass="order">
+	<![CDATA[	
+		update crm.crm_tb_order_kunnr_total d 
+		       set d.MODIFY_DATE = sysdate,
+		           d.LAST_MODIFY_USER = #lastModifyUser#
+		]]>	
+		<isNotEmpty property="kunnr" prepend=",">
+			<![CDATA[ d.kunnr =#kunnr#]]>
+		</isNotEmpty>
+		<isNotEmpty property="status" prepend=",">
+			<![CDATA[ d.status =#status#]]>
+		</isNotEmpty>
+		<isNotEmpty property="orderStatus" prepend=",">
+			<![CDATA[ d.order_status =#orderStatus#]]>
+		</isNotEmpty>
+		<isNotEmpty property="orderFundsStatus" prepend=",">
+			<![CDATA[ d.order_funds_status =#orderFundsStatus#]]>
+		</isNotEmpty>
+		<isNotEmpty property="orderDesc" prepend=",">
+			<![CDATA[ d.ORDER_DESCRIPTION =#orderDesc#]]>
+		</isNotEmpty>
+		<isNotEmpty property="totalPrice" prepend=",">
+			<![CDATA[ d.total_price =#totalPrice#]]>
+		</isNotEmpty>
+		<isNotEmpty property="name2" prepend=",">
+			<![CDATA[ d.name2 =#name2#]]>
+		</isNotEmpty>
+		<isNotEmpty property="mobile" prepend=",">
+			<![CDATA[ d.mobile =#mobile#]]>
+		</isNotEmpty>
+		<isNotEmpty property="address" prepend=",">
+			<![CDATA[ d.address =#address#]]>
+		</isNotEmpty>
+		<isNotEmpty property="carType" prepend=",">
+			<![CDATA[ d.car_type =#carType#]]>
+		</isNotEmpty>
+		<![CDATA[ where d.order_id = #orderId# ]]>	
+	</update>
+	
+	<update id="updateOrderNewDetail" parameterClass="orderDetail">
+	<![CDATA[	
+		update crm.crm_tb_order_kunnr_detail d 
+		       set d.MODIFY_DATE = sysdate,
+		           d.MODIFY_USER_ID = #lastModifyUser#
+		]]>	
+		<isNotEmpty property="quantity" prepend=",">
+			<![CDATA[ d.quantity =#quantity#]]>
+		</isNotEmpty>
+		<isNotEmpty property="skuId" prepend=",">
+			<![CDATA[ d.sku_id =#skuId#]]>
+		</isNotEmpty>
+		<isNotEmpty property="price" prepend=",">
+			<![CDATA[ d.price =#price#]]>
+		</isNotEmpty>
+		<isNotEmpty property="realQuantity" prepend=",">
+			<![CDATA[ d.real_quantity =#realQuantity#]]>
+		</isNotEmpty>
+		<isNotEmpty property="orderType" prepend=",">
+			<![CDATA[ d.order_type =#orderType#]]>
+		</isNotEmpty>
+		<isNotEmpty property="totalPrice" prepend=",">
+			<![CDATA[ d.total_price =#totalPrice#]]>
+		</isNotEmpty>
+		<![CDATA[ where  d.order_detail_id = #orderDetailId# ]]>	
+	</update>
+	
+	<select id="searchOrderNewDetailList" parameterClass="orderDetail"
+		resultClass="orderDetail">
+		<![CDATA[ 
+           select  
+              d.order_detail_id as orderDetailId,
+              k.sku_name  as skuName,
+              d.quantity as quantity,
+              d.real_quantity   as realQuantity,
+              d.price as price,
+              d.order_type  as orderType ,
+              d.total_price as totalPrice
+             from  crm.crm_tb_order_kunnr_detail d
+             left join crm.crm_tb_sku k 
+             on d.sku_id = k.sku_id
+            where 1=1
+		]]>
+	<dynamic>
+	    <isNotEmpty property="orderId" prepend="and">
+			<![CDATA[ d.order_id =#orderId#]]>
+		</isNotEmpty>
+	</dynamic>
+	</select>
+	
+	<insert id="createOrderNew" parameterClass="order">
+	   <![CDATA[
+	     insert into crm.crm_tb_order_kunnr_total
+		  (order_id,
+		   total_price,
+		   total_price_unit_desc,
+		   order_description,
+		   order_quantity,
+		   kunnr,
+		   org_id,
+		   user_id,
+		   status,
+		   last_modify_user,
+		   order_create_date,
+		   create_date,
+		   modify_date,
+		   order_status,
+		   order_funds_status,
+		   name2,
+		   mobile,
+		   address,
+		   car_type)
+		values
+		  (#orderId#,
+		   #totalPrice#,
+		   'Ԫ',
+		   #orderDesc#,
+		   '0.0',
+		   #kunnr#,
+		   #orgId#,
+		   #userId#,
+		   'U',
+		   #userId#,
+		   sysdate,
+		   sysdate,
+		   sysdate,
+		   'N',
+		   'N',
+		   #name2#,
+		   #mobile#,
+		   #address#,
+		   #carType#)
+		 ]]>
+	</insert>
+	
+	<insert id="createOrderNewDetail" parameterClass="orderDetail">
+	   <selectKey resultClass="java.lang.Long" keyProperty="orderDetailId">
+	   <![CDATA[
+	      select crm.crm_seq_order_kunnr_detail.nextval as orderDetailId from dual
+	   ]]>
+	   </selectKey>
+	   <![CDATA[
+	     insert into crm.crm_tb_order_kunnr_detail
+		  (order_id,
+		   order_detail_id,
+		   quantity,
+		   unit_code,
+		   unit_desc,
+		   price_unit_desc,
+		   price,
+		   total_price,
+		   status,
+		   create_date,
+		   modify_date,
+		   sku_id,
+		   order_type)
+		values
+		  (#orderId#,
+		   #orderDetailId#,
+		   #quantity#,
+		   #unitCode#,
+		   #unitDesc#,
+		   'Ԫ',
+		   #price#,
+		   #totalPrice#,
+		   'U',
+		   sysdate,
+		   sysdate,
+		   #skuId#,
+		   #orderType#)
+		 ]]>
+	</insert>
+	
+	<select id="getOrderNewDetailAllListCount" parameterClass="orderInfo" resultClass="java.lang.Integer">
+	  <![CDATA[
+	  select count(*) from (
+	    select  
+              sum(d.total_price) as totalPrice,
+              sum(d.quantity) as quantity,
+              sum(d.real_quantity) as realQuantity,
+              t.cloud_id as kunnr,
+              d.unit_desc as unitDesc,
+              r.name1 as kunnrName,
+              k.sku_name as skuName
+              
+             from  crm.crm_tb_order_kunnr_detail d
+             left join crm.crm_tb_order_kunnr_total t
+             on d.order_id = t.order_id
+              left join  basis.basis_vw_user_psw s
+                 on s.user_id = t.user_id
+             left join crm.crm_tb_sku k 
+             on d.sku_id = k.sku_id
+             left join crm.crm_tb_kunnr r
+             on r.kunnr = t.cloud_id
+            where 1=1
+            ]]>
+        <dynamic>
+		<isNotEmpty property="isOffice" prepend="and">
+			<![CDATA[ t.cloud_id =#isOffice#]]>
+		</isNotEmpty>
+		<isNotEmpty property="skuId" prepend="and">
+			<![CDATA[ k.sku_id = #skuId#]]>
+		</isNotEmpty>
+		<isNotEmpty property="orgIds" prepend="and">
+			<![CDATA[ s.org_id in ]]>
+				<iterate property="orgIds" open="(" close=")" conjunction=",">#orgIds[]#
+				</iterate>
+		</isNotEmpty>
+		</dynamic>
+		<isNotEmpty property="custKunnrs" prepend="and">
+			<![CDATA[ t.cloud_id in]]>
+			    <iterate property="custKunnrs" open="(" close=")" conjunction=",">#custKunnrs[]#
+				</iterate>
+		</isNotEmpty>
+		<isNotEmpty property="startDate" prepend="and">
+			<![CDATA[ d.create_date >= #startDate#]]>
+		</isNotEmpty>
+		<isNotEmpty property="endDate" prepend="and">
+			<![CDATA[ d.create_date <= #endDate#+1]]>
+		</isNotEmpty>
+      <![CDATA[     group by t.cloud_id,r.name1,k.sku_name,d.unit_desc
+                      order by t.cloud_id,k.sku_name)
+      ]]>
+	</select>
+	
+	<select id="getOrderNewDetailAllList" parameterClass="orderInfo" resultClass="orderInfo">
+	<include refid="global.paginationStart" />
+	  <![CDATA[
+	    select  
+              sum(d.total_price) as totalPrice,
+              sum(d.quantity) as quantity,
+              sum(d.real_quantity) as realQuantity,
+              t.cloud_id as kunnr,
+              d.unit_desc as unitDesc,
+              r.name1 as kunnrName,
+              k.sku_name as skuName
+              
+             from  crm.crm_tb_order_kunnr_detail d
+             left join crm.crm_tb_order_kunnr_total t
+             on d.order_id = t.order_id
+              left join  basis.basis_vw_user_psw s
+             on s.user_id = t.user_id
+             left join crm.crm_tb_sku k 
+             on d.sku_id = k.sku_id
+             left join crm.crm_tb_kunnr r
+             on r.kunnr = t.cloud_id
+            where 1=1
+            ]]>
+        <dynamic>
+		<isNotEmpty property="isOffice" prepend="and">
+			<![CDATA[ t.cloud_id =#isOffice#]]>
+		</isNotEmpty>
+		<isNotEmpty property="skuId" prepend="and">
+			<![CDATA[ k.sku_id = #skuId#]]>
+		</isNotEmpty>
+		<isNotEmpty property="orgIds" prepend="and">
+			<![CDATA[ s.org_id in ]]>
+				<iterate property="orgIds" open="(" close=")" conjunction=",">#orgIds[]#
+				</iterate>
+		</isNotEmpty>
+		<isNotEmpty property="custKunnrs" prepend="and">
+			<![CDATA[ t.cloud_id in]]>
+			    <iterate property="custKunnrs" open="(" close=")" conjunction=",">#custKunnrs[]#
+				</iterate>
+		</isNotEmpty>
+		<isNotEmpty property="startDate" prepend="and">
+			<![CDATA[ d.create_date >= #startDate#]]>
+		</isNotEmpty>
+		<isNotEmpty property="endDate" prepend="and">
+			<![CDATA[ d.create_date <= #endDate#+1]]>
+		</isNotEmpty>
+		</dynamic>
+      <![CDATA[     group by t.cloud_id,r.name1,k.sku_name,d.unit_desc
+                      order by t.cloud_id,k.sku_name
+      ]]>
+      <include refid="global.paginationEnd" />
+	</select>
+	
+	<select id="getMaxId" resultClass="java.lang.Long">
+       <![CDATA[
+            select 
+			max(order_id)
+			from crm.crm_tb_order_kunnr_total
+	   ]]>
+    </select>
+    
+    <select id="searchAccountCount" parameterClass="account" resultClass="java.lang.Integer">
+       <![CDATA[
+          select count(*)
+                 from crm.crm_tb_order_account t
+                 left join crm.crm_tb_kunnr k on t.kunnr = k.kunnr
+                 left join basis.basis_vw_user_psw u on u.user_id = t.user_id
+                 where 1=1
+          ]]>
+          <dynamic>
+          <isNotEmpty property="userId" prepend="and">
+			<![CDATA[ t.user_id = #userId#]]>
+		  </isNotEmpty>
+		  <isNotEmpty property="status" prepend="and">
+			<![CDATA[ t.status = #status#]]>
+		  </isNotEmpty>
+		  <isNotEmpty property="accountId" prepend="and">
+			<![CDATA[ t.account_id  = #accountId#]]>
+		  </isNotEmpty>
+          <isNotEmpty property="startDate" prepend="and">
+			<![CDATA[ t.create_date >= #startDate#]]>
+		  </isNotEmpty>
+		  <isNotEmpty property="endDate" prepend="and">
+			<![CDATA[ t.create_date <= #endDate#+1]]>
+		  </isNotEmpty>
+		  <isNotEmpty property="kunnr" prepend="and">
+			<![CDATA[ t.kunnr  = #kunnr#]]>
+		  </isNotEmpty>
+		  </dynamic>
+    </select>
+    
+    <select id="searchAccountList" parameterClass="account" resultClass="account">
+    <include refid="global.paginationStart" />
+       <![CDATA[
+          select t.account_id as accountId,
+                 t.description as accountDesc,
+                 t.price as price,
+                 t.fee as fee,
+                 t.user_id as userId,
+                 t.status as status,
+                 t.create_date as createDate,
+                 t.kunnr as kunnr,
+                 t.success_num as successNum,
+                 t.pay_type as payType,
+                 t.card_type as cardType,
+                 t.success_date as successDate,
+                 t.in_sap as inSap,
+                 k.name1 as kunnrName,
+                 u.user_name as userName
+                 from crm.crm_tb_order_account t
+                 left join crm.crm_tb_kunnr k on t.kunnr = k.kunnr
+                 left join basis.basis_vw_user_psw u on u.user_id = t.user_id
+                 where 1=1
+          ]]>
+          <dynamic>
+          <isNotEmpty property="userId" prepend="and">
+			<![CDATA[ t.user_id = #userId#]]>
+		  </isNotEmpty>
+		  <isNotEmpty property="status" prepend="and">
+			<![CDATA[ t.status = #status#]]>
+		  </isNotEmpty>
+		  <isNotEmpty property="accountId" prepend="and">
+			<![CDATA[ t.account_id  = #accountId#]]>
+		  </isNotEmpty>
+          <isNotEmpty property="startDate" prepend="and">
+			<![CDATA[ t.create_date >= #startDate#]]>
+		  </isNotEmpty>
+		  <isNotEmpty property="endDate" prepend="and">
+			<![CDATA[ t.create_date <= #endDate#+1]]>
+		  </isNotEmpty>
+		  <isNotEmpty property="kunnr" prepend="and">
+			<![CDATA[ t.kunnr  = #kunnr#]]>
+		  </isNotEmpty>
+		  <isNotEmpty property="inSap" prepend="and">
+			<![CDATA[ t.in_sap  is null]]>
+		  </isNotEmpty>
+		  </dynamic>
+		  <![CDATA[ order by t.account_id desc ]]>
+		  <include refid="global.paginationEnd" />
+    </select>
+    
+    <select id="searchAccount" parameterClass="account" resultClass="account">
+       <![CDATA[
+          select t.account_id as accountId,
+                 t.description as accountDesc,
+                 t.price as price,
+                 t.fee as fee,
+                 t.user_id as userId,
+                 t.status as status,
+                 t.create_date as createDate,
+                 t.kunnr as kunnr,
+                 k.name1 as kunnrName,
+                 t.success_num as successNum,
+                 t.pay_type as payType,
+                 t.card_type as cardType,
+                 t.success_date as successDate,
+                 t.in_sap as inSap
+                 from crm.crm_tb_order_account t
+                 left join crm.crm_tb_kunnr k on k.kunnr=t.kunnr
+                 where 1=1
+          ]]>
+          <dynamic>
+          <isNotEmpty property="userId" prepend="and">
+			<![CDATA[ t.user_id = #userId#]]>
+		  </isNotEmpty>
+		  <isNotEmpty property="status" prepend="and">
+			<![CDATA[ t.status = #status#]]>
+		  </isNotEmpty>
+		  <isNotEmpty property="accountId" prepend="and">
+			<![CDATA[ t.account_id  = #accountId#]]>
+		  </isNotEmpty>
+		  <isNotEmpty property="kunnr" prepend="and">
+			<![CDATA[ t.kunnr  = #kunnr#]]>
+		  </isNotEmpty>
+		  </dynamic>
+    </select>
+    
+    <insert id="createAccount" parameterClass="account">
+     <![CDATA[   insert into crm.crm_tb_order_account(
+            account_id,
+            price,
+            description,
+            user_id,
+            status,
+            create_date,
+            pay_type,
+            card_type,
+            kunnr,
+            success_num,
+            fee
+        ) values (
+            #accountId#,
+            #price#,
+            #accountDesc#,
+            #userId#,
+            #status#,
+            sysdate,
+            #payType#,
+            #cardType#,
+            #kunnr#,
+            #successNum#,
+            #fee#
+        ) ]]>
+    </insert>
+    
+    <update id="updateAccount" parameterClass="account">
+        <![CDATA[ update crm.crm_tb_order_account t ]]>
+        <dynamic prepend="set">
+		  <isNotEmpty property="userId" prepend=",">
+			<![CDATA[ t.user_id = #userId#]]>
+		  </isNotEmpty>
+		  <isNotEmpty property="status" prepend=",">
+			<![CDATA[ t.status = #status#]]>
+		  </isNotEmpty>
+		  <isNotEmpty property="price" prepend=",">
+			<![CDATA[ t.price  = #price#]]>
+		  </isNotEmpty>
+		  <isNotEmpty property="accountDesc" prepend=",">
+			<![CDATA[ t.description  = #accountDesc#]]>
+		  </isNotEmpty>
+		  <isNotEmpty property="payType" prepend=",">
+			<![CDATA[ t.pay_type  = #payType#]]>
+		  </isNotEmpty>
+		  <isNotEmpty property="successNum" prepend=",">
+			<![CDATA[ t.success_num  = #successNum#]]>
+		  </isNotEmpty>
+		  <isNotEmpty property="kunnr" prepend=",">
+			<![CDATA[ t.kunnr  = #kunnr#]]>
+		  </isNotEmpty>
+		  <isNotEmpty property="successDate" prepend=",">
+			<![CDATA[ t.success_date  = #successDate#]]>
+		  </isNotEmpty>
+		  <isNotEmpty property="inSap" prepend=",">
+			<![CDATA[ t.in_sap  = #inSap#]]>
+		  </isNotEmpty>
+		  <isNotEmpty property="accountRefundId" prepend=",">
+			<![CDATA[ t.account_refund_id  = #accountRefundId#]]>
+		  </isNotEmpty>
+		  <![CDATA[ where t.account_id =#accountId# ]]>
+	</dynamic>
+    </update>
+
+    <select id="getPrintFormatListCount" parameterClass="printFormat" resultClass="java.lang.Integer">
+       <![CDATA[
+		select 
+		  count(1)
+		from 
+		crm.crm_tb_order_printformat t
+		left join crm.crm_tb_kunnr t1 on t.kunnr = t1.kunnr
+		left join basis.basis_tb_dict t2 on t.properties_code = t2.item_value
+		left join basis.basis_tb_dict_type t3 on t2.dict_type_id = t3.dict_type_id
+		left join basis.basis_tb_salesemp_info t4 on t.operator = t4.emp_id
+		where 
+		t3.dict_type_value = 'app@orderFormat'
+		and t3.dict_type_state = 'U'
+		and t2.item_state = 'U'
+		and t.status = 'U'
+          ]]>
+          <dynamic>
+          <isNotEmpty property="format_id" prepend="and">
+			<![CDATA[ t.format_id  = #format_id#]]>
+		  </isNotEmpty>
+		  <isNotEmpty property="kunnr" prepend="and">
+			<![CDATA[ t.kunnr  = #kunnr#]]>
+		  </isNotEmpty>
+		  <isNotEmpty property="properties_code" prepend="and">
+		    <![CDATA[ t.properties_code = #properties_code#]]>
+		  </isNotEmpty>		  
+		  <isNotEmpty property="kunnr_name" prepend="and">
+		    <![CDATA[t1.name1 like #kunnr_name,handler=wildcard# escape '\']]>
+		  </isNotEmpty>
+			 <isNotEmpty property="orgId" prepend="and">
+		    <isEmpty property="bhxjFlag">
+			<![CDATA[t1.org_id =#orgId#]]>
+			</isEmpty>
+			<isNotEmpty property="bhxjFlag">
+			<![CDATA[t1.org_id in(select o.org_id
+                   from basis.basis_tb_org o
+                    where o.state = 'Y'
+                    start with o.org_id = #orgId#
+                    connect by nocycle prior o.org_id = o.org_parent_id
+			)]]>
+			</isNotEmpty>
+			</isNotEmpty>		  
+		  </dynamic>
+    </select>
+
+
+    <select id="getPrintFormatList" parameterClass="printFormat" resultClass="printFormat">
+       <include refid="global.paginationStart" />
+       <![CDATA[
+		select 
+		  t.format_id,
+		  t.kunnr,
+		  t1.name1 kunnr_name,
+		  t.properties_code,
+		  t2.item_name properties_name,
+		  t.type,
+		  t.order_desc,
+		  t.operator,
+		  t4.user_name operator_name,
+		  t.create_date,
+		  t.modify_date,
+		  t.memo,
+		  t2.remark
+		from 
+		crm.crm_tb_order_printformat t
+		left join crm.crm_tb_kunnr t1 on t.kunnr = t1.kunnr
+		left join basis.basis_tb_dict t2 on t.properties_code = t2.item_value
+		left join basis.basis_tb_dict_type t3 on t2.dict_type_id = t3.dict_type_id
+		left join basis.basis_vw_user_psw t4 on t.operator = t4.user_id
+		where 
+		t3.dict_type_value = 'app@orderFormat'
+		and t3.dict_type_state = 'U'
+		and t2.item_state = 'U'
+		and t.status = 'U'
+          ]]>
+          <dynamic>
+          <isNotEmpty property="format_id" prepend="and">
+			<![CDATA[ t.format_id  = #format_id#]]>
+		  </isNotEmpty>
+		  <isNotEmpty property="kunnr" prepend="and">
+			<![CDATA[ t.kunnr  = #kunnr#]]>
+		  </isNotEmpty>
+		  <isNotEmpty property="kunnr_name" prepend="and">
+		    <![CDATA[t1.name1 like #kunnr_name,handler=wildcard# escape '\']]>
+		  </isNotEmpty>
+		  <isNotEmpty property="properties_code" prepend="and">
+		    <![CDATA[ t.properties_code = #properties_code#]]>
+		  </isNotEmpty>
+			 <isNotEmpty property="orgId" prepend="and">
+		    <isEmpty property="bhxjFlag">
+			<![CDATA[t1.org_id =#orgId#]]>
+			</isEmpty>
+			<isNotEmpty property="bhxjFlag">
+			<![CDATA[t1.org_id in(select o.org_id
+                   from basis.basis_tb_org o
+                    where o.state = 'Y'
+                    start with o.org_id = #orgId#
+                    connect by nocycle prior o.org_id = o.org_parent_id
+			)]]>
+			</isNotEmpty>
+			</isNotEmpty>		  
+		  </dynamic>
+		<![CDATA[order by t.kunnr,to_number(t.order_desc) asc]]>
+		<include refid="global.orderBy" />
+		<include refid="global.paginationEnd" />
+    </select>
+
+    <select id="getPropertiesJSON"  resultClass="printFormat">
+       <![CDATA[
+			select 
+				t1.item_name properties_name,
+		       	t1.item_value properties_code
+		  	from basis.basis_tb_dict_type t
+		  	left join 
+		  	basis.basis_tb_dict t1
+		  	on t.dict_type_id = t1.dict_type_id
+		 	where t.dict_type_state = 'U'
+		 	and t.dict_type_value = 'app@orderFormat'
+		 	and t1.item_state = 'U'
+          ]]>
+    </select>
+    
+    
+    <select id="kunnrSearch" parameterClass="kunnr" resultClass="kunnr">
+		<include refid="global.paginationStart" />
+		<![CDATA[
+		select t.kunnr,
+		t.name1,
+        t.org_id as orgId,
+        t.org_name as orgName
+		from crm.crm_tb_kunnr t 
+		where 1=1
+		]]>
+		<dynamic>
+			<isNotEmpty property="kunnr" prepend="and">
+			<![CDATA[t.kunnr=#kunnr#]]>
+			</isNotEmpty>
+			<isNotEmpty property="name1" prepend="and">
+			<![CDATA[t.name1 like #name1,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="status" prepend="and">
+			<![CDATA[t.status=#status#]]>
+			</isNotEmpty>
+			 <isNotEmpty property="orgId" prepend="and">
+		    <isEmpty property="bhxjFlag">
+			<![CDATA[t.org_id =#orgId#]]>
+			</isEmpty>
+			<isNotEmpty property="bhxjFlag">
+			<![CDATA[t.org_id in(select o.org_id
+                   from basis.basis_tb_org o
+                    where o.state = 'Y'
+                    start with o.org_id = #orgId#
+                    connect by nocycle prior o.org_id = o.org_parent_id
+			)]]>
+			</isNotEmpty>
+			</isNotEmpty>
+		</dynamic>
+			<!-- <![CDATA[order by t.status, t.create_date desc]]> -->
+		<include refid="global.orderBy" />
+		<include refid="global.paginationEnd" />
+	</select>
+    
+    
+    <update id="modifyFormat" parameterClass="printFormat">
+		<![CDATA[	
+			update crm.crm_tb_order_printformat t 
+		       set t.MODIFY_DATE = sysdate,
+		       	   t.MEMO = #memo#
+		]]>	
+		<dynamic>
+			<isNotEmpty property="operator" prepend=",">
+				<![CDATA[ t.OPERATOR =#operator#]]>
+			</isNotEmpty>
+			<isNotEmpty property="kunnr" prepend=",">
+				<![CDATA[ t.KUNNR =#kunnr#]]>
+			</isNotEmpty>
+			<isNotEmpty property="properties_code" prepend=",">
+				<![CDATA[ t.PROPERTIES_CODE =#properties_code#]]>
+			</isNotEmpty>
+			<isNotEmpty property="type" prepend=",">
+				<![CDATA[ t.TYPE =#type#]]>
+			</isNotEmpty>
+			<isNotEmpty property="status" prepend=",">
+				<![CDATA[ t.STATUS =#status#]]>
+			</isNotEmpty>
+			<isNotEmpty property="order_desc" prepend=",">
+				<![CDATA[ t.ORDER_DESC =#order_desc#]]>
+			</isNotEmpty>
+		</dynamic>
+	<![CDATA[
+		 where 1=1
+	]]>
+		<dynamic>
+			<isNotEmpty property="format_id" prepend="and">
+			<![CDATA[  t.FORMAT_ID=#format_id#]]>
+			</isNotEmpty>
+			<isNotEmpty property="format_ids" prepend="and">
+			<![CDATA[t.FORMAT_ID in]]>
+				<iterate property="format_ids" open="(" close=")"
+					conjunction=",">#format_ids[]#
+				</iterate>
+			</isNotEmpty>
+		</dynamic>		
+		
+		
+			
+	</update>
+    
+	<insert id="createFormat" parameterClass="printFormat">
+	   <selectKey resultClass="java.lang.Integer" keyProperty="format_id">
+	   <![CDATA[
+	      select crm.crm_seq_order_format.nextval as format_id from dual
+	   ]]>
+	   </selectKey>
+	   <![CDATA[
+	     insert into crm.crm_tb_order_printformat
+		  (FORMAT_ID,
+		   KUNNR,
+		   PROPERTIES_CODE,
+		   TYPE,
+		   ORDER_DESC,
+		   OPERATOR,
+		   STATUS,
+		   MEMO,
+		   CREATE_DATE,
+		   MODIFY_DATE)
+		values
+		  (#format_id#,
+		   #kunnr#,
+		   #properties_code#,
+		   #type#,
+		   #order_desc#,
+		   #operator#,
+		   #status#,
+		   #memo#,
+		   sysdate,
+		   sysdate)
+		 ]]>
+	</insert>
+	
+	<select id="getUserStationBySjjlCount" parameterClass="java.lang.String" resultClass="java.lang.Integer">
+	    <![CDATA[
+	        select count(*) from basis.basis_tb_station_user u
+	        where u.user_id=#userId# and u.station_id in ('h_zg','h_zg_xn','h_yd')
+	    ]]>
+	</select>   
+
+</sqlMap>

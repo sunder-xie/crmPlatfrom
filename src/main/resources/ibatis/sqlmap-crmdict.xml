@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="GB2312"?>
+<!DOCTYPE sqlMap
+	PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="crmdict">
+	
+	<typeAlias alias="crmDict" type="com.kintiger.platform.crmdict.pojo.CrmDict" />
+	<typeAlias alias="crmDictType" type="com.kintiger.platform.crmdict.pojo.CrmDictType" />
+	
+	<select id="getCrmDictTypeCount" parameterClass="crmDictType"
+		resultClass="java.lang.Integer">
+	<![CDATA[
+		select 
+			 count(e.dict_type_id)
+			from crm.crm_tb_dict_type e 
+			  where e.dict_type_state ='U'
+	]]>
+		<dynamic>
+			<isNotEmpty property="dictTypeName" prepend="and">
+			<![CDATA[  e.dict_type_name like #dictTypeName,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="dictTypeValue" prepend="and">
+			<![CDATA[  e.dict_type_value like #dictTypeValue,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="remark" prepend="and">
+			<![CDATA[  e.remark like #remark,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	
+	<select id="getCrmDictTypeList" parameterClass="crmDictType"
+		resultClass="crmDictType">
+		<include refid="global.paginationStart" /> 
+	<![CDATA[
+		select  e.dict_type_id  as dictTypeId,
+				 e.parent_dict_type_id as parentDictTypeId ,
+				e.dict_type_name  as dictTypeName,
+					e.dict_type_value as dictTypeValue,
+					e.remark as remark,
+				e.dict_type_state as dictTypeState,
+					e.last_modify as lastModify,
+				e.modify_date as modifyDate
+			 from crm.crm_tb_dict_type e
+			  where e.dict_type_state ='U'
+	]]>
+		<dynamic>
+			<isNotEmpty property="dictTypeName" prepend="and">
+			<![CDATA[  e.dict_type_name like #dictTypeName,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="dictTypeValue" prepend="and">
+			<![CDATA[  e.dict_type_value like #dictTypeValue,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+			<isNotEmpty property="remark" prepend="and">
+			<![CDATA[  e.remark like #remark,handler=wildcard# escape '\']]>
+			</isNotEmpty>
+		</dynamic>
+	<![CDATA[ order by e.dict_type_id desc]]>
+		<include refid="global.orderBy" />
+		<include refid="global.paginationEnd" /> 
+	</select>
+	<select id="getCrmDictTypeListjosn" 
+		resultClass="crmDictType">
+	<![CDATA[
+		select  e.dict_type_id  as dictTypeId,
+				 e.parent_dict_type_id as parentDictTypeId ,
+				e.dict_type_name  as dictTypeName,
+					e.dict_type_value as dictTypeValue,
+					e.remark as remark,
+				e.dict_type_state as dictTypeState,
+					e.last_modify as lastModify,
+				e.modify_date as modifyDate
+			 from crm.crm_tb_dict_type e
+			  where e.dict_type_state ='U'
+			  order by e.dict_type_id desc
+	]]>
+	</select>
+	
+	<select id="getCrmDictType" parameterClass="crmDictType"
+		resultClass="crmDictType">
+	<![CDATA[
+		select  e.dict_type_id  as dictTypeId,
+				 e.parent_dict_type_id as parentDictTypeId ,
+				e.dict_type_name  as dictTypeName,
+					e.dict_type_value as dictTypeValue,
+					e.remark as remark,
+				e.dict_type_state as dictTypeState,
+					e.last_modify as lastModify,
+				e.modify_date as modifyDate
+			 from crm.crm_tb_dict_type e
+			  where e.dict_type_state ='U'
+	]]>
+		<dynamic>
+			<isNotEmpty property="dictTypeId" prepend="and">
+			<![CDATA[  e.dict_type_id=#dictTypeId#]]>
+			</isNotEmpty>
+			<isNotEmpty property="dictTypeValue" prepend="and">
+			<![CDATA[  e.dict_type_value=#dictTypeValue#]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	
+	<select id="getCrmDict" parameterClass="crmDict"
+		resultClass="crmDict">
+	<![CDATA[
+
+		select  e.item_id as itemId ,
+				e.dict_type_id as dictTypeId,
+				e.parent_item_id as parentItemId,
+				e.item_name as itemName,
+				e.item_description as itemDescription,
+				e.item_value as itemValue, 
+				e.remark as  remark,
+				e.item_state as itemState,
+				e.last_modify as lastModify,
+				e.charge_id as chargeId,
+				e.appobject_level as appobjectLevel,
+				 e.modify_date as modifyDate
+		  from  crm.crm_tb_dict e
+			  where e.item_state='U'
+	]]>
+		<dynamic>
+			<isNotEmpty property="itemId" prepend="and">
+			<![CDATA[  e.item_id = #itemId#]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	            
+	<select id="getCrmDictCount" parameterClass="crmDict"
+		resultClass="java.lang.Integer">
+	<![CDATA[
+		select 
+				count(e.item_id)
+			from crm.crm_tb_dict e
+			  where e.item_state ='U'
+	]]>
+		<dynamic>
+			<isNotEmpty property="dictTypeId" prepend="and">
+			<![CDATA[  e.dict_type_id = #dictTypeId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="itemId" prepend="and">
+			<![CDATA[  e.item_id = #itemId#]]>
+			</isNotEmpty>
+			<isNotEmpty property="itemName" prepend="and">
+			<![CDATA[  e.item_Name = #itemName#]]>
+			</isNotEmpty>
+			<isNotEmpty property="remark" prepend="and">
+			<![CDATA[  e.remark = #remark#]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	          
+	<select id="getCrmDictList" parameterClass="crmDict"
+		resultClass="crmDict">
+		<include refid="global.paginationStart" /> 
+	<![CDATA[
+		select e.item_id          as itemId,
+					   e.dict_type_id     as dictTypeId,
+					   e.parent_item_id   as parentItemId,
+					   b.dict_type_name   as parentItemName,
+					   e.item_name        as itemName,
+					   e.item_description as itemDescription,
+					   e.item_value       as itemValue,
+					   e.remark           as remark,
+					   e.item_state       as itemState,
+					   e.last_modify      as lastModify,
+					   e.charge_id        as chargeId,
+					   e.appobject_level  as appobjectLevel,
+					   e.modify_date      as modifyDate
+				  from crm.crm_tb_dict e
+				  left join crm.crm_tb_dict_type b on e.dict_type_id = b.dict_type_id
+				 where e.item_state = 'U'
+				   and b.dict_type_state ='U'
+	]]>
+		<dynamic>
+			<isNotEmpty property="dictTypeId" prepend="and">
+			<![CDATA[  e.dict_type_id = #dictTypeId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="itemId" prepend="and">
+			<![CDATA[  e.item_id = #itemId#]]>
+			</isNotEmpty>
+			<isNotEmpty property="itemName" prepend="and">
+			<![CDATA[  e.item_Name = #itemName#]]>
+			</isNotEmpty>
+			<isNotEmpty property="remark" prepend="and">
+			<![CDATA[  e.remark = #remark#]]>
+			</isNotEmpty>
+		</dynamic>
+	<![CDATA[ order by e.item_id desc ]]>
+		<include refid="global.orderBy" />
+		<include refid="global.paginationEnd" /> 
+	</select>
+	
+	<select id="getDictCount" parameterClass="crmDict" resultClass="java.lang.Integer">
+	<![CDATA[
+		select count(1)
+		  from crm.crm_tb_dict t, crm.crm_tb_dict_type p
+		 where t.dict_type_id = p.dict_type_id
+		  and t.item_state='U'
+               and p.dict_type_state='U'
+	]]>
+		<dynamic>
+			<isNotEmpty property="dictTypeValue" prepend="and">
+			<![CDATA[ p.dict_type_value = #dictTypeValue# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="itemName" prepend="and">
+			<![CDATA[ t.item_name like #itemName,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	          
+	<select id="getDictList" parameterClass="crmDict" resultClass="crmDict">
+		<include refid="global.paginationStart" /> 
+	<![CDATA[
+		select t.item_id          as itemId,
+			   t.dict_type_id     as dictTypeId,
+			   t.parent_item_id   as parentItemId,
+			   t.item_name        as itemName,
+			   t.item_description as itemDescription,
+			   t.item_value       as itemValue,
+			   t.remark           as remark,
+			   t.item_state       as itemState,
+			   t.last_modify      as lastModify,
+			   t.charge_id        as chargeId,
+			   t.appobject_level  as appobjectLevel,
+			   t.modify_date      as modifyDate
+		  from crm.crm_tb_dict t, crm.crm_tb_dict_type p
+		 where t.dict_type_id = p.dict_type_id
+		       and t.item_state='U'
+               and p.dict_type_state='U'
+	]]>
+		<dynamic>
+			<isNotEmpty property="dictTypeValue" prepend="and">
+			<![CDATA[ p.dict_type_value = #dictTypeValue# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="itemName" prepend="and">
+			<![CDATA[ t.item_name like #itemName,handler=wildcard# escape '\' ]]>
+			</isNotEmpty>
+			<isEmpty property="sort">
+			<![CDATA[ order by t.item_id desc ]]>
+			</isEmpty>
+		</dynamic>
+		<include refid="global.orderBy" />
+		<include refid="global.paginationEnd" /> 
+	</select>
+	
+	<insert id="createDictType" parameterClass="crmDictType" >
+		<selectKey resultClass="java.lang.Long" keyProperty="dictTypeId">
+		<![CDATA[
+			select crm.crm_seq_dict_type.nextval as dictTypeId from dual
+		]]>
+		</selectKey>
+	<![CDATA[
+		insert into crm.crm_tb_dict_type
+		  (DICT_TYPE_ID,
+		   PARENT_DICT_TYPE_ID,
+		   DICT_TYPE_NAME,
+		   DICT_TYPE_VALUE,
+		   REMARK,
+		   DICT_TYPE_STATE,
+		   LAST_MODIFY,
+		   MODIFY_DATE
+		  )
+		values
+		  (#dictTypeId#,
+		   #dictTypeId#,
+		   #dictTypeName#,
+		   #dictTypeValue#,
+		   #remark#,
+		   'U',
+		   sysdate,
+		   sysdate
+		 )
+	]]>
+	</insert>
+	
+	<insert id="createDict" parameterClass="crmDict" 
+		>
+		<selectKey resultClass="java.lang.Long" keyProperty="itemId">
+		<![CDATA[
+			select crm.crm_seq_dict.nextval as itemId from dual
+		]]>
+		</selectKey>
+	<![CDATA[
+		insert into crm.crm_tb_dict
+		  (ITEM_ID,
+		   DICT_TYPE_ID,
+		   ITEM_NAME,
+		   ITEM_DESCRIPTION,
+		   ITEM_VALUE,
+		   REMARK,
+		   ITEM_STATE,
+		   LAST_MODIFY,
+		   MODIFY_DATE
+		  )
+		values
+		  (#itemId:NUMBER#,
+		   #dictTypeId:NUMBER#,
+
+		   #itemName:VARCHAR#,
+		   #itemDescription:VARCHAR#,
+		   #itemValue:VARCHAR#,
+		   #remark:VARCHAR#,
+		   'U',
+		   sysdate,
+		   sysdate
+		 )
+	]]>
+	</insert>
+	
+	<update  id="updateDict" parameterClass="crmDict" >
+	<![CDATA[
+		update  crm.crm_tb_dict t set t.LAST_MODIFY=sysdate
+	]]>
+		<dynamic>
+			<isNotEmpty property="itemName" prepend=",">
+			<![CDATA[ t.ITEM_NAME =#itemName# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="itemValue" prepend=",">
+			<![CDATA[ t.ITEM_VALUE =#itemValue# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="dictTypeId" prepend=",">
+			<![CDATA[ t.dict_type_id =#dictTypeId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="itemDescription" prepend=",">
+			<![CDATA[ t.ITEM_DESCRIPTION =#itemDescription# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="remark" prepend=",">
+			<![CDATA[ t.REMARK =#remark# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="itemState" prepend=",">
+			<![CDATA[ t.ITEM_STATE =#itemState# ]]>
+			</isNotEmpty>
+		</dynamic>
+	<![CDATA[
+		 where t.ITEM_ID=#itemId#
+
+	]]>
+	</update>
+	
+	<update  id="updateDictType" parameterClass="crmDictType" >
+	<![CDATA[
+		update  crm.crm_tb_dict_type t set t.LAST_MODIFY=sysdate
+	]]>
+		<dynamic>
+			<isNotEmpty property="dictTypeName" prepend=",">
+			<![CDATA[ t.DICT_TYPE_NAME =#dictTypeName# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="dictTypeValue" prepend=",">
+			<![CDATA[ t.DICT_TYPE_VALUE =#dictTypeValue# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="dictTypeState" prepend=",">
+			<![CDATA[ t.DICT_TYPE_STATE =#dictTypeState# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="remark" prepend=",">
+			<![CDATA[ t.REMARK =#remark# ]]>
+			</isNotEmpty>
+		</dynamic>
+	<![CDATA[
+		  where t.DICT_TYPE_ID=#dictTypeId#
+	]]>
+	</update>
+	
+	<select id="getCrmDictListByType" parameterClass="crmDict"
+		resultClass="crmDict">
+	<![CDATA[
+		select  e.item_id as itemId ,
+				e.dict_type_id as dictTypeId,
+				e.parent_item_id as parentItemId,
+				e.item_name as itemName,
+				e.item_description as itemDescription,
+				e.item_value as itemValue, 
+				e.remark as  remark,
+				e.item_state as itemState,
+				e.last_modify as lastModify,
+				e.charge_id as chargeId,
+				e.appobject_level as appobjectLevel,
+				e.modify_date as modifyDate
+		  from  crm.crm_tb_dict e ,crm.crm_tb_dict_type t
+		where  e.dict_type_id=t.DICT_TYPE_ID and  e.item_state='U' and t.dict_type_state='U'
+	]]>
+		<dynamic>
+			<isNotEmpty property="dictTypeId" prepend="and">
+			<![CDATA[  e.dict_type_id = #dictTypeId# ]]>
+			</isNotEmpty>
+			<isNotEmpty property="dictTypeName" prepend="and">
+			<![CDATA[  t.dict_type_name like   #dictTypeName,handler=wildcard# escape '\'   ]]>
+			</isNotEmpty>
+			<isNotEmpty property="dictTypeValue" prepend="and">
+			<![CDATA[  t.dict_type_value like   #dictTypeValue,handler=wildcard# escape '\'   ]]>
+			</isNotEmpty>
+		</dynamic>
+	</select>
+	
+	<select id="getByCrmDictList" parameterClass="crmDict"
+		resultClass="crmDict">
+	<![CDATA[
+			 select t.item_id          as itemId,
+			 t.dict_type_id     as dictTypeId,
+			 t.parent_item_id   as parentItemId,
+			 t.item_name        as itemName,
+			 t.item_description as itemDescription,
+			 t.item_value       as itemValue,
+				   t.remark           as remark,
+				   t.item_state       as itemState,
+				   t.last_modify      as lastModify,
+				   t.charge_id        as chargeId,
+				   t.appobject_level  as appobjectLevel,
+				   t.modify_date      as modifyDate
+			  from crm.crm_tb_dict t, crm.crm_tb_dict_type p
+			 where t.dict_type_id = p.dict_type_id
+		 and  p.dict_type_name=#itemName#
+		 order by t.item_value asc
+	]]>
+	</select>
+</sqlMap>

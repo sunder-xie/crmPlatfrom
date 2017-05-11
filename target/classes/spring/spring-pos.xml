@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<bean id="posAction" class="com.kintiger.platform.pos.action.PosAction"
+		scope="request" parent="baseAction">
+		<property name="posService" ref="posService" />
+		<property name="xmlFilePath">
+			<value>${wfe.xml.filePath}</value>
+		</property>	
+		<property name="orgServiceHessian" ref="orgServiceHessian"/>
+	</bean>
+	
+	<bean id="posService"
+		class="com.kintiger.platform.pos.service.impl.PosServiceImpl">
+		<property name="posDao" ref="posDao" />
+	</bean>
+	<bean id="posDao" class="com.kintiger.platform.pos.dao.impl.PosDaoImpl" parent="baseDao">
+	</bean>
+	
+</beans>

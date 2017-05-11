@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+	"http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<include file="struts/struts-global.xml" />
+	<include file="struts/struts-channel.xml" />
+	<include file="struts/struts-kunnr.xml" />
+	<include file="struts/struts-goal.xml" />
+	<include file="struts/struts-customer.xml" />
+	<include file="struts/struts-crmdict.xml" />
+	<include file="struts/struts-sales.xml" />
+	<include file="struts/struts-kunnrAddress.xml" />
+	<include file="struts/struts-custvist.xml" />
+	<include file="struts/struts-org.xml" />
+	<include file="struts/struts-stock.xml" />
+	<include file="struts/struts-instock.xml" />
+	<include file="struts/struts-citydict.xml" />
+	<include file="struts/struts-master.xml" />
+	<include file="struts/struts-supercheck.xml" />
+	<include file="struts/struts-twoOrderCust.xml" />
+	<include file="struts/struts-batOrgUpdate.xml" />
+	<include file="struts/struts-distributionData.xml" />
+	<include file="struts/struts-distributionDataRep.xml" />
+	<include file="struts/struts-distributionDataRepMon.xml" />
+	<include file="struts/struts-distributionInventory.xml" />
+	<include file="struts/struts-distributionDataAppend.xml" />
+	<include file="struts/struts-distributionDataAppendRep.xml" />
+	<include file="struts/struts-distributionDataAppendRepMon.xml" />
+	<include file="struts/struts-distributionGoal.xml" />
+	<include file="struts/struts-distributionGoalAppend.xml" />
+	<include file="struts/struts-question.xml" />
+	<include file="struts/struts-saleItems.xml" />
+	<include file="struts/struts-order.xml" />
+	<include file="struts/struts-orderResult.xml" />
+	<include file="struts/struts-kunnrBusinessContact.xml" />
+	<include file="struts/struts-complaintReport.xml" />
+	<include file="struts/struts-visitInfo.xml" />
+	<include file="struts/struts-busPhone.xml" />
+	<include file="struts/struts-stockReport.xml" />
+	<include file="struts/struts-pos.xml" />
+	<include file="struts/struts-sms.xml" />
+	<include file="struts/struts-cuanhuoQuery.xml" />
+	<include file="struts/struts-newOrg.xml" />
+	<include file="struts/struts-kunnrManager.xml" />
+	<include file="struts/struts-qualityChecking.xml"></include>
+</struts>
